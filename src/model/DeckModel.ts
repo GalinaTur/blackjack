@@ -20,4 +20,9 @@ export class DeckModel {
             [this._deck[i], this._deck[k]] = [this._deck[k], this._deck[i]];
         }
     }
+
+    getCard(){
+        const card = this._deck.pop();
+        return card;
+    }
 }
