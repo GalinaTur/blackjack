@@ -1,5 +1,4 @@
 import { CardModel } from "./CardModel";
-import { DeckModel } from "./DeckModel";
 
 export enum ERoundState {
     NOT_STARTED,
@@ -11,21 +10,25 @@ export enum ERoundState {
 }
 
 export class RoundModel {
-    public currentState: ERoundState;
+    public currentState: ERoundState; //make private and getter
 
     constructor() {
         this.currentState = ERoundState.NOT_STARTED;
     }
 
-    startNewRound() {
-        this.currentState = ERoundState.BETTING;
+    checkRoundStarted(isStarted: boolean) {
+        if (!isStarted) {
+            this.currentState = ERoundState.NOT_STARTED;
+        } else {
+            this.currentState = ERoundState.BETTING;
+        }
     }
 
-    playerBet(bet:number) {
+    playerBet(bet: number) {
         // this.player.placeBet(bet);
         this.currentState = ERoundState.CARDS_DEALING;
     }
-    
+
     confirmDealingEnded(cardsOnHand: CardModel[]) {
         if (cardsOnHand.length === 2) {
             this.currentState = ERoundState.PLAYERS_TURN;

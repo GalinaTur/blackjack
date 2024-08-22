@@ -9,7 +9,10 @@ module.exports = {
   },
   entry: './src/main.ts',
   plugins: [
-    new HtmlWebpackPlugin({ template: './src/index.html' }),
+    new HtmlWebpackPlugin({ 
+      favicon: "./assets/favicon.png",
+      template: './src/index.html' 
+    }),
     new CopyPlugin({
       patterns: [
         { from: "./assets", to: "./assets" },

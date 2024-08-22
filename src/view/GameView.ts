@@ -1,22 +1,42 @@
-import { Application, Container, DisplayObject, Sprite, Spritesheet, SpriteSource } from "pixi.js";
-import { AssetsLoader } from "./AssetsLoader";
+import { Application, Container, Spritesheet } from "pixi.js";
 import { BoardView } from "./BoardView";
+import { Main } from "../main";
+import { Background } from "./scenes/sceneComponents/Background";
+import { InitialScene } from "./scenes/InitialScene";
+import { GameScene } from "./scenes/GameScene";
 
 
-export class GameView {
+export class GameView extends Container {
     appStage: Container;
+    board = new BoardView();
     cards: null | Spritesheet = null;
-    constructor (app: Application) {
+    currentScene: Container | null = null;
+
+    constructor(app: Application) {
+        super();
         this.appStage = app.stage;
+        this.appStage.addChild(this);
+        Main.APP.ticker.add(() => {
+            this.resize();
+        })
     }
 
-    async init () {
-        // const assetsLoader = new AssetsLoader();
-        await AssetsLoader.init();
-        const board = new BoardView();
-        board.init();
-        this.appStage.addChild(board);
-        // const card = await AssetsLoader.getTexture('7_of_Hearts')s
-        // this.appStage.addChild(new Sprite(card))
+    init() {
+        const background = new Background();
+        this.addChild(background);
+    }
+
+    renderInitialScene() {
+        const initialScene = new InitialScene();
+        this.currentScene = this.addChild(initialScene);
+    }
+
+    renderGameScene() {
+        const gameScene = new GameScene();
+        this.currentScene = this.addChild(gameScene);
+    }
+
+    resize() {
+        this.board.setBackgroundSize();
     }
 }

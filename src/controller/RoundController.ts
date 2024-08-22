@@ -1,10 +1,10 @@
 import { DealerModel } from "../model/DealerModel";
 import { DeckModel } from "../model/DeckModel";
-import { HandModel } from "../model/HandModel";
 import { Person } from "../model/Person";
 import { PlayerModel } from "../model/PlayerModel";
 import { ERoundState, RoundModel } from "../model/RoundModel";
 import { GameView } from "../view/GameView";
+import { Main } from "../main";
 
 export class RoundController {
     private roundModel: RoundModel;
@@ -13,6 +13,7 @@ export class RoundController {
     private dealer: DealerModel;
     private player: PlayerModel;
     private participants: Person[] = [];
+    isRoundStarted = false;
 
     constructor(roundModel: RoundModel, gameView: GameView) {
         this.gameView = gameView;
@@ -22,17 +23,24 @@ export class RoundController {
         this.dealer = new DealerModel();
         this.player = new PlayerModel();
         this.participants.push(this.player, this.dealer);
+        this.init();
+        Main.APP.ticker.add(() => {
+            // this.handleNextAction(this.roundModel.currentState);
+        });
     }
-    
-    init() {
+
+    async init() {
+        this.gameView.renderInitialScene();
         this.handleNextAction(this.roundModel.currentState);
+        Main.signalController.roundStart.add(this.startRound, this);
     }
 
     handleNextAction = (nextState: ERoundState) => {
+        console.log('current state:'+ this.roundModel.currentState)
         switch (nextState) {
             case ERoundState.NOT_STARTED:
-                this.roundModel.startNewRound();
-                this.handleNextAction(this.roundModel.currentState);
+                this.roundModel.checkRoundStarted(this.isRoundStarted);
+                console.log('ds')
                 break;
             case ERoundState.BETTING:
                 this.roundModel.playerBet(100);
@@ -61,5 +69,13 @@ export class RoundController {
     dealCardTo(person: Person) {
         const card = this.deck.getCard();
         if (card) person.drawCard(card);
+    }
+
+    startRound() {
+        if (!this.gameView.currentScene) return;
+        this.isRoundStarted = true;
+        this.gameView.removeChild(this.gameView.currentScene);
+        this.gameView.renderGameScene();
+        this.handleNextAction(this.roundModel.currentState);
     }
 }
