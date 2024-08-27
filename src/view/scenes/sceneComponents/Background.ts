@@ -25,7 +25,6 @@ export class Background extends Container {
     }
     
     async setLogoImage() {
-        console.log(this)
         this.logo = await AssetsLoader.getSprite('bgLogo');
         if (this.logo === null) return;
         this.logo.anchor.set(0.5, 1);
@@ -60,7 +59,7 @@ export class Background extends Container {
         this.image.position.y = Main.screenSize.height/2;
 
         this.logo.position.x = Main.screenSize.width/2;
-        this.logo.position.y = Main.screenSize.height*0.4;
+        this.logo.position.y = Main.screenSize.height*0.5;
     }
 
     onResize() {

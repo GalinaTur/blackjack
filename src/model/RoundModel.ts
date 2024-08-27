@@ -1,5 +1,78 @@
 import { CardModel } from "./CardModel";
 
+export class RoundModel {
+
+    private _roundStateInfo: IStateInfo = {
+        isStarted: false,
+        bet: 0,
+        currentState: ERoundState.NOT_STARTED,
+        cards: {
+            dealer: [],
+            player: [],
+            split: [],
+            },
+        points: {
+            dealer: 0,
+            player: 0,
+        },
+        isSplitAllowed: false,
+    }
+
+    public dealTo(person: keyof ICardsDealed, card: CardModel) {
+        if (person === 'player') {
+            card.hidden = false;
+            this._roundStateInfo.cards.player.push(card);
+            return;
+        }
+
+        if (this._roundStateInfo.cards.dealer.length === 0) {
+            card.hidden = false;
+        }
+        this._roundStateInfo.cards.dealer.push(card);
+    }
+
+    public isDealingEnded() {
+        if (this._roundStateInfo.cards.dealer.length === 2 &&
+            this._roundStateInfo.cards.player.length === 2) {
+            this._roundStateInfo.currentState = ERoundState.PLAYERS_TURN;
+        }
+    }
+
+    get roundStateInfo() {
+        return this._roundStateInfo;
+    }
+
+    set isStarted(isStarted: boolean) {
+        this._roundStateInfo.isStarted = isStarted;
+        this._roundStateInfo.currentState = ERoundState.BETTING;
+    }
+
+    set bet(bet: number) {
+        this._roundStateInfo.bet = bet;
+        this._roundStateInfo.currentState = ERoundState.CARDS_DEALING;
+    }
+
+    get bet() {
+        return this._roundStateInfo.bet;
+    }
+
+    get cards() {
+        return this._roundStateInfo.cards;
+    }
+
+    get points() {
+        return this._roundStateInfo.points;
+    }
+
+    setPoints(person: keyof IPoints, points: number) {
+        this._roundStateInfo.points[person] = points;
+    }
+
+    set dealerPoints(points: number) {
+        this._roundStateInfo.points.dealer = points;
+    }
+}
+
 export enum ERoundState {
     NOT_STARTED,
     BETTING,
@@ -9,29 +82,22 @@ export enum ERoundState {
     ROUND_OVER
 }
 
-export class RoundModel {
-    public currentState: ERoundState; //make private and getter
+interface IStateInfo {
+    isStarted: boolean,
+    bet: number,
+    currentState: ERoundState,
+    cards: ICardsDealed,
+    points: IPoints,
+    isSplitAllowed: boolean,
+}
 
-    constructor() {
-        this.currentState = ERoundState.NOT_STARTED;
-    }
+export interface ICardsDealed {
+    dealer: CardModel[],
+    player: CardModel[],
+    split: CardModel[]
+}
 
-    checkRoundStarted(isStarted: boolean) {
-        if (!isStarted) {
-            this.currentState = ERoundState.NOT_STARTED;
-        } else {
-            this.currentState = ERoundState.BETTING;
-        }
-    }
-
-    playerBet(bet: number) {
-        // this.player.placeBet(bet);
-        this.currentState = ERoundState.CARDS_DEALING;
-    }
-
-    confirmDealingEnded(cardsOnHand: CardModel[]) {
-        if (cardsOnHand.length === 2) {
-            this.currentState = ERoundState.PLAYERS_TURN;
-        }
-    }
+export interface IPoints {
+    dealer: number,
+    player: number,
 }

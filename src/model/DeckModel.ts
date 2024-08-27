@@ -1,11 +1,16 @@
-import { CardModel, TRank, TSuit } from "./CardModel";
+import { CardModel } from "./CardModel";
+
+const ranks = ['two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'jack', 'queen', 'king', 'ace'] as const;
+const suits = ['hearts', 'diamonds', 'clubs', 'spades'] as const;
+
+export type TRank = typeof ranks[number];
+export type TSuit = typeof suits[number];
 
 export class DeckModel {
     private _deck: CardModel[] = [];
 
     constructor() {
-        const ranks: TRank[] = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace'];
-        const suits: TSuit[] = ['Hearts', 'Diamonds', 'Clubs', 'Spades'];
+        
 
         for (let rank of ranks) {
             for (let suit of suits) {

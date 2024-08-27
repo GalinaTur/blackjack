@@ -1,21 +1,15 @@
-type TPipRank = '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10';
-type TFaceRank = 'Jack' | 'Queen' | 'King';
-type TAce = 'Ace';
-export type TRank = TPipRank | TFaceRank | TAce;
-export type TSuit = 'Hearts' | 'Diamonds' | 'Clubs' | 'Spades';
+import { TRank, TSuit } from "./DeckModel";
 
 export class CardModel {
     private _rank: TRank;
     private _suit: TSuit;
     private _hidden = true;
+    private _points = 0;
 
     constructor(rank: TRank, suit: TSuit) {
         this._rank = rank;
         this._suit = suit;
     }
-
-    // get points() {
-    // }
 
     get rank() {
         return this._rank;

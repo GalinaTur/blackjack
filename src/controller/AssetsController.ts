@@ -46,12 +46,24 @@ export class AssetsLoader {
                     name: 'gameTableAssets',
                     assets: [
                         {
+                            name: 'header_panel',
+                            srcs: '../../../assets/headerPanel.png',
+                        },
+                        {
                             name: 'bet_panel',
                             srcs: '../../../assets/betPanel.png',
                         },
                         {
-                            name: 'upper_panel',
-                            srcs: '../../../assets/upperPanel.png',
+                            name: 'game_panel',
+                            srcs: '../../../assets/gamePanel.png',
+                        },
+                        {
+                            name: 'cards_back',
+                            srcs: '../../../assets/cards/cards_back.png',
+                        },
+                        {
+                            name: 'points_label',
+                            srcs: '../../../assets/label.png',
                         },
                     ],
                 },

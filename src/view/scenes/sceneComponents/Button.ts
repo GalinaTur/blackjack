@@ -1,24 +1,38 @@
-import { Application, ColorMatrixFilter, Container, DisplayObject, Filter, filters, Sprite, Spritesheet, SpriteSource, Text, TextStyle } from "pixi.js";
+import { ColorMatrixFilter, Container, Sprite, Text, TextStyle } from "pixi.js";
 import { AssetsLoader } from "../../../controller/AssetsController";
-import { Main } from "../../../main";
-
+import { DropShadowFilter } from "pixi-filters";
 
 export class Button extends Container {
     image: Sprite | null = null;
     text: Text | null = null;
     // sepiaColorFilter: ColorMatrixFilter
+    dropShadowFilter: DropShadowFilter;
 
     constructor(buttonText: string | null, onClick: (()=>void)) {
         super();
-        this.setSprite().then(() =>
-            this.setText(buttonText));
+        this.setSprite()
+        .then(this.setText.bind(this, buttonText));
+        
         this.eventMode = "static";
         this.cursor = "pointer";
         // this.sepiaColorFilter = new ColorMatrixFilter();
         // this.sepiaColorFilter.sepia(true);
         // this.filters = [this.sepiaColorFilter];
 
-        this.on('click', onClick);
+
+        this.on('pointerdown', onClick);
+
+        this.dropShadowFilter = new DropShadowFilter({
+            blur:3,
+            quality: 2,
+            alpha: 0.5,
+            offset: {
+                x: 2,
+                y: -2,
+            },
+            color: 0x000000});
+
+            this.filters = [this.dropShadowFilter];
     }
     
     async setSprite() {
@@ -33,7 +47,6 @@ export class Button extends Container {
         if (!this.image) return;
 
         const style = new TextStyle({
-
             fontSize: 36,
             fill: "#ffffff",
             fontFamily: "SairaBD",

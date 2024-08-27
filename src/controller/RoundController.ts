@@ -2,9 +2,13 @@ import { DealerModel } from "../model/DealerModel";
 import { DeckModel } from "../model/DeckModel";
 import { Person } from "../model/Person";
 import { PlayerModel } from "../model/PlayerModel";
-import { ERoundState, RoundModel } from "../model/RoundModel";
+import { ERoundState, ICardsDealed, IPoints, RoundModel } from "../model/RoundModel";
 import { GameView } from "../view/GameView";
 import { Main } from "../main";
+import { BettingController } from "./BettingController";
+import { CardModel } from "../model/CardModel";
+import { PointsController } from "./PointsController";
+import { IPoint } from "pixi.js";
 
 export class RoundController {
     private roundModel: RoundModel;
@@ -13,7 +17,8 @@ export class RoundController {
     private dealer: DealerModel;
     private player: PlayerModel;
     private participants: Person[] = [];
-    isRoundStarted = false;
+    private bettingController: BettingController;
+    private pointsController: PointsController;
 
     constructor(roundModel: RoundModel, gameView: GameView) {
         this.gameView = gameView;
@@ -23,6 +28,8 @@ export class RoundController {
         this.dealer = new DealerModel();
         this.player = new PlayerModel();
         this.participants.push(this.player, this.dealer);
+        this.bettingController = new BettingController(this.player.balance);
+        this.pointsController = new PointsController();
         this.init();
         Main.APP.ticker.add(() => {
             // this.handleNextAction(this.roundModel.currentState);
@@ -30,34 +37,36 @@ export class RoundController {
     }
 
     async init() {
-        this.gameView.renderInitialScene();
-        this.handleNextAction(this.roundModel.currentState);
-        Main.signalController.roundStart.add(this.startRound, this);
+        this.handleNextAction(this.roundModel.roundStateInfo.currentState);
+        Main.signalController.roundStart.add(this.onRoundStart, this);
+        Main.signalController.bet.placed.add(this.onBetPlaced, this);
+        Main.signalController.player.hit.add(this.onPlayerHit, this);
     }
 
     handleNextAction = (nextState: ERoundState) => {
-        console.log('current state:'+ this.roundModel.currentState)
         switch (nextState) {
             case ERoundState.NOT_STARTED:
-                this.roundModel.checkRoundStarted(this.isRoundStarted);
-                console.log('ds')
+                this.gameView.renderInitialScene();
+                this.roundModel.roundStateInfo.isStarted &&
+                    this.handleNextAction(this.roundModel.roundStateInfo.currentState);
                 break;
             case ERoundState.BETTING:
-                this.roundModel.playerBet(100);
-                this.handleNextAction(this.roundModel.currentState);
+                this.gameView.renderHeaderPanel(this.bettingController.betSize);
+                this.gameView.renderBettingScene(this.bettingController.bets);
                 break;
             case ERoundState.CARDS_DEALING:
-                for (let person of this.participants) {
-                    this.dealCardTo(person);
-                }
-                this.roundModel.confirmDealingEnded(this.dealer.mainHand.cards);
-                this.handleNextAction(this.roundModel.currentState);
+                this.gameView.renderGameScene(this.roundModel.cards, this.roundModel.points);
+                this.deck.shuffle();
+                this.dealCardTo('dealer');
+                this.dealCardTo('player');
+                this.roundModel.isDealingEnded();
+                this.handleNextAction(this.roundModel.roundStateInfo.currentState);
                 break;
             case ERoundState.PLAYERS_TURN:
-
+            console.log("player's turn")
                 break;
             case ERoundState.DEALERS_TURN:
-
+                console.log("dealer's turn")
                 break;
             case ERoundState.ROUND_OVER:
                 console.log('game Over');
@@ -66,16 +75,29 @@ export class RoundController {
         }
     }
 
-    dealCardTo(person: Person) {
+    dealCardTo(person: keyof ICardsDealed) {
         const card = this.deck.getCard();
-        if (card) person.drawCard(card);
+        card && this.roundModel.dealTo(person, card);
+        const points = this.pointsController.calculate(this.roundModel.cards[person])
+        this.roundModel.setPoints(person as keyof IPoints, points);
+        Main.signalController.card.deal.emit();
     }
 
-    startRound() {
-        if (!this.gameView.currentScene) return;
-        this.isRoundStarted = true;
-        this.gameView.removeChild(this.gameView.currentScene);
-        this.gameView.renderGameScene();
-        this.handleNextAction(this.roundModel.currentState);
+    updatePoints() {
+
+    }
+
+    onRoundStart() {
+        this.roundModel.isStarted = true;
+        this.handleNextAction(this.roundModel.roundStateInfo.currentState);
+    }
+
+    onBetPlaced() {
+        this.roundModel.bet = this.bettingController.betSize;
+        this.handleNextAction(this.roundModel.roundStateInfo.currentState);
+    }
+
+    onPlayerHit() {
+        this.dealCardTo('player');
     }
 }

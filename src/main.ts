@@ -19,6 +19,13 @@ export class Main {
         this.app = new Application({
             backgroundColor: 0x000000,
             resizeTo: window,
+            antialias: true,
+            eventMode: "auto",
+            eventFeatures: {
+                globalMove: true,
+                move: true,
+                click: true,
+            },
         });
         (globalThis as any).__PIXI_APP__ = this.app;
         this.app.ticker.add(() => {
