@@ -1,45 +1,54 @@
-class Signal<T = void> {
-    subscribers: ((data: T) => void)[] = [];
+import { TRoundResult } from "../model/RoundModel";
+import { TParticipants } from "./RoundController";
 
-    add(func: ((data: T) => void), ctx: unknown) {
+class Signal<T = void> {
+    private subscribers: ((data: T) => void)[] = [];
+
+    public add(func: ((data: T) => void), ctx: unknown) {
         this.subscribers.push(func.bind(ctx));
     }
 
-    emit(data: T) {
+    public emit(data: T) {
         this.subscribers.forEach(func => func(data));
     }
     
-    remove() {
+    public remove() {
 
     }
 }
 
 export class SignalsController {
-    roundStart: Signal<void> = new Signal();
     
-    bet = {
+    public round = {
+        start: new Signal<void>(),
+        end: new Signal<TRoundResult>(),
+        new: new Signal<void>(),
+    }
+    
+    public bet = {
         added: new Signal<number>(),
         updated: new Signal<number>(),
         removed: new Signal<number>(),
-        placed: new Signal(),
-        cleared: new Signal(),
+        placed: new Signal<void>(),
+        cleared: new Signal<void>(),
     }
 
-    card = {
-        deal: new Signal(),
-        open: new Signal(),
+    public card = {
+        deal: new Signal<TParticipants>(),
+        open: new Signal<void>(),
     }
 
-    player = {
-            hit: new Signal(),
-            stand: new Signal(),
-            double: new Signal(),
-            split: new Signal(),
-            insure: new Signal(),
+    public player = {
+            hit: new Signal<void>(),
+            stand: new Signal<void>(),
+            double: new Signal<void>(),
+            split: new Signal<void>(),
+            insure: new Signal<void>(),
         }
     
-    dealer = {
-        hit: new Signal(),
-        stand: new Signal(),
+    public dealer = {
+        hit: new Signal<void>(),
+        stand: new Signal<void>(),
     }
+
 }

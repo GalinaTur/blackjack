@@ -4,6 +4,7 @@ import { RoundModel } from "./model/RoundModel";
 import { GameView } from "./view/GameView";
 import { SignalsController } from "./controller/SignalsController";
 import { AssetsLoader } from "./controller/AssetsController";
+import { GameController } from "./controller/GameController";
 
 export class Main {
     public static APP: Application;
@@ -13,7 +14,7 @@ export class Main {
         width: window.innerWidth,
         height: window.innerHeight,
     }
-    app: Application;
+    private app: Application;
 
     constructor() {
         this.app = new Application({
@@ -38,16 +39,15 @@ export class Main {
         this.app.stage.sortableChildren = true;
     }
 
-    async init() {
+    
+    public async init() {
         Main.APP = this.app;
         document.body.appendChild(this.app.view as HTMLCanvasElement);
         await Main.assetsLoader.init();
-        const round = new RoundController(new RoundModel(), new GameView(this.app));
+        const gameController = new GameController(this.app);
+
     }
 }
-
-// settings.ROUND_PIXELS = true;
-// settings.RESOLUTION = 2;
 
 const main = new Main();
 main.init();

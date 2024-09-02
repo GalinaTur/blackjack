@@ -1,48 +1,42 @@
-import { Container, Sprite, Text, TextStyle } from "pixi.js";
-import { AssetsLoader } from "../../../controller/AssetsController";
+import { Container, Graphics, Sprite, Text } from "pixi.js";
 import { Main } from "../../../main";
-import { Button } from "./Button";
-import { Chip } from "./Chip";
-import { DropShadowFilter } from "pixi-filters";
+import { ColorGradientFilter, DropShadowFilter } from "pixi-filters";
+import { Textstyles } from "../../styles/TextStyles";
 
 export class HeaderPanel extends Container {
     image: Sprite | null = null;
     dropShadowFilter: DropShadowFilter;
+    dropShadowFilterOptions = {
+        blur: 5,
+        quality: 3,
+        alpha: 0.5,
+        offset: {
+            x: 0,
+            y: 10,
+        },
+        color: 0x000000
+    };
+
     betText: Text;
 
     constructor(betSize: number) {
         super();
-        const textStyle = new TextStyle({
-            fontSize: 36,
-            fill: "#ffffff",
-            fontFamily: "SairaBD",
-            strokeThickness: 4,
-        });
 
-        this.betText = new Text(`Bet: ${betSize}$`, textStyle)
+        this.betText = new Text(`Bet: ${betSize}$`, Textstyles.BUTTON_TEXTSTYLE);
 
         this.setSprite()
             .then(this.setButtons.bind(this))
-            .then(this.setBetText.bind(this));
-
-        this.dropShadowFilter = new DropShadowFilter({
-            blur: 5,
-            quality: 3,
-            alpha: 0.5,
-            offset: {
-                x: 0,
-                y: 10,
-            },
-            color: 0x000000
-        });
+            .then(this.setBetText.bind(this))
+            .then(this.setTextFrame.bind(this))
 
         Main.signalController.bet.updated.add(this.onBetUpdate, this);
+        this.dropShadowFilter = new DropShadowFilter(this.dropShadowFilterOptions);
 
         this.filters = [this.dropShadowFilter];
     }
 
     async setSprite() {
-        this.image = await AssetsLoader.getSprite('header_panel');
+        this.image = await Main.assetsLoader.getSprite('header_panel');
         this.resize();
         this.addChild(this.image);
     }
@@ -50,6 +44,21 @@ export class HeaderPanel extends Container {
     setBetText() {
         this.betText.position.set(80, 80);
         this.addChild(this.betText);
+    }
+
+    async setTextFrame() {
+        const frame = new Graphics();
+        frame.beginFill(0x000000)
+        .lineStyle(1, 0xffffff, 0.2)
+        .drawRoundedRect(0,0,150,50,5)
+        .endFill();
+        const texture = Main.APP.renderer.generateTexture(frame);
+        const sprite = new Sprite(texture);
+        sprite.filters = [new ColorGradientFilter({
+            css: `linear-gradient(220deg, rgba(255,255,255,0.3) 0%, 
+            rgba(255,255,255,0.1) 1%, rgba(0,0,0,0) 100%)`
+        })]
+        this.addChild(sprite)
     }
 
     setButtons() {

@@ -1,11 +1,10 @@
 import { Container, Sprite } from "pixi.js";
-import { AssetsLoader } from "../../../controller/AssetsController";
 import { Main } from "../../../main";
 
 
 export class Background extends Container {
-    image: Sprite | null = null;
-    logo: Sprite | null = null;
+    private image: Sprite | null = null;
+    private logo: Sprite | null = null;
 
     constructor() {
         super();
@@ -13,26 +12,22 @@ export class Background extends Container {
         .then(this.setLogoImage.bind(this))
         .then(this.resize.bind(this))
         .then(this.centralize.bind(this));
-
-        this.zIndex = -1;
     }
 
-    async setBgImage() {
-        this.image = await AssetsLoader.getSprite('background');
+    private async setBgImage() {
+        this.image = await Main.assetsLoader.getSprite('background');
         this.image.anchor.set(0.5);
-        
         this.addChild(this.image);
     }
     
-    async setLogoImage() {
-        this.logo = await AssetsLoader.getSprite('bgLogo');
+    private async setLogoImage() {
+        this.logo = await Main.assetsLoader.getSprite('bgLogo');
         if (this.logo === null) return;
         this.logo.anchor.set(0.5, 1);
         this.addChild(this.logo);
     }
 
-    
-    resize() {
+    private resize() {
         if (this.image === null) return;
         if (this.logo === null) return;
         const bgRatio = this.image.height/this.image.width;
@@ -52,7 +47,7 @@ export class Background extends Container {
         this.logo.height = this.logo.width
     }
 
-    centralize(){
+    private centralize(){
         if (this.image === null) return;
         if (this.logo === null) return;
         this.image.position.x = Main.screenSize.width/2;
@@ -62,7 +57,7 @@ export class Background extends Container {
         this.logo.position.y = Main.screenSize.height*0.5;
     }
 
-    onResize() {
+    private onResize() {
         this.resize();
         this.centralize();
     }

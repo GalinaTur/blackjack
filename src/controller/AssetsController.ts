@@ -1,9 +1,7 @@
-import { Assets, Sprite} from "pixi.js";
-
+import { Assets, Sprite } from "pixi.js";
 
 export class AssetsLoader {
-
-    async init() {
+    public async init() {
         const assetsManifest = {
             bundles: [
                 {
@@ -57,29 +55,51 @@ export class AssetsLoader {
                             name: 'game_panel',
                             srcs: '../../../assets/gamePanel.png',
                         },
-                        {
-                            name: 'cards_back',
-                            srcs: '../../../assets/cards/cards_back.png',
-                        },
+                    ],
+                },
+                {
+                    name: 'labels',
+                    assets: [
                         {
                             name: 'points_label',
                             srcs: '../../../assets/label.png',
+                        },
+                        {
+                            name: 'BJ_label',
+                            srcs: '../../../assets/BJLabel.png',
+                        },
+                        {
+                            name: 'regular_label',
+                            srcs: '../../../assets/regularLabel.png',
+                        },
+                        {
+                            name: 'win_label',
+                            srcs: '../../../assets/winLabel.png',
+                        },
+                        {
+                            name: 'final_label',
+                            srcs: '../../../assets/finalLabel.png',
+                        },
+                        {
+                            name: 'shine',
+                            srcs: '../../../assets/shine.png',
                         },
                     ],
                 },
             ],
         }
-        
-        await Assets.init({manifest: assetsManifest});
+
+        await Assets.init({ manifest: assetsManifest });
         await Assets.loadBundle('fonts');
         await Assets.loadBundle('initialAssets');
         await Assets.loadBundle('gameTableAssets');
+        await Assets.loadBundle('labels');
         await Assets.load('../../../assets/cards/cardsSpritesheet.json');
         await Assets.load('../../../assets/chips/chipsSpritesheet.json');
-        };
+    };
 
-    static async getSprite(id: string) {
-        const texture = Assets.get(id);
+    public async getSprite(id: string): Promise<Sprite> {
+        const texture = await Assets.get(id);
         return new Sprite(texture);
     }
 }

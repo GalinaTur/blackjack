@@ -1,5 +1,4 @@
 import { Container, Sprite } from "pixi.js";
-import { AssetsLoader } from "../../../controller/AssetsController";
 import { Main } from "../../../main";
 import { Button } from "./Button";
 import { DropShadowFilter } from "pixi-filters";
@@ -11,31 +10,33 @@ export class GamePanel extends Container {
     hitButton: Button;
     standButton: Button;
     dropShadowFilter: DropShadowFilter;
+    dropShadowFilterOptions = {
+        blur:5,
+        quality: 3,
+        alpha: 0.5,
+        offset: {
+            x: 0,
+            y: -10,
+        },
+        color: 0x000000};
 
     constructor() {
         super();
-        this.splitButton = new Button('Split', this.onSplit);
-        this.doubleButton = new Button('Double', this.onDouble);
-        this.hitButton = new Button('Hit', this.onHit);
-        this.standButton = new Button('Stand', this.onStand);
-        this.dropShadowFilter = new DropShadowFilter({
-            blur:5,
-            quality: 3,
-            alpha: 0.5,
-            offset: {
-                x: 0,
-                y: -10,
-            },
-            color: 0x000000});
+        this.splitButton = new Button('Split', this.onSplit, true);
+        this.doubleButton = new Button('Double', this.onDouble, true);
+        this.hitButton = new Button('Hit', this.onHit, true);
+        this.standButton = new Button('Stand', this.onStand, true);
 
         this.setSprite()
         .then(this.setButtons.bind(this))
+
+        this.dropShadowFilter = new DropShadowFilter(this.dropShadowFilterOptions);
 
         this.filters = [this.dropShadowFilter];
     }
 
     async setSprite() {
-        this.image = await AssetsLoader.getSprite('game_panel');
+        this.image = await Main.assetsLoader.getSprite('game_panel');
         this.image.anchor.y = 1
         this.resize();
         this.addChild(this.image);

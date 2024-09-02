@@ -1,8 +1,7 @@
 import { Container, Sprite } from "pixi.js";
-import { AssetsLoader } from "../../../controller/AssetsController";
 import { Main } from "../../../main";
 import { Button } from "./Button";
-import { Chip } from "./Chip";
+import { Chip } from "./ChipView";
 import { DropShadowFilter } from "pixi-filters";
 
 enum EChips {
@@ -16,31 +15,29 @@ enum EChips {
     '5000$' = 'chipBlue',
 }
 
-interface IChip {
-    name: string,
-    value: number
-}
-
 export class BetPanel extends Container {
+    betSize: number;
     image: Sprite | null = null;
     clearBetButton: Button;
     placeBetButton: Button;
     dropShadowFilter: DropShadowFilter;
+    dropShadowFilterOptions = {
+        blur:5,
+        quality: 3,
+        alpha: 0.5,
+        offset: {
+            x: 0,
+            y: -10,
+        },
+        color: 0x000000};
     chips: Chip[] = [];
 
-    constructor(bets: number[]) {
+    constructor(bets: number[], betSize: number) {
         super();
-        this.clearBetButton = new Button('Clear Bet', this.onClearBet);
-        this.placeBetButton = new Button('Place Bet', this.onPlaceBet);
-        this.dropShadowFilter = new DropShadowFilter({
-            blur:5,
-            quality: 3,
-            alpha: 0.5,
-            offset: {
-                x: 0,
-                y: -10,
-            },
-            color: 0x000000});
+        this.betSize = betSize;
+        this.clearBetButton = new Button('Clear Bet', this.onClearBet, Boolean(betSize));
+        this.placeBetButton = new Button('Place Bet', this.onPlaceBet, Boolean(betSize));
+        this.dropShadowFilter = new DropShadowFilter(this.dropShadowFilterOptions);
 
         this.setSprite()
         .then(this.setButtons.bind(this))
@@ -50,7 +47,7 @@ export class BetPanel extends Container {
     }
 
     async setSprite() {
-        this.image = await AssetsLoader.getSprite('bet_panel');
+        this.image = await Main.assetsLoader.getSprite('bet_panel');
         this.image.anchor.y = 1
         this.resize();
         this.addChild(this.image);
@@ -105,5 +102,11 @@ export class BetPanel extends Container {
 
     onChipClick(value: number) {
         Main.signalController.bet.added.emit(value);
+    }
+
+    onUpdate(betSize: number) {
+        const isButtonsActive = Boolean(betSize);
+        this.clearBetButton.update(isButtonsActive);
+        this.placeBetButton.update(isButtonsActive);
     }
 }
