@@ -1,28 +1,27 @@
 import { Main } from "../main";
-import { BetModel } from "../model/BetModel";
+import { RoundModel } from "../model/RoundModel";
 
 export class BettingController {
-    betModel: BetModel;
+    private roundModel: RoundModel;
 
-    constructor(betModel: BetModel) {
+    constructor(roundModel: RoundModel) {
         this.init();
-        this.betModel = betModel;
+        this.roundModel = roundModel;
         // this.playerBalance = playerBalance;
     }
 
-    init() {
+    private init() {
         Main.signalController.bet.added.add(this.onBetAdd, this);
         Main.signalController.bet.cleared.add(this.onClearBet, this);
-        // Main.signalController.bet.placed.add(this.onConfirmBet, this);
     }
 
-    onBetAdd(value: number) {
-        this.betModel.increaseBet(value);
-        Main.signalController.bet.updated.emit(this.betModel.betSize);
+    private onBetAdd(value: number) {
+        this.roundModel.increaseBet(value);
+        Main.signalController.bet.updated.emit(this.roundModel.betSize);
     }
 
-    onClearBet() {
-        this.betModel.clearBet();
-        Main.signalController.bet.updated.emit(this.betModel.betSize);
+    private onClearBet() {
+        this.roundModel.clearBet();
+        Main.signalController.bet.updated.emit(this.roundModel.betSize);
     }
 }

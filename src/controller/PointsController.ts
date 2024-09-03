@@ -1,4 +1,5 @@
 import { CardModel } from "../model/CardModel";
+import { ICardsDealed } from "../model/RoundModel";
 
 export class PointsController {
     public calcPoints(cards: CardModel[]) {
@@ -13,20 +14,35 @@ export class PointsController {
             }
             return sum + ERankPoints[card.rank];
         }, 0)
-        
-        aces.forEach(()=> {
+
+        aces.forEach(() => {
             sum += this.getAcePoints(sum);
         })
-
         return sum;
     }
 
-    private getAcePoints(sum: number){
-        return (sum >= 11) ? 1: 11;
+    private getAcePoints(sum: number) {
+        return (sum >= 11) ? 1 : 11;
     }
 
     public getCardPoints(card: CardModel) {
         return ERankPoints[card.rank];
+    }
+
+    public isTie(cards: ICardsDealed) {
+        return this.calcPoints(cards.dealer) === this.calcPoints(cards.player);
+    }
+
+    public isBust(cards: CardModel[]) {
+        return this.calcPoints(cards) > 21;
+    }
+
+    public isWin(cards: CardModel[]) {
+        return this.calcPoints(cards) === 21;
+    }
+
+    public comparePoints(cards: ICardsDealed) {
+
     }
 }
 

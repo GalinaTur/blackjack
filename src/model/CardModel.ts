@@ -1,4 +1,4 @@
-import { TRank, TSuit } from "./DeckModel";
+import { TRank, TSuit } from "../data/types";
 
 type TValue = `${TRank}_of_${TSuit}`;
 

@@ -3,20 +3,28 @@ import { CardModel } from "./CardModel";
 export class RoundModel {
 
     private _roundStateInfo: IStateInfo = {
-        isStarted: false,
-        isBetPlaced: false,
+        bet: 0,
+        win: 0,
         currentState: ERoundState.NOT_STARTED,
         cards: {
             dealer: [],
             player: [],
             split: [],
         },
-        points: {
-            dealer: 0,
-            player: 0,
-        },
         isSplitAllowed: false,
         roundResult: null,
+    }
+
+    constructor(previousBet: number) {
+        this._roundStateInfo.bet = previousBet;
+    }
+
+    public increaseBet(value: number) {
+        this._roundStateInfo.bet += value
+    }
+
+    public clearBet() {
+        this._roundStateInfo.bet = 0;
     }
 
     public dealTo(person: keyof ICardsDealed, card: CardModel) {
@@ -38,70 +46,29 @@ export class RoundModel {
         return true;
     }
 
-    public changeState() {
-
-    }
-
     get roundStateInfo() {
         return this._roundStateInfo;
     }
 
-    set isStarted(isStarted: boolean) {
-        this._roundStateInfo.isStarted = isStarted;
-        this._roundStateInfo.currentState = ERoundState.BETTING;
+    get betSize() {
+        return this._roundStateInfo.bet;
     }
-
-    set isBetPlaced(isBetPlaced: boolean) {
-        this._roundStateInfo.isBetPlaced = isBetPlaced;
-        this._roundStateInfo.currentState = ERoundState.CARDS_DEALING;
-    }
-
-    // set bet(bet: number) {
-    //     this._roundStateInfo.bet = bet;
-
-    // }
-
-    // get bet() {
-    //     return this._roundStateInfo.bet;
-    // }
 
     get cards() {
         return this._roundStateInfo.cards;
     }
 
-    get points() {
-        return this._roundStateInfo.points;
+    set state(state: ERoundState) {
+        this._roundStateInfo.currentState = state;
     }
 
-    public setPoints(person: keyof IPoints, points: number) {
-        this._roundStateInfo.points[person] = points;
+    get state() {
+        return this._roundStateInfo.currentState;
     }
 
-    public endRound(roundResult: TRoundResult) {
+    set result(roundResult: TRoundResult) {
         this._roundStateInfo.roundResult = roundResult;
-        this._roundStateInfo.currentState = ERoundState.ROUND_OVER;
     }
-
-    public startDealersTurn() {
-        this._roundStateInfo.currentState = ERoundState.DEALERS_TURN;
-    }
-
-    public isBust(points: number) {
-        return points > 21;
-    }
-
-
-    public checkIfTie() {
-        return (this.points.dealer === this.points.player);
-    }
-
-
-    public comparePoints() {
-        this.checkIfTie() ? this.endRound('push') :
-            this.points.player > this.points.dealer ?
-                this.endRound('win') : this.endRound('loss');
-    }
-
 }
 
 export enum ERoundState {
@@ -113,12 +80,13 @@ export enum ERoundState {
     ROUND_OVER
 }
 
-interface IStateInfo {
-    isStarted: boolean,
-    isBetPlaced: boolean,
+export interface IStateInfo {
+    // isStarted: boolean,
+    // isBetPlaced: boolean,
+    bet: number,
+    win: number,
     currentState: ERoundState,
     cards: ICardsDealed,
-    points: IPoints,
     isSplitAllowed: boolean,
     roundResult: TRoundResult | null,
 }
@@ -134,6 +102,6 @@ export interface IPoints {
     player: number,
 }
 
-export type TRoundResult = "playerBJ" | "dealerBJ" | "win" | "doubleWin" | "loss"
+export type TRoundResult = "playerBJ" | "dealerBJ" | "win" | "doubleWin" | "lose"
     | "push" | "playerBust" | "dealerBust"
     | "surrender" | "insurance"

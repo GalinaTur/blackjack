@@ -1,62 +1,50 @@
-import { Container, Sprite, Text, TextStyle } from "pixi.js";
+import { Container, Text } from "pixi.js";
 import { Main } from "../../main";
-import { GamePanel } from "./sceneComponents/GamePanel";
 import { CardView } from "./sceneComponents/CardView";
-import { ICardsDealed, IPoints, TRoundResult } from "../../model/RoundModel";
+import { ICardsDealed, TRoundResult } from "../../model/RoundModel";
 import { Textstyles } from "../styles/TextStyles";
 import { CardModel } from "../../model/CardModel";
 import { IScene } from "../GameView";
+import { TParticipants } from "../../data/types";
 
 export class GameScene extends Container implements IScene<void> {
-    gamePanel: GamePanel;
-    dealersHand = new Container();
-    playersHand = new Container();
-    splitHand = new Container();
-    cards: ICardsDealed;
-    points: IPoints;
+    private dealersHand = new Container();
+    private playersHand = new Container();
+    private splitHand = new Container();
+    private cards: ICardsDealed = {
+        dealer: [],
+        player: [],
+        split: []
+    };
+    private holeCard: CardModel | null = null;
     // popup: Sprite | null;
 
-    constructor(cards: ICardsDealed, points: IPoints) {
+    constructor() {
         super();
-        this.gamePanel = new GamePanel();
-        this.cards = cards;
-        this.points = points;
         this.init();
     }
 
     private init() {
-        this.setPanels();
         this.setPlayersHand();
         this.setDealersHand();
-    }
-
-    private async setPanels() {
-        this.gamePanel.position.set(0, Main.screenSize.height);
-        this.addChild(this.gamePanel);
     }
 
     private async setDealersHand() {
         this.dealersHand.sortableChildren = true;
         this.dealersHand.position.set(Main.screenSize.width / 2.1, Main.screenSize.height * 0.3);
-        await this.setCards(this.dealersHand, this.cards.dealer);
-        await this.setPointsLabel(this.dealersHand, this.points.dealer);
         this.addChild(this.dealersHand);
     }
 
     private async setPlayersHand() {
         this.playersHand.sortableChildren = true;
         this.playersHand.position.set(Main.screenSize.width / 2.1, Main.screenSize.height * 0.7);
-        await this.setCards(this.playersHand, this.cards.player);
-        this.setPointsLabel(this.playersHand, this.points.player);
         this.addChild(this.playersHand);
     }
 
-    private async setCards(parent: Container, cards: CardModel[]) {
-        cards.forEach((card, index) => {
-            const cardView = new CardView(card);
-            cardView.position.set(index * 50, 0);
-            parent.addChild(cardView);
-        })
+    private async setCard(parent: Container, card: CardModel, index: number) {
+        const cardView = new CardView(card);
+        cardView.position.set(index * 50, 0);
+        parent.addChild(cardView);
     }
 
     private async setPointsLabel(parent: Container, points: number) {
@@ -113,16 +101,32 @@ export class GameScene extends Container implements IScene<void> {
         return shine;
     }
 
-    onUpdate() {
-        this.setPlayersHand();
-        this.setDealersHand();
+    public onCardDeal(person: TParticipants, card: CardModel, points: number) {
+        if (card.hidden) {
+            this.holeCard = card;
+        }
+        if (person === 'dealer') {
+            this.cards.dealer.push(card);
+            this.setCard(this.dealersHand, card, this.cards.dealer.length - 1);
+            this.setPointsLabel(this.dealersHand, points);
+        } else if (person === 'player') {
+            this.cards.player.push(card);
+            this.setCard(this.playersHand, card, this.cards.player.length - 1);
+            this.setPointsLabel(this.playersHand, points);
+        }
     }
-    
-    onResize() {
 
+    public onCardOpen(card: CardModel, points: number) {
+        console.log('hole card opened');
+        this.holeCard = card;
+        this.setCard(this.dealersHand, card, this.cards.dealer.length - 1);
+        this.setPointsLabel(this.dealersHand, points);
     }
 
-    async onRoundEnd(result: TRoundResult) {
+    public onResize() {
+    }
+
+    public async onRoundEnd(result: TRoundResult) {
         switch (result) {
             case "dealerBJ":
                 this.setBJLabel(this.dealersHand);
@@ -141,7 +145,7 @@ export class GameScene extends Container implements IScene<void> {
             case "win":
                 this.setWinLabel(this.playersHand, 'WIN');
                 break;
-            case "loss":
+            case "lose":
                 this.setRegularLabel(this.playersHand, 'LOSE');
                 break;
             case "push":
@@ -150,7 +154,7 @@ export class GameScene extends Container implements IScene<void> {
         }
     }
 
-    resize() {
+    private resize() {
 
     };
 }

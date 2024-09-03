@@ -1,5 +1,5 @@
 import { Application } from "pixi.js";
-import { RoundModel } from "../model/RoundModel";
+import { IStateInfo, RoundModel } from "../model/RoundModel";
 import { GameView } from "../view/GameView";
 import { RoundController } from "./RoundController";
 import { Main } from "../main";
@@ -7,18 +7,36 @@ import { Main } from "../main";
 export class GameController {
     private app: Application;
     private round: RoundController;
-    private playerBalance = 1000;
+    // private playerBalance = 1000;
+    private previousBet = 0;
+    private gameView: GameView | null = null;
+    private history: IStateInfo[] = [];
 
     constructor(app: Application) {
         this.app = app;
-        this.round = new RoundController(new RoundModel(), new GameView(this.app))
+        this.gameView = new GameView(this.app);
+        this.round = new RoundController(new RoundModel(this.previousBet), this.gameView);
     }
 
-    init() {
-        Main.signalController.round.new.add(this.newRound, this);
+    public init() {
+        this.gameView?.renderInitialScene();
+        this.setEventListeners();
     }
 
-    newRound() {
-        this.round = new RoundController(new RoundModel(), new GameView(this.app))
+    private setEventListeners() {
+        Main.signalController.round.new.add(this.onNewRound, this);
+        Main.signalController.round.end.add(this.onRoundEnd, this);
+    }
+
+    private onNewRound() {
+        console.log('new round');
+        this.app.stage.removeChildren();
+        this.round = new RoundController(new RoundModel(this.previousBet), new GameView(this.app));
+        Main.signalController.round.start.emit();
+    }
+
+    private onRoundEnd() {
+        this.history.push(this.round.roundModel.roundStateInfo);
+        this.previousBet = this.round.roundModel.betSize;
     }
 }

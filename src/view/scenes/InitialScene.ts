@@ -4,8 +4,8 @@ import { Button } from "./sceneComponents/Button";
 import { IScene } from "../GameView";
 
 export class InitialScene extends Container implements IScene<void> {
-    logo: Sprite | null = null;
-    button = new Button("Let's play!", this.onStartClick, true);
+    private logo: Sprite | null = null;
+    private button = new Button("Let's play!", this.onStartClick, true);
 
     constructor() {
         super();
@@ -17,27 +17,27 @@ export class InitialScene extends Container implements IScene<void> {
         this.setButton();
     }
 
-    async setLogo() {
+    private async setLogo() {
         this.logo = await Main.assetsLoader.getSprite('initialLogo');
-        this.logo.position.set(Main.screenSize.width / 2, Main.screenSize.height*0.4);
+        this.logo.position.set(Main.screenSize.width / 2, Main.screenSize.height * 0.4);
         this.logo.anchor.set(0.5);
         this.addChild(this.logo);
     }
 
-    setButton() {
+    private setButton() {
         this.addChild(this.button);
-        this.button.position.set(Main.screenSize.width / 2, Main.screenSize.height*0.85);
+        this.button.position.set(Main.screenSize.width / 2, Main.screenSize.height * 0.85);
     }
 
-    onStartClick() {
+    private onStartClick() {
         Main.signalController.round.start.emit();
     }
 
-    onUpdate() {
+    public onUpdate() {
 
     }
 
-    onResize(): void {
-        
+    public onResize(): void {
+
     }
 }

@@ -45,7 +45,7 @@ export class Main {
         document.body.appendChild(this.app.view as HTMLCanvasElement);
         await Main.assetsLoader.init();
         const gameController = new GameController(this.app);
-
+        gameController.init();
     }
 }
 

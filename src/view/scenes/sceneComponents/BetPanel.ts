@@ -3,6 +3,9 @@ import { Main } from "../../../main";
 import { Button } from "./Button";
 import { Chip } from "./ChipView";
 import { DropShadowFilter } from "pixi-filters";
+import { Effects } from "../../styles/Effects";
+import { AVAILABLE_BETS } from "../../../data/constants";
+import { IPanel } from "../../GameView";
 
 enum EChips {
     '1$' = 'chipWhite',
@@ -15,98 +18,96 @@ enum EChips {
     '5000$' = 'chipBlue',
 }
 
-export class BetPanel extends Container {
-    betSize: number;
-    image: Sprite | null = null;
-    clearBetButton: Button;
-    placeBetButton: Button;
-    dropShadowFilter: DropShadowFilter;
-    dropShadowFilterOptions = {
-        blur:5,
-        quality: 3,
-        alpha: 0.5,
-        offset: {
-            x: 0,
-            y: -10,
-        },
-        color: 0x000000};
-    chips: Chip[] = [];
+export class BetPanel extends Container implements IPanel{
+    private background: Sprite | null = null;
+    private clearBetButton: Button;
+    private placeBetButton: Button;
+    private dropShadowFilter = new DropShadowFilter(Effects.FOOTER_PANEL_DROP_SHADOW);
+    private isButtonsActive = false;
+    private chips: Chip[] = [];
 
-    constructor(bets: number[], betSize: number) {
+    constructor(betSize: number) {
         super();
-        this.betSize = betSize;
-        this.clearBetButton = new Button('Clear Bet', this.onClearBet, Boolean(betSize));
-        this.placeBetButton = new Button('Place Bet', this.onPlaceBet, Boolean(betSize));
-        this.dropShadowFilter = new DropShadowFilter(this.dropShadowFilterOptions);
+        if (betSize > 0) this.isButtonsActive = true;
+        this.clearBetButton = new Button('Clear Bet', this.onClearBet, this.isButtonsActive);
+        this.placeBetButton = new Button('Place Bet', this.onPlaceBet, this.isButtonsActive);
 
-        this.setSprite()
-        .then(this.setButtons.bind(this))
-        .then(this.setChips.bind(this, bets));
+        Main.signalController.bet.updated.add(this.onBetUpdate, this);
+
+        this.setBackground()
+            .then(this.setButtons.bind(this))
+            .then(this.setChips.bind(this));
 
         this.filters = [this.dropShadowFilter];
     }
 
-    async setSprite() {
-        this.image = await Main.assetsLoader.getSprite('bet_panel');
-        this.image.anchor.y = 1
+    private async setBackground() {
+        this.background = await Main.assetsLoader.getSprite('bet_panel');
+        this.background.anchor.y = 1
         this.resize();
-        this.addChild(this.image);
+        this.addChild(this.background);
     }
 
-    setButtons() {
+    private setButtons() {
         this.clearBetButton.position.set(183, -155);
         this.clearBetButton.scale.set(0.7);
         this.addChild(this.clearBetButton);
 
-        this.placeBetButton.position.set(this.width-183,-65);
+        this.placeBetButton.position.set(this.width - 183, -65);
         this.placeBetButton.scale.set(0.7);
         this.addChild(this.placeBetButton);
     }
 
-    setChips(bets: number[]) {
-        for (let i=0; i<bets.length; i++) {
-            const key: string = bets[i] + '$';
-            const name = EChips[key as keyof typeof EChips]
-            const chip = new Chip(name, String(bets[i]), ()=>this.onChipClick(bets[i]))
-            this.chips.push(chip)
-            chip.position.y = -this.height*0.7;
+    private setChips() {
+        for (let i = 0; i < AVAILABLE_BETS.length; i++) {
+            const key: string = AVAILABLE_BETS[i] + '$';
+            const name = EChips[key as keyof typeof EChips];
+            const chip = new Chip(name, String(AVAILABLE_BETS[i]), () => this.onChipClick(AVAILABLE_BETS[i]));
+            this.chips.push(chip);
+
+            chip.position.y = -this.height * 0.7;
             chip.position.x = this.width * 0.322 + i * this.width * 0.14;
-            if (chip.position.x > this.width*0.8) {
-                chip.position.y = -this.height*0.28;
+            if (chip.position.x > this.width * 0.8) {
+                chip.position.y = -this.height * 0.28;
                 chip.position.x = -this.width * 0.31 + i * this.width * 0.14;
             }
-            chip.scale.set(this.height*4/1000);
+
+            chip.scale.set(this.height * 4 / 1000);
             this.addChild(chip)
         }
     }
 
-    resize() {
-        if (this.image === null) return;
-        const bgRatio = this.image.height / this.image.width;
+    private resize() {
+        if (this.background === null) return;
+        const bgRatio = this.background.height / this.background.width;
 
-        this.image.width = Main.screenSize.width;
-        this.image.height = this.image.width*bgRatio*0.65;
+        this.background.width = Main.screenSize.width;
+        this.background.height = this.background.width * bgRatio * 0.65;
     }
 
-    onResize() {
+    private onResize() {
         this.resize();
     }
 
-    onClearBet() {
+    private onClearBet() {
         Main.signalController.bet.cleared.emit();
     }
 
-    onPlaceBet() {
+    private onPlaceBet() {
         Main.signalController.bet.placed.emit();
     }
 
-    onChipClick(value: number) {
+    private onChipClick(value: number) {
         Main.signalController.bet.added.emit(value);
     }
 
-    onUpdate(betSize: number) {
-        const isButtonsActive = Boolean(betSize);
-        this.clearBetButton.update(isButtonsActive);
-        this.placeBetButton.update(isButtonsActive);
+    public onBetUpdate(betSize: number) {
+        this.isButtonsActive = Boolean(betSize);
+        this.clearBetButton.update(this.isButtonsActive);
+        this.placeBetButton.update(this.isButtonsActive);
+    }
+
+    public deactivate(): void {
+        this.parent.removeChild(this);
     }
 }

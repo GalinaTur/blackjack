@@ -2,32 +2,23 @@ import { Container, Sprite } from "pixi.js";
 import { CardModel } from "../../../model/CardModel";
 import { DropShadowFilter } from "pixi-filters";
 import { Main } from "../../../main";
+import { Effects } from "../../styles/Effects";
 
 export class CardView extends Container {
-    card: CardModel;
-    image: Sprite | null = null;
-    dropShadowFilter: DropShadowFilter;
-    dropShadowFilterOptions = {
-        blur: 1,
-        quality: 1,
-        alpha: 0.5,
-        offset: {
-            x: 1,
-            y: 1,
-        },
-        color: 0x000000
-    }
+    private card: CardModel;
+    private image: Sprite | null = null;
+    private dropShadowFilter: DropShadowFilter;
 
     constructor(card: CardModel) {
         super();
         this.card = card;
-        this.setSprite();
+        this.setImage();
 
-        this.dropShadowFilter = new DropShadowFilter(this.dropShadowFilterOptions);
+        this.dropShadowFilter = new DropShadowFilter(Effects.CARD_DROP_SHADOW);
         this.filters = [this.dropShadowFilter];
     }
 
-    async setSprite() {
+    private async setImage() {
         this.image = await Main.assetsLoader.getSprite('cards_back');
 
         if (!this.card.hidden) {

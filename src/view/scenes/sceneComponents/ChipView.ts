@@ -1,24 +1,16 @@
-import { Container, Rectangle, Sprite, Text, TextStyle } from "pixi.js";
+import { Container, Rectangle, Sprite, Text } from "pixi.js";
 import { BevelFilter, DropShadowFilter } from "pixi-filters";
 import { Main } from "../../../main";
 import { Textstyles } from "../../styles/TextStyles";
+import { Effects } from "../../styles/Effects";
 
 export class Chip extends Container {
-    image: Sprite | null = null;
-    text: Text | null = null;
-    dropShadowFilter: DropShadowFilter;
-    dropShadowFilterOptions = {
-        blur: 3,
-        quality: 3,
-        alpha: 1,
-        offset: {
-            x: 5,
-            y: -5,
-        },
-        color: 0x000000
-    }
-    bevelFilter: BevelFilter;
-    bevelFilterOptions = {
+    private image: Sprite | null = null;
+    private text: Text | null = null;
+    private dropShadowFilter: DropShadowFilter;
+
+    private bevelFilter: BevelFilter;
+    private bevelFilterOptions = {
         rotation: 280,
         thickness: 3
     }
@@ -35,20 +27,20 @@ export class Chip extends Container {
 
         this.on('pointerdown', onClick);
 
-        this.dropShadowFilter = new DropShadowFilter(this.dropShadowFilterOptions);
+        this.dropShadowFilter = new DropShadowFilter(Effects.CHIP_DROP_SHADOW);
         this.bevelFilter = new BevelFilter(this.bevelFilterOptions);
 
         this.filters = [this.dropShadowFilter, this.bevelFilter];
     }
 
-    async setSprite(name: string) {
+    private async setSprite(name: string) {
         this.image = await Main.assetsLoader.getSprite(`${name}.png`);
         this.image.anchor.set(0.5);
         this.setSize();
         this.addChild(this.image);
     }
 
-    setText(data: string | null) {
+    private setText(data: string | null) {
         if (!data) return
         if (!this.image) return;
 
@@ -57,7 +49,7 @@ export class Chip extends Container {
         this.addChild(this.text);
     }
 
-    async setSize() {
+    private async setSize() {
         if (this.image === null) return;
         const buttonRatio = this.image.height / this.image.width;
 
