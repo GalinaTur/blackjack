@@ -19,16 +19,25 @@ export class HeaderPanel extends Container {
         this.balanceText = new Text(`Balance: ${playerBalance}$`, Textstyles.HEADER_TEXTSTYLE);
         this.winText = new Text(`Win: ${winSize}$`, Textstyles.HEADER_TEXTSTYLE);
         this.totalWinText = new Text(`Total Win: ${totalWin}$`, Textstyles.HEADER_TEXTSTYLE);
+        this.dropShadowFilter = new DropShadowFilter(Effects.HEADER_PANEL_DROP_SHADOW);
 
+        this.init();
+    }
+
+    private init() {
         this.setBackground()
             .then(this.setButtons.bind(this))
             .then(this.setLeftTextFrame.bind(this))
             .then(this.setRightTextFrame.bind(this));
 
-        Main.signalController.bet.updated.add(this.onBetUpdate, this);
-        this.dropShadowFilter = new DropShadowFilter(Effects.HEADER_PANEL_DROP_SHADOW);
-
+        this.setEventListeners();
         this.filters = [this.dropShadowFilter];
+    }
+
+    private setEventListeners() {
+        Main.signalController.bet.updated.add(this.onBetUpdate, this);
+        Main.signalController.balance.updated.add(this.onBalanceUpdate, this);
+        Main.signalController.winSize.updated.add(this.onWinSizeUpdate, this);
     }
 
     private async setBackground() {
@@ -100,5 +109,16 @@ export class HeaderPanel extends Container {
 
     private onBetUpdate(betSize: number) {
         this.betText.text = `Bet: ${betSize}$`;
+    }
+
+    private onBalanceUpdate(balance: number) {
+        this.balanceText.text = `Balance: ${balance}$`
+    }
+
+
+    private onWinSizeUpdate(obj: {win: number, totalWin: number}) {
+        const {win, totalWin} = obj;
+        this.winText.text = `Win: ${win}$`
+        this.totalWinText.text = `Total Win: ${totalWin}$`
     }
 }

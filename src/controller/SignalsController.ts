@@ -38,6 +38,14 @@ export class SignalsController {
         rebet: new Signal<void>(),
     }
 
+    public balance = {
+        updated: new Signal<number>(),
+    }
+    
+    public winSize = {
+        updated: new Signal<{win: number, totalWin: number}>(),
+    }
+
     public card = {
         deal: new Signal<{ person: TParticipants, card: CardModel, totalPoints: number }>(),
         open: new Signal<{ card: CardModel, totalPoints: number }>(),

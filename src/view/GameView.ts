@@ -29,6 +29,7 @@ export class GameView {
     constructor(app: Application, playerBalance: number, totalWin: number) {
         this.appStage = app.stage;
         this.playerBalance = playerBalance;
+        this.totalWin = totalWin;
         this.init();
     }
 
@@ -57,7 +58,7 @@ export class GameView {
             case ERoundState.ROUND_OVER:
                 this.renderFinalPanel();
                 if (stateInfo.win > 0) {
-                    this.renderWinPopup();
+                    this.renderWinPopup(stateInfo.win);
                 }
                 break;
         }
@@ -106,11 +107,11 @@ export class GameView {
         this.currentScene && this.currentScene.addChild(this.finalPanel);
     }
 
-    private async renderWinPopup() {
+    private async renderWinPopup(winSize: number) {
         const background = await Main.assetsLoader.getSprite('finalLabel');
         background.anchor.set(0.5);
-        background.position.set(Main.screenSize.width / 2, Main.screenSize.height / 2)
-        const text = new Text('15037$', Textstyles.WIN_TEXTSTYLE);
+        background.position.set(Main.screenSize.width / 2, Main.screenSize.height* 0.4)
+        const text = new Text(`${winSize}$`, Textstyles.WIN_TEXTSTYLE);
         text.anchor.set(0.5, 0)
         text.position.set(0, 80)
         background.addChild(text);

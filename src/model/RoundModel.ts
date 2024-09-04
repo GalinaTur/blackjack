@@ -66,6 +66,14 @@ export class RoundModel {
         return this._roundStateInfo.currentState;
     }
 
+    set winSize(value: number) {
+        this._roundStateInfo.win = value;
+    }
+
+    get winSize() {
+        return this._roundStateInfo.win;
+    }
+
     set result(roundResult: TRoundResult) {
         this._roundStateInfo.roundResult = roundResult;
     }
@@ -103,5 +111,5 @@ export interface IPoints {
 }
 
 export type TRoundResult = "playerBJ" | "dealerBJ" | "win" | "doubleWin" | "lose"
-    | "push" | "playerBust" | "dealerBust"
-    | "surrender" | "insurance"
+    | "push" | "pushBJ" | "playerBust" | "dealerBust"
+    | "surrender" | "insurance" 

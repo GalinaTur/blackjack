@@ -15,7 +15,6 @@ export class RoundController {
     constructor(roundModel: RoundModel, gameView: GameView) {
         this.gameView = gameView;
         this.roundModel = roundModel;
-        const bettingController = new BettingController(this.roundModel)
         this.init();
     }
     
@@ -44,8 +43,7 @@ export class RoundController {
                     this.dealCardTo('dealer');
                     this.dealCardTo('player');
                 }
-                this.checkForBJ();
-                this.changeState(ERoundState.PLAYERS_TURN);
+                !this.checkForBJ() && this.changeState(ERoundState.PLAYERS_TURN);
                 break;
 
             case ERoundState.PLAYERS_TURN:
@@ -57,8 +55,9 @@ export class RoundController {
             case ERoundState.DEALERS_TURN:
                 console.log("dealer's turn");
                 this.revealHoleCard();
-                if (this.pointsController.isBust(this.dealersCards)) this.endRound('dealerBust');
-                this.dealerPlay();
+                if (this.pointsController.isBust(this.dealersCards)) {
+                    this.endRound('dealerBust');
+                } else this.dealerPlay();
                 break;
 
             case ERoundState.ROUND_OVER:
@@ -112,7 +111,6 @@ export class RoundController {
 
     private dealerStand() {
         this.comparePoints();
-        this.changeState(ERoundState.ROUND_OVER);
     }
 
     private endRound(result: TRoundResult) {
@@ -121,8 +119,8 @@ export class RoundController {
             this.revealHoleCard();
         };
         this.roundModel.result = result;
-        this.changeState(ERoundState.ROUND_OVER);
         Main.signalController.round.end.emit(result);
+        this.changeState(ERoundState.ROUND_OVER);
     }
 
     private comparePoints() {
@@ -146,8 +144,13 @@ export class RoundController {
     private checkForBJ() {
         if (this.checkForDealerBJ()) {
             this.pointsController.isTie(this.roundModel.cards) ? this.endRound('push') : this.endRound('dealerBJ');
+            return true;
         }
-        if (this.pointsController.calcPoints(this.playersCards) === 21) this.endRound('playerBJ');
+        if (this.pointsController.calcPoints(this.playersCards) === 21) {
+            this.endRound('playerBJ');
+            return true;
+        }
+        return false;
     }
 
     private revealHoleCard() {

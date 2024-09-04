@@ -40,7 +40,7 @@ export class Textstyles {
             1
         ],
         fontFamily: "Impact",
-        fontSize: 86,
+        fontSize: 128,
         fontWeight: "bold",
         letterSpacing: 6,
         lineJoin: "round",

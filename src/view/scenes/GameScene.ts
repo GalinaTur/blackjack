@@ -39,6 +39,16 @@ export class GameScene extends Container implements IScene<void> {
         this.addChild(this.playersHand);
     }
 
+    private async setPushLabel() {
+        const image = await Main.assetsLoader.getSprite('regular_label');
+        image.anchor.set(0.5);
+        image.position.set(Main.screenSize.width/2, Main.screenSize.height/2);
+        const text = new Text("PUSH", Textstyles.LABEL_TEXTSTYLE);
+        text.anchor.set(0.5);
+        image.addChild(text);
+        this.addChild(image);
+    }
+
     private async setCard(parent: Container, card: CardModel, index: number) {
         const cardView = new CardView(card);
         cardView.position.set(index * 50, 0);
@@ -143,7 +153,12 @@ export class GameScene extends Container implements IScene<void> {
                 this.setRegularLabel(this.playersHand, 'LOSE');
                 break;
             case "push":
-                this.setRegularLabel(this.playersHand, 'PUSH');
+                this.setPushLabel();
+                break;
+            case "pushBJ":
+                this.setBJLabel(this.dealersHand);
+                this.setBJLabel(this.playersHand);
+                this.setPushLabel();
                 break;
         }
     }
