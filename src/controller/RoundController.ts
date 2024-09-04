@@ -20,7 +20,6 @@ export class RoundController {
     }
     
     private async init() {
-        this.gameView.init();
         this.setEventListeners();
         this.handleNextAction(this.roundModel.state);
     }

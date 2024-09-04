@@ -8,16 +8,22 @@ export class HeaderPanel extends Container {
     private background: Sprite | null = null;
     private dropShadowFilter: DropShadowFilter;
     private betText: Text;
+    private balanceText: Text;
+    private winText: Text;
+    private totalWinText: Text;
 
-    constructor(betSize: number) {
+    constructor(betSize: number, winSize: number, playerBalance: number, totalWin: number) {
         super();
 
-        this.betText = new Text(`Bet: ${betSize}$`, Textstyles.BUTTON_TEXTSTYLE);
+        this.betText = new Text(`Bet: ${betSize}$`, Textstyles.HEADER_TEXTSTYLE);
+        this.balanceText = new Text(`Balance: ${playerBalance}$`, Textstyles.HEADER_TEXTSTYLE);
+        this.winText = new Text(`Win: ${winSize}$`, Textstyles.HEADER_TEXTSTYLE);
+        this.totalWinText = new Text(`Total Win: ${totalWin}$`, Textstyles.HEADER_TEXTSTYLE);
 
         this.setBackground()
             .then(this.setButtons.bind(this))
-            .then(this.setBetText.bind(this))
-            .then(this.setTextFrame.bind(this))
+            .then(this.setLeftTextFrame.bind(this))
+            .then(this.setRightTextFrame.bind(this));
 
         Main.signalController.bet.updated.add(this.onBetUpdate, this);
         this.dropShadowFilter = new DropShadowFilter(Effects.HEADER_PANEL_DROP_SHADOW);
@@ -31,24 +37,42 @@ export class HeaderPanel extends Container {
         this.addChild(this.background);
     }
 
-    private setBetText() {
-        this.betText.position.set(80, 80);
-        this.addChild(this.betText);
+    private setLeftTextFrame() {
+        const frame = this.setTextFrame();
+        this.totalWinText.anchor.set(0, 0);
+        this.winText.anchor.set(0, 0);
+        this.totalWinText.position.set(5, 0);
+        this.winText.position.set(5, 30);
+        frame.addChild(this.totalWinText, this.winText);
+        frame.position.set(10, 40);
+        this.addChild(frame);
     }
 
-    private async setTextFrame() {
+    private setRightTextFrame() {
+        const frame = this.setTextFrame();
+        this.balanceText.anchor.set(0, 0);
+        this.betText.anchor.set(0, 0);
+        this.balanceText.position.set(5, 0);
+        this.betText.position.set(5, 30);
+        frame.addChild(this.balanceText, this.betText);
+        frame.position.set(1100, 40);
+        this.addChild(frame);
+    }
+
+    private setTextFrame() {
         const frame = new Graphics();
         frame.beginFill(0x000000)
             .lineStyle(1, 0xffffff, 0.2)
-            .drawRoundedRect(0, 0, 150, 50, 5)
+            .drawRoundedRect(0, 0, 400, 60, 5)
             .endFill();
         const texture = Main.APP.renderer.generateTexture(frame);
         const sprite = new Sprite(texture);
         sprite.filters = [new ColorGradientFilter({
-            css: `linear-gradient(220deg, rgba(255,255,255,0.3) 0%, 
-            rgba(255,255,255,0.1) 1%, rgba(0,0,0,0) 100%)`
+            css: `linear-gradient(220deg, rgba(255,255,255,0.2) 0%, 
+            rgba(255,255,255,0.05) 1%, rgba(0,0,0,0) 100%)`
         })]
-        this.addChild(sprite)
+        sprite.anchor.set(0, 0);
+        return sprite;
     }
 
     private setButtons() {

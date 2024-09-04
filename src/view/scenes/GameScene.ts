@@ -16,8 +16,6 @@ export class GameScene extends Container implements IScene<void> {
         player: [],
         split: []
     };
-    private holeCard: CardModel | null = null;
-    // popup: Sprite | null;
 
     constructor() {
         super();
@@ -102,9 +100,6 @@ export class GameScene extends Container implements IScene<void> {
     }
 
     public onCardDeal(person: TParticipants, card: CardModel, points: number) {
-        if (card.hidden) {
-            this.holeCard = card;
-        }
         if (person === 'dealer') {
             this.cards.dealer.push(card);
             this.setCard(this.dealersHand, card, this.cards.dealer.length - 1);
@@ -118,7 +113,6 @@ export class GameScene extends Container implements IScene<void> {
 
     public onCardOpen(card: CardModel, points: number) {
         console.log('hole card opened');
-        this.holeCard = card;
         this.setCard(this.dealersHand, card, this.cards.dealer.length - 1);
         this.setPointsLabel(this.dealersHand, points);
     }

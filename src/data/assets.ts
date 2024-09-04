@@ -13,6 +13,11 @@ export const ASSETS_MANIFEST = {
                     srcs: '../../../assets/fonts/Saira-BlackItalic.ttf',
                     data: { family: 'SairaBD' },
                 },
+                {
+                    name: 'Orbitron',
+                    srcs: '../../../assets/fonts/Orbitron-Regular.ttf',
+                    data: { family: 'Orbitron' },
+                },
             ],
         },
         {
@@ -79,6 +84,10 @@ export const ASSETS_MANIFEST = {
                 {
                     name: 'shine',
                     srcs: '../../../assets/shine.png',
+                },
+                {
+                    name: 'finalLabel',
+                    srcs: '../../../assets/finalLabel.png',
                 },
             ],
         },

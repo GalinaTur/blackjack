@@ -1,7 +1,4 @@
-import { Application, settings } from "pixi.js";
-import { RoundController } from "./controller/RoundController";
-import { RoundModel } from "./model/RoundModel";
-import { GameView } from "./view/GameView";
+import { Application } from "pixi.js";
 import { SignalsController } from "./controller/SignalsController";
 import { AssetsLoader } from "./controller/AssetsController";
 import { GameController } from "./controller/GameController";
@@ -14,10 +11,10 @@ export class Main {
         width: window.innerWidth,
         height: window.innerHeight,
     }
-    private app: Application;
+    private _app: Application;
 
     constructor() {
-        this.app = new Application({
+        this._app = new Application({
             backgroundColor: 0x000000,
             resizeTo: window,
             antialias: true,
@@ -39,7 +36,10 @@ export class Main {
         this.app.stage.sortableChildren = true;
     }
 
-    
+    get app() {
+        return this._app;
+    }
+
     public async init() {
         Main.APP = this.app;
         document.body.appendChild(this.app.view as HTMLCanvasElement);
