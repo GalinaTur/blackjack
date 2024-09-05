@@ -1,9 +1,10 @@
 import { Application } from "pixi.js";
-import { IStateInfo, RoundModel } from "../model/RoundModel";
+import { RoundModel } from "../model/RoundModel";
 import { GameView } from "../view/GameView";
 import { RoundController } from "./RoundController";
 import { Main } from "../main";
 import { BettingController } from "./BettingController";
+import { IStateInfo } from "../data/types";
 
 export class GameController {
     private app: Application;

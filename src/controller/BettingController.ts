@@ -1,5 +1,6 @@
+import { TRoundResult } from "../data/types";
 import { Main } from "../main";
-import { RoundModel, TRoundResult } from "../model/RoundModel";
+import { RoundModel } from "../model/RoundModel";
 import { GameController } from "./GameController";
 
 export class BettingController {

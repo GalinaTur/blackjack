@@ -1,71 +1,53 @@
-import { Container, Sprite } from "pixi.js";
 import { Main } from "../../../main";
 import { Button } from "./Button";
-import { DropShadowFilter } from "pixi-filters";
-import { Effects } from "../../styles/Effects";
-import { IPanel } from "../../GameView";
+import { IPanel } from "../../../data/types";
+import { Panel } from "./Panel";
 
-export class GamePanel extends Container implements IPanel {
-    private background: Sprite | null = null;
+export class GamePanel extends Panel implements IPanel {
     private splitButton: Button;
     private doubleButton: Button;
     private hitButton: Button;
     private standButton: Button;
-    private dropShadowFilter: DropShadowFilter;
 
     constructor() {
-        super();
+        super('game_panel');
         this.splitButton = new Button('Split', this.onSplit, true);
         this.doubleButton = new Button('Double', this.onDouble, true);
         this.hitButton = new Button('Hit', this.onHit, true);
         this.standButton = new Button('Stand', this.onStand, true);
 
-        this.setBackground()
-        .then(this.setButtons.bind(this))
-
-        this.dropShadowFilter = new DropShadowFilter(Effects.FOOTER_PANEL_DROP_SHADOW);
-
-        this.filters = [this.dropShadowFilter];
+        this.init();
     }
 
-    async setBackground() {
-        this.background = await Main.assetsLoader.getSprite('game_panel');
-        this.background.anchor.y = 1
-        this.resize();
-        this.addChild(this.background);
+    protected async init(): Promise<void> {
+        await super.init();
+        this.setButtons()
     }
 
     private setButtons() {
         this.splitButton.position.set(120, -50);
         this.splitButton.scale.set(0.7);
-        this.addChild(this.splitButton);
+        this.buttonContainer.addChild(this.splitButton);
 
-        this.doubleButton.position.set(340,-50);
+        this.doubleButton.position.set(340, -50);
         this.doubleButton.scale.set(0.7);
-        this.addChild(this.doubleButton);
+        this.buttonContainer.addChild(this.doubleButton);
 
-        this.hitButton.position.set(560,-50);
+        this.hitButton.position.set(560, -50);
         this.hitButton.scale.set(0.7);
-        this.addChild(this.hitButton);
+        this.buttonContainer.addChild(this.hitButton);
 
-        this.standButton.position.set(780,-50);
+        this.standButton.position.set(780, -50);
         this.standButton.scale.set(0.7);
-        this.addChild(this.standButton);
+        this.buttonContainer.addChild(this.standButton);
+
+        this.addChild(this.buttonContainer);
     }
 
-    private resize() {
-        if (this.background === null) return;
-        const bgRatio = this.background.height / this.background.width;
-
-        this.background.width = Main.screenSize.width;
-        this.background.height = this.background.width*bgRatio*0.65;
-    }
-
-    
     private onHit() {
         Main.signalController.player.hit.emit();
     }
-    
+
     private onStand() {
         Main.signalController.player.stand.emit();
     }
@@ -76,13 +58,5 @@ export class GamePanel extends Container implements IPanel {
 
     private onSplit() {
         Main.signalController.player.split.emit();
-    }
-
-    private onResize() {
-        this.resize();
-    }
-
-    public deactivate(): void {
-        
     }
 }

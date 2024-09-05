@@ -1,3 +1,4 @@
+import { ERoundState, ICardsDealed, IStateInfo, TRoundResult } from "../data/types";
 import { CardModel } from "./CardModel";
 
 export class RoundModel {
@@ -79,37 +80,3 @@ export class RoundModel {
     }
 }
 
-export enum ERoundState {
-    NOT_STARTED,
-    BETTING,
-    CARDS_DEALING,
-    PLAYERS_TURN,
-    DEALERS_TURN,
-    ROUND_OVER
-}
-
-export interface IStateInfo {
-    // isStarted: boolean,
-    // isBetPlaced: boolean,
-    bet: number,
-    win: number,
-    currentState: ERoundState,
-    cards: ICardsDealed,
-    isSplitAllowed: boolean,
-    roundResult: TRoundResult | null,
-}
-
-export interface ICardsDealed {
-    dealer: CardModel[],
-    player: CardModel[],
-    split: CardModel[]
-}
-
-export interface IPoints {
-    dealer: number,
-    player: number,
-}
-
-export type TRoundResult = "playerBJ" | "dealerBJ" | "win" | "doubleWin" | "lose"
-    | "push" | "pushBJ" | "playerBust" | "dealerBust"
-    | "surrender" | "insurance" 

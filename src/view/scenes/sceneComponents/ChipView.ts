@@ -4,38 +4,42 @@ import { Main } from "../../../main";
 import { Textstyles } from "../../styles/TextStyles";
 import { Effects } from "../../styles/Effects";
 
-export class Chip extends Container {
+export class ChipView extends Container {
     private image: Sprite | null = null;
+    private chipName: string = '';
     private text: Text | null = null;
-    private dropShadowFilter: DropShadowFilter;
+    public dropShadowFilter: DropShadowFilter;
 
-    private bevelFilter: BevelFilter;
+    public bevelFilter: BevelFilter;
     private bevelFilterOptions = {
         rotation: 280,
-        thickness: 3
+        thickness: 1,
     }
 
-    constructor(name: string, value: string, onClick: (() => void)) {
+    constructor(name: string, value: number, onClick: (() => void)) {
         super();
-        this.setSprite(name)
-            .then(this.setText.bind(this, value));
-        this.eventMode = "static";
-        this.cursor = "pointer";
-        // this.sepiaColorFilter = new ColorMatrixFilter();
-        // this.sepiaColorFilter.sepia(true);
-        // this.filters = [this.sepiaColorFilter];
+        this.chipName = name;
+        this.setSprite(this.chipName)
+            .then(this.setText.bind(this, String(value)));
 
         this.on('pointerdown', onClick);
 
         this.dropShadowFilter = new DropShadowFilter(Effects.CHIP_DROP_SHADOW);
         this.bevelFilter = new BevelFilter(this.bevelFilterOptions);
 
+        this.init();
+    }
+
+    private init() {
+        this.eventMode = "static";
+        this.cursor = "pointer";
         this.filters = [this.dropShadowFilter, this.bevelFilter];
     }
 
     private async setSprite(name: string) {
-        this.image = await Main.assetsLoader.getSprite(`${name}.png`);
+        this.image = await Main.assetsLoader.getSprite(name);
         this.image.anchor.set(0.5);
+        this.scale.set(Main.screenSize.height / 1000);
         this.setSize();
         this.addChild(this.image);
     }

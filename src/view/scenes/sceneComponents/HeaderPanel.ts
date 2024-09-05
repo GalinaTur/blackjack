@@ -1,49 +1,42 @@
-import { Container, Graphics, Sprite, Text } from "pixi.js";
+import { Graphics, Sprite, Text } from "pixi.js";
 import { Main } from "../../../main";
-import { ColorGradientFilter, DropShadowFilter } from "pixi-filters";
+import { ColorGradientFilter } from "pixi-filters";
 import { Textstyles } from "../../styles/TextStyles";
 import { Effects } from "../../styles/Effects";
+import { Panel } from "./Panel";
+import { IPanel } from "../../../data/types";
 
-export class HeaderPanel extends Container {
-    private background: Sprite | null = null;
-    private dropShadowFilter: DropShadowFilter;
+export class HeaderPanel extends Panel implements IPanel {
     private betText: Text;
     private balanceText: Text;
     private winText: Text;
     private totalWinText: Text;
 
     constructor(betSize: number, winSize: number, playerBalance: number, totalWin: number) {
-        super();
+        super('header_panel');
 
         this.betText = new Text(`Bet: ${betSize}$`, Textstyles.HEADER_TEXTSTYLE);
         this.balanceText = new Text(`Balance: ${playerBalance}$`, Textstyles.HEADER_TEXTSTYLE);
         this.winText = new Text(`Win: ${winSize}$`, Textstyles.HEADER_TEXTSTYLE);
         this.totalWinText = new Text(`Total Win: ${totalWin}$`, Textstyles.HEADER_TEXTSTYLE);
-        this.dropShadowFilter = new DropShadowFilter(Effects.HEADER_PANEL_DROP_SHADOW);
+        this.dropShadowFilter.offset.y = Effects.HEADER_PANEL_DROP_SHADOW.offset.y
 
         this.init();
     }
 
-    private init() {
-        this.setBackground()
-            .then(this.setButtons.bind(this))
-            .then(this.setLeftTextFrame.bind(this))
-            .then(this.setRightTextFrame.bind(this));
-
+    protected async init() {
+        await super.init();
+        this.setButtons();
+        this.setLeftTextFrame();
+        this.setRightTextFrame();
+        this.background?.anchor.set(0);
         this.setEventListeners();
-        this.filters = [this.dropShadowFilter];
     }
 
     private setEventListeners() {
         Main.signalController.bet.updated.add(this.onBetUpdate, this);
         Main.signalController.balance.updated.add(this.onBalanceUpdate, this);
         Main.signalController.winSize.updated.add(this.onWinSizeUpdate, this);
-    }
-
-    private async setBackground() {
-        this.background = await Main.assetsLoader.getSprite('header_panel');
-        this.resize();
-        this.addChild(this.background);
     }
 
     private setLeftTextFrame() {
@@ -94,17 +87,6 @@ export class HeaderPanel extends Container {
         // this.addChild(this.placeBetButton);
     }
 
-    private resize() {
-        if (this.background === null) return;
-        const bgRatio = this.background.height / this.background.width;
-
-        this.background.width = Main.screenSize.width;
-        this.background.height = this.background.width * bgRatio * 0.65;
-    }
-
-    private onResize() {
-        this.resize();
-    }
 
 
     private onBetUpdate(betSize: number) {
@@ -116,9 +98,13 @@ export class HeaderPanel extends Container {
     }
 
 
-    private onWinSizeUpdate(obj: {win: number, totalWin: number}) {
-        const {win, totalWin} = obj;
+    private onWinSizeUpdate(obj: { win: number, totalWin: number }) {
+        const { win, totalWin } = obj;
         this.winText.text = `Win: ${win}$`
         this.totalWinText.text = `Total Win: ${totalWin}$`
     }
+
+    // private onResize() {
+    //     this.resize();
+    // }
 }

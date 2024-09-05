@@ -1,6 +1,4 @@
-import { TRank, TSuit } from "../data/types";
-
-type TValue = `${TRank}_of_${TSuit}`;
+import { TRank, TSuit, TValue } from "../data/types";
 
 export class CardModel {
     private _rank: TRank;

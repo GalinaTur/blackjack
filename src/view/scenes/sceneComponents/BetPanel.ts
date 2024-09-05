@@ -1,51 +1,37 @@
-import { Container, Sprite } from "pixi.js";
+import { Container, Point } from "pixi.js";
 import { Main } from "../../../main";
 import { Button } from "./Button";
-import { Chip } from "./ChipView";
-import { DropShadowFilter } from "pixi-filters";
-import { Effects } from "../../styles/Effects";
+import { ChipView } from "./ChipView";
 import { AVAILABLE_BETS } from "../../../data/constants";
-import { IPanel } from "../../GameView";
+import { GameScene } from "../GameScene";
+import { EChips, IPanel, } from "../../../data/types";
+import { Panel } from "./Panel";
 
-enum EChips {
-    '1$' = 'chipWhite',
-    '5$' = 'chipRed',
-    '10$' = 'chipOrange',
-    '25$' = 'chipGreen',
-    '100$' = 'chipBlack',
-    '500$' = 'chipPurple',
-    '1000$' = 'chipYellow',
-    '5000$' = 'chipBlue',
-}
-
-export class BetPanel extends Container implements IPanel{
-    private background: Sprite | null = null;
+export class BetPanel extends Panel implements IPanel {
     private clearBetButton: Button;
     private placeBetButton: Button;
-    private dropShadowFilter = new DropShadowFilter(Effects.FOOTER_PANEL_DROP_SHADOW);
     private isButtonsActive = false;
-    private chips: Chip[] = [];
+    private chips: ChipView[] = [];
 
     constructor(betSize: number) {
-        super();
+        super('bet_panel');
         if (betSize > 0) this.isButtonsActive = true;
         this.clearBetButton = new Button('Clear Bet', this.onClearBet, this.isButtonsActive);
         this.placeBetButton = new Button('Place Bet', this.onPlaceBet, this.isButtonsActive);
 
-        Main.signalController.bet.updated.add(this.onBetUpdate, this);
-
-        this.setBackground()
-            .then(this.setButtons.bind(this))
-            .then(this.setChips.bind(this));
-
-        this.filters = [this.dropShadowFilter];
+        this.init();
     }
 
-    private async setBackground() {
-        this.background = await Main.assetsLoader.getSprite('bet_panel');
-        this.background.anchor.y = 1
-        this.resize();
-        this.addChild(this.background);
+    protected async init(): Promise<void> {
+        await super.init();
+        this.setButtons();
+        this.setChips();
+        
+        this.setEventListeners();
+    }
+
+    private setEventListeners() {
+        Main.signalController.bet.updated.add(this.onBetUpdate, this);
     }
 
     private setButtons() {
@@ -62,7 +48,7 @@ export class BetPanel extends Container implements IPanel{
         for (let i = 0; i < AVAILABLE_BETS.length; i++) {
             const key: string = AVAILABLE_BETS[i] + '$';
             const name = EChips[key as keyof typeof EChips];
-            const chip = new Chip(name, String(AVAILABLE_BETS[i]), () => this.onChipClick(AVAILABLE_BETS[i]));
+            const chip = new ChipView(name, AVAILABLE_BETS[i], () => this.onChipClick(AVAILABLE_BETS[i], chip));
             this.chips.push(chip);
 
             chip.position.y = -this.height * 0.7;
@@ -71,22 +57,8 @@ export class BetPanel extends Container implements IPanel{
                 chip.position.y = -this.height * 0.28;
                 chip.position.x = -this.width * 0.31 + i * this.width * 0.14;
             }
-
-            chip.scale.set(this.height * 4 / 1000);
             this.addChild(chip)
         }
-    }
-
-    private resize() {
-        if (this.background === null) return;
-        const bgRatio = this.background.height / this.background.width;
-
-        this.background.width = Main.screenSize.width;
-        this.background.height = this.background.width * bgRatio * 0.65;
-    }
-
-    private onResize() {
-        this.resize();
     }
 
     private onClearBet() {
@@ -97,8 +69,13 @@ export class BetPanel extends Container implements IPanel{
         Main.signalController.bet.placed.emit();
     }
 
-    private onChipClick(value: number) {
+    private onChipClick(value: number, chip: Container) {
+        const parent = this.parent as GameScene
         Main.signalController.bet.added.emit(value);
+        const key = `${value}$`;
+        const newChip = new ChipView(EChips[key as keyof typeof EChips], value, () => { });
+        newChip.position = newChip.toLocal(this.toGlobal(new Point(chip.x, chip.y)));
+        parent.addChipToStack(newChip);
     }
 
     public onBetUpdate(betSize: number) {
@@ -106,6 +83,7 @@ export class BetPanel extends Container implements IPanel{
         this.clearBetButton.update(this.isButtonsActive);
         this.placeBetButton.update(this.isButtonsActive);
     }
+
 
     public deactivate(): void {
         this.parent.removeChild(this);

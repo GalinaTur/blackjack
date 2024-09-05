@@ -1,6 +1,6 @@
 import { TParticipants } from "../data/types";
 import { CardModel } from "../model/CardModel";
-import { IStateInfo, TRoundResult } from "../model/RoundModel";
+import { IStateInfo, TRoundResult } from "../data/types";
 
 class Signal<T = void> {
     private subscribers: { func: ((data: T) => void), ctx: unknown }[] = [];
@@ -21,7 +21,6 @@ class Signal<T = void> {
 }
 
 export class SignalsController {
-
     public round = {
         changeState: new Signal<IStateInfo>(),
         start: new Signal<void>(),
@@ -47,8 +46,8 @@ export class SignalsController {
     }
 
     public card = {
-        deal: new Signal<{ person: TParticipants, card: CardModel, totalPoints: number }>(),
-        open: new Signal<{ card: CardModel, totalPoints: number }>(),
+        deal: new Signal<{ person: TParticipants, card: CardModel, totalPoints: number, resolve: (value: unknown)=>void }>(),
+        open: new Signal<{ card: CardModel, totalPoints: number, resolve: (value: unknown)=>void }>(),
     }
 
     public player = {

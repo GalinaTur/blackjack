@@ -1,23 +1,23 @@
 import { DeckModel } from "../model/DeckModel";
-import { ERoundState, RoundModel, TRoundResult } from "../model/RoundModel";
+import { RoundModel } from "../model/RoundModel";
 import { GameView } from "../view/GameView";
 import { Main } from "../main";
 import { BettingController } from "./BettingController";
 import { PointsController } from "./PointsController";
-import { TParticipants } from "../data/types";
+import { ERoundState, TParticipants, TRoundResult } from "../data/types";
 
 export class RoundController {
     public roundModel: RoundModel;
     private gameView: GameView;
     private deck = new DeckModel();
     private pointsController = new PointsController();
-    
+
     constructor(roundModel: RoundModel, gameView: GameView) {
         this.gameView = gameView;
         this.roundModel = roundModel;
         this.init();
     }
-    
+
     private async init() {
         this.setEventListeners();
         this.handleNextAction(this.roundModel.state);
@@ -31,7 +31,8 @@ export class RoundController {
         Main.signalController.round.end.add(this.deactivate, this);
     }
 
-    private handleNextAction = (state: ERoundState) => {
+    private async handleNextAction(state: ERoundState) {
+        let dealTo: TParticipants = 'player';
         switch (state) {
             case ERoundState.BETTING:
                 console.log('betting')
@@ -40,8 +41,8 @@ export class RoundController {
             case ERoundState.CARDS_DEALING:
                 console.log('cards dealing')
                 while (!this.roundModel.isDealingEnded()) {
-                    this.dealCardTo('dealer');
-                    this.dealCardTo('player');
+                    await this.dealCardTo(dealTo)
+                    dealTo = dealTo === 'player' ? 'dealer' : 'player';
                 }
                 !this.checkForBJ() && this.changeState(ERoundState.PLAYERS_TURN);
                 break;
@@ -54,14 +55,14 @@ export class RoundController {
 
             case ERoundState.DEALERS_TURN:
                 console.log("dealer's turn");
-                this.revealHoleCard();
+                await this.revealHoleCard();
                 if (this.pointsController.isBust(this.dealersCards)) {
                     this.endRound('dealerBust');
-                } else this.dealerPlay();
+                } else await this.dealerPlay();
                 break;
 
             case ERoundState.ROUND_OVER:
-                this.gameView.renderScene(this.roundModel.roundStateInfo)
+                this.gameView.render(this.roundModel.roundStateInfo)
                 console.log('game Over');
                 break;
         }
@@ -82,16 +83,18 @@ export class RoundController {
     }
 
     private dealCardTo(person: TParticipants) {
-        const card = this.deck.getCard();
-        if (!card) return;
-        this.roundModel.dealTo(person, card);
-        const totalPoints = this.pointsController.calcPoints(this.roundModel.cards[person]);
-        Main.signalController.card.deal.emit({ person, card, totalPoints });
+        return new Promise((resolve) => {
+            const card = this.deck.getCard();
+            if (!card) return;
+            this.roundModel.dealTo(person, card);
+            const totalPoints = this.pointsController.calcPoints(this.roundModel.cards[person]);
+            Main.signalController.card.deal.emit({ person, card, totalPoints, resolve });
+        })
     }
 
-    private onPlayerHit() {
+    private async onPlayerHit() {
         if (this.roundModel.state !== ERoundState.PLAYERS_TURN) return;
-        this.dealCardTo('player');
+        await this.dealCardTo('player');
         this.handleNextAction(this.roundModel.state);
     }
 
@@ -100,12 +103,12 @@ export class RoundController {
         this.changeState(ERoundState.DEALERS_TURN);
     }
 
-    private dealerPlay() {
+    private async dealerPlay() {
         if (this.pointsController.calcPoints(this.dealersCards) >= 17) {
             this.dealerStand();
             return;
         }
-        this.dealCardTo('dealer');
+        await this.dealCardTo('dealer');
         this.handleNextAction(this.roundModel.state);
     }
 
@@ -113,10 +116,10 @@ export class RoundController {
         this.comparePoints();
     }
 
-    private endRound(result: TRoundResult) {
+    private async endRound(result: TRoundResult) {
         console.log(result);
         if (this.holeCard) {
-            this.revealHoleCard();
+            await this.revealHoleCard();
         };
         this.roundModel.result = result;
         Main.signalController.round.end.emit(result);
@@ -129,20 +132,20 @@ export class RoundController {
                 this.endRound('win') : this.endRound('lose');
     }
 
-    private checkForDealerBJ() {
+    private async checkForDealerBJ() {
         if (!this.holeCard) return;
         let dealerPoints = this.pointsController.calcPoints(this.dealersCards);
         if (dealerPoints !== 10 && dealerPoints !== 11) return;
         let holeCardPoints = this.pointsController.getCardPoints(this.holeCard);
         if (dealerPoints + holeCardPoints === 21) {
-            this.revealHoleCard();
+            await this.revealHoleCard();
             return true;
         }
         return false
     }
 
-    private checkForBJ() {
-        if (this.checkForDealerBJ()) {
+    private async checkForBJ() {
+        if (await this.checkForDealerBJ()) {
             this.pointsController.isTie(this.roundModel.cards) ? this.endRound('push') : this.endRound('dealerBJ');
             return true;
         }
@@ -153,12 +156,16 @@ export class RoundController {
         return false;
     }
 
-    private revealHoleCard() {
+    private async revealHoleCard() {
         if (!this.holeCard) return;
-        const card = this.holeCard;
-        this.holeCard.hidden = false;
-        const totalPoints = this.pointsController.calcPoints(this.dealersCards);
-        Main.signalController.card.open.emit({ card, totalPoints });
+
+        return new Promise(resolve => {
+            if (!this.holeCard) return;
+            const card = this.holeCard;
+            this.holeCard.hidden = false;
+            const totalPoints = this.pointsController.calcPoints(this.dealersCards);
+            Main.signalController.card.open.emit({ card, totalPoints, resolve });
+        })
     }
 
     get dealersCards() {

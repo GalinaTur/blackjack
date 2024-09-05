@@ -2,6 +2,8 @@ import { Application } from "pixi.js";
 import { SignalsController } from "./controller/SignalsController";
 import { AssetsLoader } from "./controller/AssetsController";
 import { GameController } from "./controller/GameController";
+import PixiPlugin from "gsap/PixiPlugin";
+import gsap from "gsap";
 
 export class Main {
     public static APP: Application;
@@ -25,6 +27,7 @@ export class Main {
                 click: true,
             },
         });
+
         (globalThis as any).__PIXI_APP__ = this.app;
         this.app.ticker.add(() => {
             Main.screenSize = {
@@ -51,3 +54,6 @@ export class Main {
 
 const main = new Main();
 main.init();
+
+gsap.registerPlugin(PixiPlugin);
+PixiPlugin.registerPIXI(Main.APP);

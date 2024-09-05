@@ -1,7 +1,8 @@
 import { Container, Sprite } from "pixi.js";
 import { Main } from "../../main";
 import { Button } from "./sceneComponents/Button";
-import { IScene } from "../GameView";
+import { IScene } from "../../data/types";
+import { Animations } from "../styles/Animations";
 
 export class InitialScene extends Container implements IScene<void> {
     private logo: Sprite | null = null;
@@ -22,6 +23,7 @@ export class InitialScene extends Container implements IScene<void> {
         this.logo.position.set(Main.screenSize.width / 2, Main.screenSize.height * 0.4);
         this.logo.anchor.set(0.5);
         this.addChild(this.logo);
+        Animations.initialLogo.scale(this.logo);
     }
 
     private setButton() {

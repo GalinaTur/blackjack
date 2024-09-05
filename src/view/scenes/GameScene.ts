@@ -1,16 +1,18 @@
 import { Container, Text } from "pixi.js";
 import { Main } from "../../main";
 import { CardView } from "./sceneComponents/CardView";
-import { ICardsDealed, TRoundResult } from "../../model/RoundModel";
+import { ICardsDealed, TRoundResult, IScene } from "../../data/types";
 import { Textstyles } from "../styles/TextStyles";
 import { CardModel } from "../../model/CardModel";
-import { IScene } from "../GameView";
 import { TParticipants } from "../../data/types";
+import { ChipView } from "./sceneComponents/ChipView";
+import { Animations } from "../styles/Animations";
 
 export class GameScene extends Container implements IScene<void> {
     private dealersHand = new Container();
     private playersHand = new Container();
     private splitHand = new Container();
+    private chipsStack = new Container();
     private cards: ICardsDealed = {
         dealer: [],
         player: [],
@@ -20,6 +22,9 @@ export class GameScene extends Container implements IScene<void> {
     constructor() {
         super();
         this.init();
+        this.sortableChildren = true;
+        this.chipsStack.zIndex = 1;
+        this.addChild(this.chipsStack);
     }
 
     private init() {
@@ -42,7 +47,7 @@ export class GameScene extends Container implements IScene<void> {
     private async setPushLabel() {
         const image = await Main.assetsLoader.getSprite('regular_label');
         image.anchor.set(0.5);
-        image.position.set(Main.screenSize.width/2, Main.screenSize.height/2);
+        image.position.set(Main.screenSize.width / 2, Main.screenSize.height / 2);
         const text = new Text("PUSH", Textstyles.LABEL_TEXTSTYLE);
         text.anchor.set(0.5);
         image.addChild(text);
@@ -51,17 +56,21 @@ export class GameScene extends Container implements IScene<void> {
 
     private async setCard(parent: Container, card: CardModel, index: number) {
         const cardView = new CardView(card);
-        cardView.position.set(index * 50, 0);
-        parent.addChild(cardView);
+        cardView.position.set(500, -1500);
+        parent.addChild(cardView)
+        await Animations.cards.deal(cardView, index);
     }
 
     private async setPointsLabel(parent: Container, points: number) {
         const label = await Main.assetsLoader.getSprite("points_label");
-        label.anchor.set(0.5)
-        label.position.set(0, 35);
+        label.anchor.set(0, 0.5)
+        label.position.set(-50, 35);
+        label.scale.set(0, 1);
         const text = new Text(points, Textstyles.LABEL_TEXTSTYLE);
-        text.anchor.set(0.5);
+        text.anchor.set(0.5, 0.5);
+        text.position.set(50, 0.5);
         label.zIndex = 1
+        Animations.cards.addPointsLabel(label);
         label.addChild(text);
         parent.addChild(label);
     }
@@ -109,22 +118,35 @@ export class GameScene extends Container implements IScene<void> {
         return shine;
     }
 
-    public onCardDeal(person: TParticipants, card: CardModel, points: number) {
+    public async onCardDeal(person: TParticipants, card: CardModel, points: number) {
         if (person === 'dealer') {
             this.cards.dealer.push(card);
-            this.setCard(this.dealersHand, card, this.cards.dealer.length - 1);
+            await this.setCard(this.dealersHand, card, this.cards.dealer.length - 1);
+            if (this.cards.dealer.length < 2) return;
             this.setPointsLabel(this.dealersHand, points);
         } else if (person === 'player') {
             this.cards.player.push(card);
-            this.setCard(this.playersHand, card, this.cards.player.length - 1);
+            await this.setCard(this.playersHand, card, this.cards.player.length - 1);
+            if (this.cards.player.length < 2) return;
             this.setPointsLabel(this.playersHand, points);
         }
     }
 
-    public onCardOpen(card: CardModel, points: number) {
-        console.log('hole card opened');
-        this.setCard(this.dealersHand, card, this.cards.dealer.length - 1);
+    public async onCardOpen(card: CardModel, points: number) {
+        const cardIndex = this.cards.dealer.findIndex((cardElement) => cardElement.value === card.value);
+        const cardView = this.dealersHand.children[cardIndex] as CardView;
+        await cardView.open();
         this.setPointsLabel(this.dealersHand, points);
+    }
+
+    public addChipToStack(chip: ChipView) {
+        const index = this.chipsStack.children.length;
+        Animations.chip.place(chip, index);
+        chip.dropShadowFilter.offset.x +=6*index;
+        chip.dropShadowFilter.offset.y = 0;
+        chip.dropShadowFilter.alpha -=0.1* index;
+        chip.dropShadowFilter.blur +=0.5* index;
+        this.chipsStack.addChild(chip);
     }
 
     public onResize() {
