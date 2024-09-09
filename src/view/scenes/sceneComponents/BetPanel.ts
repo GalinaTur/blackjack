@@ -1,37 +1,32 @@
-import { Container, Point } from "pixi.js";
+import { Point } from "pixi.js";
 import { Main } from "../../../main";
 import { Button } from "./Button";
 import { ChipView } from "./ChipView";
-import { AVAILABLE_BETS } from "../../../data/constants";
 import { GameScene } from "../GameScene";
-import { EChips, IPanel, } from "../../../data/types";
+import { EChips, IPanel, TBets, } from "../../../data/types";
 import { Panel } from "./Panel";
+import { Animations } from "../../styles/Animations";
 
 export class BetPanel extends Panel implements IPanel {
     private clearBetButton: Button;
     private placeBetButton: Button;
     private isButtonsActive = false;
     private chips: ChipView[] = [];
+    private availableBets: TBets[] = [];
+    private lastChoosedChip: ChipView | null = null
 
-    constructor(betSize: number) {
+    constructor(availableBets: TBets[]) {
         super('bet_panel');
-        if (betSize > 0) this.isButtonsActive = true;
+        // if (betSize > 0) this.isButtonsActive = true;
         this.clearBetButton = new Button('Clear Bet', this.onClearBet, this.isButtonsActive);
         this.placeBetButton = new Button('Place Bet', this.onPlaceBet, this.isButtonsActive);
-
-        this.init();
+        this.availableBets = availableBets;
     }
 
     protected async init(): Promise<void> {
         await super.init();
         this.setButtons();
         this.setChips();
-        
-        this.setEventListeners();
-    }
-
-    private setEventListeners() {
-        Main.signalController.bet.updated.add(this.onBetUpdate, this);
     }
 
     private setButtons() {
@@ -45,16 +40,16 @@ export class BetPanel extends Panel implements IPanel {
     }
 
     private setChips() {
-        for (let i = 0; i < AVAILABLE_BETS.length; i++) {
-            const key: string = AVAILABLE_BETS[i] + '$';
+        for (let i = 0; i < this.availableBets.length; i++) {
+            const key: string = this.availableBets[i] + '$';
             const name = EChips[key as keyof typeof EChips];
-            const chip = new ChipView(name, AVAILABLE_BETS[i], () => this.onChipClick(AVAILABLE_BETS[i], chip));
+            const chip = new ChipView(name, this.availableBets[i], () => this.onChipClick(this.availableBets[i], chip));
             this.chips.push(chip);
 
-            chip.position.y = -this.height * 0.7;
+            chip.position.y = -Main.screenSize.height * 0.2;
             chip.position.x = this.width * 0.322 + i * this.width * 0.14;
             if (chip.position.x > this.width * 0.8) {
-                chip.position.y = -this.height * 0.28;
+                chip.position.y = -Main.screenSize.height * 0.08;
                 chip.position.x = -this.width * 0.31 + i * this.width * 0.14;
             }
             this.addChild(chip)
@@ -69,19 +64,51 @@ export class BetPanel extends Panel implements IPanel {
         Main.signalController.bet.placed.emit();
     }
 
-    private onChipClick(value: number, chip: Container) {
+    private async onChipClick(value: TBets, chip: ChipView) {
         const parent = this.parent as GameScene
-        Main.signalController.bet.added.emit(value);
         const key = `${value}$`;
         const newChip = new ChipView(EChips[key as keyof typeof EChips], value, () => { });
         newChip.position = newChip.toLocal(this.toGlobal(new Point(chip.x, chip.y)));
-        parent.addChipToStack(newChip);
+        this.lastChoosedChip = chip;
+        await parent.addChipToStack(newChip);
+        Main.signalController.bet.added.emit(value);
     }
 
-    public onBetUpdate(betSize: number) {
+    public async onBetUpdate(betSize: number, availableBets: TBets[]) {
         this.isButtonsActive = Boolean(betSize);
-        this.clearBetButton.update(this.isButtonsActive);
-        this.placeBetButton.update(this.isButtonsActive);
+        this.availableBets = availableBets;
+        await this.updateChips();
+        this.clearBetButton.updateIsActive(this.isButtonsActive);
+        this.placeBetButton.updateIsActive(this.isButtonsActive);
+    }
+
+    private async updateChips() {
+        this.chips.forEach(async (chip) => {
+            if (this.availableBets.includes(chip.value)) {
+                chip.hidden && this.makeAvailable(chip);
+                return;
+            }
+            await this.hide(chip);
+        })
+    }
+
+    private async makeAvailable(chip: ChipView) {
+        chip.hidden = false;
+        await Animations.chip.show(chip);
+        chip.eventMode = 'static';
+    }
+
+    private async hide(chip: ChipView) {
+        if (chip.hidden) return;
+
+        chip.eventMode = 'none';
+        chip.hidden = true;
+
+        if (chip === this.lastChoosedChip) {
+            chip.position.y += 200;
+            return;
+        }
+        await Animations.chip.hide(chip);
     }
 
 

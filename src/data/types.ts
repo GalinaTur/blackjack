@@ -1,5 +1,5 @@
 import { Container } from "pixi.js";
-import { RANKS, SUITS } from "./constants";
+import { ALL_BETS, RANKS, SUITS } from "./constants";
 import { CardModel } from "../model/CardModel";
 
 export type TParticipants = 'dealer' | 'player';
@@ -7,6 +7,8 @@ export type TParticipants = 'dealer' | 'player';
 export type TRank = typeof RANKS[number];
 export type TSuit = typeof SUITS[number];
 export type TValue = `${TRank}_of_${TSuit}`;
+
+export type TBets = typeof ALL_BETS[number];
 
 export type TRoundResult = "playerBJ" | "dealerBJ" | "win" | "doubleWin" | "lose"
     | "push" | "pushBJ" | "playerBust" | "dealerBust"
@@ -23,8 +25,7 @@ export interface IPanel extends Container {
 }
 
 export interface IStateInfo {
-    // isStarted: boolean,
-    // isBetPlaced: boolean,
+    availableBets: TBets[];
     bet: number,
     win: number,
     currentState: ERoundState,

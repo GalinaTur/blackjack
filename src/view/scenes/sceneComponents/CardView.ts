@@ -20,6 +20,7 @@ export class CardView extends Container {
 
         this.dropShadowFilter = new DropShadowFilter(Effects.CARD_DROP_SHADOW);
         this.filters = [this.dropShadowFilter];
+        this.position.set(500, -1500);
     }
 
     private async setImage() {
@@ -32,7 +33,6 @@ export class CardView extends Container {
         this.image.anchor.set(0.5);
         this.image.scale.set(0.4);
 
-        console.log(this.card.hidden)
         this.card.hidden? this.addChild(this.backImage) : this.addChild(this.image);
     }
 

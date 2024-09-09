@@ -4,7 +4,7 @@ export class Textstyles {
     public static BUTTON_TEXTSTYLE: Partial<TextStyle> = {
         fontSize: 36,
         fill: "#ffffff",
-        fontFamily: "SairaBD",
+        fontFamily: "SairaBlackItalic",
         strokeThickness: 4,
     }
 
@@ -15,9 +15,9 @@ export class Textstyles {
 
     public static HEADER_TEXTSTYLE: Partial<TextStyle> = {
         fill: "#ffcc00",
-        fontFamily: "Orbitron",
-        // letterSpacing:3,
+        fontFamily: "SairaLightItalic",
         fontSize: 24,
+        strokeThickness:4
     }
 
     public static WIN_TEXTSTYLE: Partial<TextStyle> = {

@@ -4,7 +4,7 @@ import { Background } from "./scenes/sceneComponents/Background";
 import { InitialScene } from "./scenes/InitialScene";
 import { GameScene } from "./scenes/GameScene";
 import { HeaderPanel } from "./scenes/sceneComponents/HeaderPanel";
-import { ERoundState, IPanel, IScene, IStateInfo, TRoundResult } from "../data/types";
+import { ERoundState, IPanel, IScene, IStateInfo, TBets, TRoundResult } from "../data/types";
 import { CardModel } from "../model/CardModel";
 import { BetPanel } from "./scenes/sceneComponents/BetPanel";
 import { GamePanel } from "./scenes/sceneComponents/GamePanel";
@@ -39,26 +39,43 @@ export class GameView {
     }
 
     private setEventListeners() {
+        Main.signalController.bet.updated.add(this.onBetUpdate, this);
         Main.signalController.card.deal.add(this.onCardDeal, this);
         Main.signalController.card.open.add(this.onCardOpen, this);
         Main.signalController.round.end.add(this.onRoundEnd, this);
         Main.signalController.round.changeState.add(this.render, this);
     }
 
-    public render(stateInfo: IStateInfo) {
+    public async render(stateInfo: IStateInfo) {
         switch (stateInfo.currentState) {
             case ERoundState.BETTING:
-                this.gameScene = new GameScene();
-                this.setCurrentScene(this.gameScene);
-                this.renderHeaderPanel(stateInfo, this.playerBalance, this.totalWin);
+                if (!this.gameScene) {
+                    this.gameScene = new GameScene();
+                    this.setCurrentScene(this.gameScene);
+                    this.renderHeaderPanel(stateInfo, this.playerBalance, this.totalWin);
+                }
 
-                this.betPanel = new BetPanel(stateInfo.bet);
-                this.setCurrentFooterPanel(this.betPanel);
+                if (!this.betPanel) {
+                    // this.betPanel = new BetPanel(stateInfo.bet, stateInfo.availableBets);
+                    this.betPanel = new BetPanel(stateInfo.availableBets);
+                    this.setCurrentFooterPanel(this.betPanel);
+                } else {
+                    // await this.betPanel.onBetUpdate(stateInfo.bet, stateInfo.availableBets);
+                    // await this.betPanel.onBetUpdate(stateInfo.availableBets);
+                }
                 break;
 
             case ERoundState.CARDS_DEALING:
                 this.gamePanel = new GamePanel();
                 this.setCurrentFooterPanel(this.gamePanel);
+                break;
+
+            case ERoundState.PLAYERS_TURN:
+                this.gamePanel?.updateButtons(stateInfo.currentState);
+                break;
+
+            case ERoundState.DEALERS_TURN:
+                this.gamePanel?.updateButtons(stateInfo.currentState);
                 break;
 
             case ERoundState.ROUND_OVER:
@@ -78,7 +95,7 @@ export class GameView {
     }
 
     private renderHeaderPanel(stateInfo: IStateInfo, playerBalance: number, totalWin: number) {
-        this.headerPanel = new HeaderPanel(stateInfo.bet, stateInfo.win, playerBalance, totalWin);
+        this.headerPanel = new HeaderPanel(stateInfo.win, playerBalance, totalWin);
         this.headerPanel.position.set(0, 0);
         this.appStage.addChild(this.headerPanel);
     }
@@ -106,6 +123,12 @@ export class GameView {
         this.appStage.addChild(background);
     }
 
+    private onBetUpdate(data: { betValues: TBets[], sum: number, availableBets: TBets[] }) {
+        const { betValues, sum, availableBets } = data;
+        this.headerPanel?.onBetUpdate(sum);
+        this.betPanel?.onBetUpdate(sum, availableBets);
+    }
+
     private async onCardDeal(data: { person: TParticipants, card: CardModel, totalPoints: number, resolve: (value: unknown) => void }) {
         const { person, card, totalPoints, resolve } = data;
         await this.gameScene?.onCardDeal(person, card, totalPoints);
@@ -118,12 +141,16 @@ export class GameView {
         resolve(true);
     }
 
-    private onRoundEnd(result: TRoundResult) {
-        this.gameScene?.onRoundEnd(result);
-        this.deactivate();
+    private async onRoundEnd(result: TRoundResult) {
+        await this.gameScene?.onRoundEnd(result);
+        
+        // this.deactivate();
     }
-    private deactivate() {
-        // Main.signalController.bet.added.remove(this.onBetAdd);
+    public deactivate() {
+        this.headerPanel?.deactivate();
+        this.currentFooterPanel && this.currentFooterPanel.deactivate();
+        this.gameScene && this.gameScene.deactivate();
+        Main.signalController.bet.updated.remove(this.onBetUpdate);
         Main.signalController.card.deal.remove(this.onCardDeal);
         Main.signalController.card.open.remove(this.onCardOpen);
         Main.signalController.round.end.remove(this.onRoundEnd);

@@ -8,7 +8,6 @@ export class Panel extends Container implements IPanel {
     protected background: Sprite | null = null;
     protected dropShadowFilter: DropShadowFilter;
     private backgroundName: string = "";
-    protected buttonContainer = new Container();
 
     constructor(name: string) {
         super();

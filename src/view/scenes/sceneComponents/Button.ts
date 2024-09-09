@@ -65,7 +65,7 @@ export class Button extends Container {
         this.cursor = "default";
     }
 
-    public update(isActive: boolean) {
+    public updateIsActive(isActive: boolean) {
         if (this.isActive === isActive) return;
         this.isActive = isActive;
         this.isActive ? this.enable() : this.disable();

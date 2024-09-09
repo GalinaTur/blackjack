@@ -5,6 +5,8 @@ import { Textstyles } from "../../styles/TextStyles";
 import { Effects } from "../../styles/Effects";
 import { Panel } from "./Panel";
 import { IPanel } from "../../../data/types";
+import { Animations } from "../../styles/Animations";
+import { HEADER_FIELDS } from "../../../data/constants";
 
 export class HeaderPanel extends Panel implements IPanel {
     private betText: Text;
@@ -12,69 +14,43 @@ export class HeaderPanel extends Panel implements IPanel {
     private winText: Text;
     private totalWinText: Text;
 
-    constructor(betSize: number, winSize: number, playerBalance: number, totalWin: number) {
+    constructor(winSize: number, playerBalance: number, totalWin: number) {
         super('header_panel');
 
-        this.betText = new Text(`Bet: ${betSize}$`, Textstyles.HEADER_TEXTSTYLE);
+        this.betText = new Text(`Bet: $`, Textstyles.HEADER_TEXTSTYLE);
         this.balanceText = new Text(`Balance: ${playerBalance}$`, Textstyles.HEADER_TEXTSTYLE);
         this.winText = new Text(`Win: ${winSize}$`, Textstyles.HEADER_TEXTSTYLE);
         this.totalWinText = new Text(`Total Win: ${totalWin}$`, Textstyles.HEADER_TEXTSTYLE);
         this.dropShadowFilter.offset.y = Effects.HEADER_PANEL_DROP_SHADOW.offset.y
-
-        this.init();
     }
 
     protected async init() {
+        this.setEventListeners();
         await super.init();
         this.setButtons();
-        this.setLeftTextFrame();
-        this.setRightTextFrame();
+        this.setTexts();
         this.background?.anchor.set(0);
-        this.setEventListeners();
     }
 
     private setEventListeners() {
-        Main.signalController.bet.updated.add(this.onBetUpdate, this);
         Main.signalController.balance.updated.add(this.onBalanceUpdate, this);
         Main.signalController.winSize.updated.add(this.onWinSizeUpdate, this);
     }
 
-    private setLeftTextFrame() {
-        const frame = this.setTextFrame();
+    private setTexts() {
         this.totalWinText.anchor.set(0, 0);
+        this.totalWinText.position.set(5, this.height * 0.3);
+
         this.winText.anchor.set(0, 0);
-        this.totalWinText.position.set(5, 0);
-        this.winText.position.set(5, 30);
-        frame.addChild(this.totalWinText, this.winText);
-        frame.position.set(10, 40);
-        this.addChild(frame);
-    }
+        this.winText.position.set(5, this.height * 0.6);
 
-    private setRightTextFrame() {
-        const frame = this.setTextFrame();
         this.balanceText.anchor.set(0, 0);
-        this.betText.anchor.set(0, 0);
-        this.balanceText.position.set(5, 0);
-        this.betText.position.set(5, 30);
-        frame.addChild(this.balanceText, this.betText);
-        frame.position.set(1100, 40);
-        this.addChild(frame);
-    }
+        this.balanceText.position.set(this.width*0.7, this.height* 0.3);
 
-    private setTextFrame() {
-        const frame = new Graphics();
-        frame.beginFill(0x000000)
-            .lineStyle(1, 0xffffff, 0.2)
-            .drawRoundedRect(0, 0, 400, 60, 5)
-            .endFill();
-        const texture = Main.APP.renderer.generateTexture(frame);
-        const sprite = new Sprite(texture);
-        sprite.filters = [new ColorGradientFilter({
-            css: `linear-gradient(220deg, rgba(255,255,255,0.2) 0%, 
-            rgba(255,255,255,0.05) 1%, rgba(0,0,0,0) 100%)`
-        })]
-        sprite.anchor.set(0, 0);
-        return sprite;
+        this.betText.anchor.set(0, 0);
+        this.betText.position.set(this.width*0.7, this.height* 0.6);
+
+        this.addChild(this.totalWinText, this.winText, this.balanceText, this.betText);
     }
 
     private setButtons() {
@@ -87,21 +63,28 @@ export class HeaderPanel extends Panel implements IPanel {
         // this.addChild(this.placeBetButton);
     }
 
+    private createText(name: string, value: string): string {
+        return `${name}: ${value}$`;
+    }
 
-
-    private onBetUpdate(betSize: number) {
-        this.betText.text = `Bet: ${betSize}$`;
+    public onBetUpdate(betSize: number) {
+        Animations.headerText.update(this.betText, HEADER_FIELDS.bet, betSize, this.createText);
     }
 
     private onBalanceUpdate(balance: number) {
-        this.balanceText.text = `Balance: ${balance}$`
+        Animations.headerText.update(this.balanceText, HEADER_FIELDS.balance, balance, this.createText);
     }
 
 
     private onWinSizeUpdate(obj: { win: number, totalWin: number }) {
         const { win, totalWin } = obj;
-        this.winText.text = `Win: ${win}$`
-        this.totalWinText.text = `Total Win: ${totalWin}$`
+        Animations.headerText.update(this.winText, HEADER_FIELDS.win, win, this.createText);
+        Animations.headerText.update(this.totalWinText, HEADER_FIELDS.totalWin, totalWin, this.createText);
+    }
+
+    public deactivate(): void {
+        Main.signalController.balance.updated.remove(this.onBalanceUpdate);
+        Main.signalController.winSize.updated.remove(this.onWinSizeUpdate);
     }
 
     // private onResize() {

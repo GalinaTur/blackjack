@@ -1,14 +1,17 @@
-import { Container, Rectangle, Sprite, Text } from "pixi.js";
+import { Container, Sprite, Text } from "pixi.js";
 import { BevelFilter, DropShadowFilter } from "pixi-filters";
 import { Main } from "../../../main";
 import { Textstyles } from "../../styles/TextStyles";
 import { Effects } from "../../styles/Effects";
+import { TBets } from "../../../data/types";
 
 export class ChipView extends Container {
+    public value: TBets;
     private image: Sprite | null = null;
     private chipName: string = '';
     private text: Text | null = null;
     public dropShadowFilter: DropShadowFilter;
+    public hidden = false;
 
     public bevelFilter: BevelFilter;
     private bevelFilterOptions = {
@@ -16,9 +19,10 @@ export class ChipView extends Container {
         thickness: 1,
     }
 
-    constructor(name: string, value: number, onClick: (() => void)) {
+    constructor(name: string, value: TBets, onClick: (() => void)) {
         super();
         this.chipName = name;
+        this.value = value;
         this.setSprite(this.chipName)
             .then(this.setText.bind(this, String(value)));
 

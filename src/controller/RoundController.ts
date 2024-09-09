@@ -5,16 +5,19 @@ import { Main } from "../main";
 import { BettingController } from "./BettingController";
 import { PointsController } from "./PointsController";
 import { ERoundState, TParticipants, TRoundResult } from "../data/types";
+import { CardModel } from "../model/CardModel";
 
 export class RoundController {
     public roundModel: RoundModel;
     private gameView: GameView;
     private deck = new DeckModel();
     private pointsController = new PointsController();
+    private bettingController
 
-    constructor(roundModel: RoundModel, gameView: GameView) {
+    constructor(roundModel: RoundModel, gameView: GameView, bettingController: BettingController) {
         this.gameView = gameView;
         this.roundModel = roundModel;
+        this.bettingController = bettingController;
         this.init();
     }
 
@@ -25,57 +28,51 @@ export class RoundController {
 
     private setEventListeners() {
         Main.signalController.round.start.add(this.onRoundStart, this);
+        // Main.signalController.bet.updated.add(this.onBetUpdated, this);
         Main.signalController.bet.placed.add(this.onBetPlaced, this);
         Main.signalController.player.hit.add(this.onPlayerHit, this);
         Main.signalController.player.stand.add(this.onPlayerStand, this);
-        Main.signalController.round.end.add(this.deactivate, this);
     }
 
     private async handleNextAction(state: ERoundState) {
         let dealTo: TParticipants = 'player';
         switch (state) {
-            case ERoundState.BETTING:
-                console.log('betting')
-                break;
+            case ERoundState.BETTING: 
+            // this.bettingController.setInitialBet();
+            break;
 
             case ERoundState.CARDS_DEALING:
-                console.log('cards dealing')
                 while (!this.roundModel.isDealingEnded()) {
                     await this.dealCardTo(dealTo)
                     dealTo = dealTo === 'player' ? 'dealer' : 'player';
                 }
-                !this.checkForBJ() && this.changeState(ERoundState.PLAYERS_TURN);
+                if(! await this.checkForBJ()) this.changeState(ERoundState.PLAYERS_TURN);
                 break;
 
             case ERoundState.PLAYERS_TURN:
-                console.log("player's turn");
                 if (this.pointsController.isWin(this.playersCards)) this.endRound('win');
                 if (this.pointsController.isBust(this.playersCards)) this.endRound('playerBust');
                 break;
 
             case ERoundState.DEALERS_TURN:
-                console.log("dealer's turn");
                 await this.revealHoleCard();
                 if (this.pointsController.isBust(this.dealersCards)) {
                     this.endRound('dealerBust');
                 } else await this.dealerPlay();
                 break;
-
-            case ERoundState.ROUND_OVER:
-                this.gameView.render(this.roundModel.roundStateInfo)
-                console.log('game Over');
-                break;
         }
     }
 
     private changeState(state: ERoundState) {
-        this.roundModel.state = state;
+        if (this.roundModel.state !== state) this.roundModel.state = state;
+        console.log(`%cEnabled state: ${ERoundState[state]}`, "color: green");
         Main.signalController.round.changeState.emit(this.roundModel.roundStateInfo);
         this.handleNextAction(state);
     }
 
     private onRoundStart() {
         this.changeState(ERoundState.BETTING);
+        this.bettingController.setInitialBet();
     }
 
     private onBetPlaced() {
@@ -87,7 +84,7 @@ export class RoundController {
             const card = this.deck.getCard();
             if (!card) return;
             this.roundModel.dealTo(person, card);
-            const totalPoints = this.pointsController.calcPoints(this.roundModel.cards[person]);
+            const totalPoints = this.pointsFrom(this.roundModel.cards[person]);
             Main.signalController.card.deal.emit({ person, card, totalPoints, resolve });
         })
     }
@@ -104,7 +101,7 @@ export class RoundController {
     }
 
     private async dealerPlay() {
-        if (this.pointsController.calcPoints(this.dealersCards) >= 17) {
+        if (this.pointsFrom(this.dealersCards) >= 17) {
             this.dealerStand();
             return;
         }
@@ -117,7 +114,6 @@ export class RoundController {
     }
 
     private async endRound(result: TRoundResult) {
-        console.log(result);
         if (this.holeCard) {
             await this.revealHoleCard();
         };
@@ -127,14 +123,14 @@ export class RoundController {
     }
 
     private comparePoints() {
-        this.pointsController.isTie(this.roundModel.cards) ? this.endRound('push') :
-            this.pointsController.calcPoints(this.playersCards) > this.pointsController.calcPoints(this.dealersCards) ?
-                this.endRound('win') : this.endRound('lose');
+        if (this.pointsController.isTie(this.roundModel.cards)) this.endRound('push');
+        if (this.pointsFrom(this.playersCards) > this.pointsFrom(this.dealersCards)) this.endRound('win');
+        if (this.pointsFrom(this.playersCards) < this.pointsFrom(this.dealersCards)) this.endRound('lose');
     }
 
     private async checkForDealerBJ() {
         if (!this.holeCard) return;
-        let dealerPoints = this.pointsController.calcPoints(this.dealersCards);
+        let dealerPoints = this.pointsFrom(this.dealersCards);
         if (dealerPoints !== 10 && dealerPoints !== 11) return;
         let holeCardPoints = this.pointsController.getCardPoints(this.holeCard);
         if (dealerPoints + holeCardPoints === 21) {
@@ -149,7 +145,7 @@ export class RoundController {
             this.pointsController.isTie(this.roundModel.cards) ? this.endRound('push') : this.endRound('dealerBJ');
             return true;
         }
-        if (this.pointsController.calcPoints(this.playersCards) === 21) {
+        if (this.pointsFrom(this.playersCards) === 21) {
             this.endRound('playerBJ');
             return true;
         }
@@ -163,7 +159,7 @@ export class RoundController {
             if (!this.holeCard) return;
             const card = this.holeCard;
             this.holeCard.hidden = false;
-            const totalPoints = this.pointsController.calcPoints(this.dealersCards);
+            const totalPoints = this.pointsFrom(this.dealersCards);
             Main.signalController.card.open.emit({ card, totalPoints, resolve });
         })
     }
@@ -181,11 +177,15 @@ export class RoundController {
         return this.dealersCards[1];
     }
 
-    private deactivate() {
+    private pointsFrom(cards: CardModel[]): number {
+        return this.pointsController.calcPoints(cards);
+    }
+
+    public deactivate() {
+        // Main.signalController.bet.updated.remove(this.onBetUpdated);
         Main.signalController.round.start.remove(this.onRoundStart);
         Main.signalController.bet.placed.remove(this.onBetPlaced);
         Main.signalController.player.hit.remove(this.onPlayerHit);
         Main.signalController.player.stand.remove(this.onPlayerStand);
-        Main.signalController.round.end.remove(this.deactivate);
     }
 }

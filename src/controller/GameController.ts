@@ -8,10 +8,10 @@ import { IStateInfo } from "../data/types";
 
 export class GameController {
     private app: Application;
-    private round: RoundController;
+    private roundController: RoundController;
     private _playerBalance = 1000;
     private _totalWin = 0;
-    private previousBet = 0;
+    private _previousBet = 0;
     private gameView: GameView | null = null;
     private roundModel: RoundModel | null = null;
     private bettingController: BettingController | null = null;
@@ -20,9 +20,9 @@ export class GameController {
     constructor(app: Application) {
         this.app = app;
         this.gameView = new GameView(this.app, this.playerBalance, this.totalWin);
-        this.roundModel = new RoundModel(this.previousBet);
+        this.roundModel = new RoundModel();
         this.bettingController = new BettingController(this.roundModel, this);
-        this.round = new RoundController(this.roundModel, this.gameView);
+        this.roundController = new RoundController(this.roundModel, this.gameView, this.bettingController);
     }
 
     public init() {
@@ -33,27 +33,24 @@ export class GameController {
     private setEventListeners() {
         Main.signalController.round.new.add(this.onNewRound, this);
         Main.signalController.round.end.add(this.onRoundEnd, this);
-        Main.signalController.bet.updated.add(this.onBetUpdate, this);
     }
 
     private onNewRound() {
-        console.log('new round');
+        console.log('%cNew round', 'color: red');
+        this.gameView?.deactivate();
+        this.bettingController && this.bettingController.deactivate()
+        this.roundController.deactivate()
         this.app.stage.removeChildren();
-        this.removeFromBalance(this.previousBet);
         this.gameView = new GameView(this.app, this.playerBalance, this._totalWin);
-        this.roundModel = new RoundModel(this.previousBet);
-        this.round = new RoundController(this.roundModel, this.gameView);
+        this.roundModel = new RoundModel();
         this.bettingController = new BettingController(this.roundModel, this);
+        this.roundController = new RoundController(this.roundModel, this.gameView, this.bettingController);
         Main.signalController.round.start.emit();
     }
 
     private onRoundEnd() {
-        this.history.push(this.round.roundModel.roundStateInfo);
-        this._totalWin += this.round.roundModel.roundStateInfo.win;
-    }
-
-    private onBetUpdate(betSize: number) {
-        this.previousBet = betSize;
+        this.history.push(this.roundController.roundModel.roundStateInfo);
+        this._totalWin += this.roundController.roundModel.roundStateInfo.win;
     }
 
     get playerBalance() {
@@ -61,8 +58,15 @@ export class GameController {
     }
 
     get totalWin() {
-        console.log('total win: '+ this._totalWin)
         return this._totalWin;
+    }
+
+    get previousBet() {
+        return this._previousBet;
+    }
+
+    set previousBet(value: number) {
+        this._previousBet = value;
     }
 
     public addToBalance(value: number) {

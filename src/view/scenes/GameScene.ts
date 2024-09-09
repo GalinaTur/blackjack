@@ -1,23 +1,19 @@
 import { Container, Text } from "pixi.js";
 import { Main } from "../../main";
 import { CardView } from "./sceneComponents/CardView";
-import { ICardsDealed, TRoundResult, IScene } from "../../data/types";
+import { TRoundResult, IScene } from "../../data/types";
 import { Textstyles } from "../styles/TextStyles";
 import { CardModel } from "../../model/CardModel";
 import { TParticipants } from "../../data/types";
 import { ChipView } from "./sceneComponents/ChipView";
 import { Animations } from "../styles/Animations";
+import { Hand } from "./sceneComponents/Hand";
 
 export class GameScene extends Container implements IScene<void> {
-    private dealersHand = new Container();
-    private playersHand = new Container();
-    private splitHand = new Container();
+    private dealersHand = new Hand();
+    private playersHand = new Hand();
+    private splitHand = new Hand();
     private chipsStack = new Container();
-    private cards: ICardsDealed = {
-        dealer: [],
-        player: [],
-        split: []
-    };
 
     constructor() {
         super();
@@ -28,20 +24,14 @@ export class GameScene extends Container implements IScene<void> {
     }
 
     private init() {
-        this.setPlayersHand();
-        this.setDealersHand();
-    }
-
-    private async setDealersHand() {
-        this.dealersHand.sortableChildren = true;
+        this.setEventListeners();
         this.dealersHand.position.set(Main.screenSize.width / 2.1, Main.screenSize.height * 0.3);
-        this.addChild(this.dealersHand);
+        this.playersHand.position.set(Main.screenSize.width / 2.1, Main.screenSize.height * 0.7);
+        this.addChild(this.dealersHand, this.playersHand);
     }
 
-    private async setPlayersHand() {
-        this.playersHand.sortableChildren = true;
-        this.playersHand.position.set(Main.screenSize.width / 2.1, Main.screenSize.height * 0.7);
-        this.addChild(this.playersHand);
+    private setEventListeners() {
+        Main.signalController.bet.cleared.add(this.onBetClear, this);
     }
 
     private async setPushLabel() {
@@ -52,27 +42,6 @@ export class GameScene extends Container implements IScene<void> {
         text.anchor.set(0.5);
         image.addChild(text);
         this.addChild(image);
-    }
-
-    private async setCard(parent: Container, card: CardModel, index: number) {
-        const cardView = new CardView(card);
-        cardView.position.set(500, -1500);
-        parent.addChild(cardView)
-        await Animations.cards.deal(cardView, index);
-    }
-
-    private async setPointsLabel(parent: Container, points: number) {
-        const label = await Main.assetsLoader.getSprite("points_label");
-        label.anchor.set(0, 0.5)
-        label.position.set(-50, 35);
-        label.scale.set(0, 1);
-        const text = new Text(points, Textstyles.LABEL_TEXTSTYLE);
-        text.anchor.set(0.5, 0.5);
-        text.position.set(50, 0.5);
-        label.zIndex = 1
-        Animations.cards.addPointsLabel(label);
-        label.addChild(text);
-        parent.addChild(label);
     }
 
     private async setBJLabel(parent: Container) {
@@ -111,6 +80,15 @@ export class GameScene extends Container implements IScene<void> {
         parent.addChild(image);
     }
 
+    private async createLabel(message: string, imageName: string) {
+        const image = await Main.assetsLoader.getSprite('win_label');
+        image.anchor.set(0.5);
+        image.position.set(100, 35);
+        const text = new Text(message, Textstyles.LABEL_TEXTSTYLE);
+        text.anchor.set(0.5);
+        image.addChild(text);
+    }
+
     private async setShine() {
         const shine = await Main.assetsLoader.getSprite('shine');
         shine.anchor.set(0.5);
@@ -119,34 +97,40 @@ export class GameScene extends Container implements IScene<void> {
     }
 
     public async onCardDeal(person: TParticipants, card: CardModel, points: number) {
-        if (person === 'dealer') {
-            this.cards.dealer.push(card);
-            await this.setCard(this.dealersHand, card, this.cards.dealer.length - 1);
-            if (this.cards.dealer.length < 2) return;
-            this.setPointsLabel(this.dealersHand, points);
-        } else if (person === 'player') {
-            this.cards.player.push(card);
-            await this.setCard(this.playersHand, card, this.cards.player.length - 1);
-            if (this.cards.player.length < 2) return;
-            this.setPointsLabel(this.playersHand, points);
-        }
+        let hand: Hand | null = null;
+        if (person === 'dealer') hand = this.dealersHand;
+        if (person === 'player') hand = this.playersHand;
+        if (!hand) return;
+
+        const cardView = new CardView(card);
+        await hand.dealCard(cardView);
+        if (hand.cards.length < 1) return;
+        hand.points = points;
     }
 
     public async onCardOpen(card: CardModel, points: number) {
-        const cardIndex = this.cards.dealer.findIndex((cardElement) => cardElement.value === card.value);
-        const cardView = this.dealersHand.children[cardIndex] as CardView;
+        const cardView = this.dealersHand.cards.find((cardView) => cardView.value === card.value);
+        if (!cardView) return;  
         await cardView.open();
-        this.setPointsLabel(this.dealersHand, points);
+        this.dealersHand.points = points;
     }
 
     public addChipToStack(chip: ChipView) {
         const index = this.chipsStack.children.length;
         Animations.chip.place(chip, index);
-        chip.dropShadowFilter.offset.x +=6*index;
+        chip.dropShadowFilter.offset.x = -6*index;
         chip.dropShadowFilter.offset.y = 0;
         chip.dropShadowFilter.alpha -=0.1* index;
         chip.dropShadowFilter.blur +=0.5* index;
         this.chipsStack.addChild(chip);
+    }
+
+    // onBetAdd()
+
+    private async onBetClear() {
+        await Animations.chipStack.remove(this.chipsStack);
+        this.chipsStack.removeChildren();
+        this.chipsStack.position.set(0,0)
     }
 
     public onResize() {
@@ -188,4 +172,8 @@ export class GameScene extends Container implements IScene<void> {
     private resize() {
 
     };
+
+    public deactivate() {
+        Main.signalController.bet.cleared.remove(this.onBetClear);
+    }
 }

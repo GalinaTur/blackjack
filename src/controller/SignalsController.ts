@@ -1,8 +1,8 @@
-import { TParticipants } from "../data/types";
+import { TBets, TParticipants } from "../data/types";
 import { CardModel } from "../model/CardModel";
 import { IStateInfo, TRoundResult } from "../data/types";
 
-class Signal<T = void> {
+class Signal<T = void>  {
     private subscribers: { func: ((data: T) => void), ctx: unknown }[] = [];
 
     public add(func: ((data: T) => void), ctx: unknown) {
@@ -29,9 +29,9 @@ export class SignalsController {
     }
 
     public bet = {
-        added: new Signal<number>(),
-        updated: new Signal<number>(),
-        removed: new Signal<number>(),
+        added: new Signal<TBets>(),
+        updated: new Signal<{betValues: TBets[], sum:number, availableBets: TBets[]}>(),
+        removed: new Signal<TBets>(),
         placed: new Signal<void>(),
         cleared: new Signal<void>(),
         rebet: new Signal<void>(),

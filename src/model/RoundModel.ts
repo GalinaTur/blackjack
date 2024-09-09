@@ -1,9 +1,10 @@
-import { ERoundState, ICardsDealed, IStateInfo, TRoundResult } from "../data/types";
+import { ERoundState, ICardsDealed, IStateInfo, TBets, TRoundResult } from "../data/types";
 import { CardModel } from "./CardModel";
 
 export class RoundModel {
 
     private _roundStateInfo: IStateInfo = {
+        availableBets: [],
         bet: 0,
         win: 0,
         currentState: ERoundState.NOT_STARTED,
@@ -14,10 +15,6 @@ export class RoundModel {
         },
         isSplitAllowed: false,
         roundResult: null,
-    }
-
-    constructor(previousBet: number) {
-        this._roundStateInfo.bet = previousBet;
     }
 
     public increaseBet(value: number) {
@@ -43,7 +40,6 @@ export class RoundModel {
             this._roundStateInfo.cards.player.length < 2) {
             return false;
         }
-        this._roundStateInfo.currentState = ERoundState.PLAYERS_TURN;
         return true;
     }
 
@@ -77,6 +73,10 @@ export class RoundModel {
 
     set result(roundResult: TRoundResult) {
         this._roundStateInfo.roundResult = roundResult;
+    }
+
+    set availableBets(bets: TBets[]) {
+        this._roundStateInfo.availableBets = bets;
     }
 }
 

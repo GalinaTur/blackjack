@@ -13,12 +13,12 @@ export class InitialScene extends Container implements IScene<void> {
         this.init();
     }
 
-    private init() {
+    private init(): void{
         this.setLogo();
         this.setButton();
     }
 
-    private async setLogo() {
+    private async setLogo(): Promise<void> {
         this.logo = await Main.assetsLoader.getSprite('initialLogo');
         this.logo.position.set(Main.screenSize.width / 2, Main.screenSize.height * 0.4);
         this.logo.anchor.set(0.5);
@@ -26,12 +26,12 @@ export class InitialScene extends Container implements IScene<void> {
         Animations.initialLogo.scale(this.logo);
     }
 
-    private setButton() {
+    private setButton(): void {
         this.addChild(this.button);
         this.button.position.set(Main.screenSize.width / 2, Main.screenSize.height * 0.85);
     }
 
-    private onStartClick() {
+    private onStartClick(): void {
         Main.signalController.round.start.emit();
     }
 
