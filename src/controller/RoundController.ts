@@ -37,6 +37,9 @@ export class RoundController {
     private async handleNextAction(state: ERoundState) {
         let dealTo: TParticipants = 'player';
         switch (state) {
+            case ERoundState.NOT_STARTED: 
+            this.gameView.render(this.roundModel.roundStateInfo)
+            break; 
             case ERoundState.BETTING: 
             // this.bettingController.setInitialBet();
             break;
@@ -82,7 +85,10 @@ export class RoundController {
     private dealCardTo(person: TParticipants) {
         return new Promise((resolve) => {
             const card = this.deck.getCard();
-            if (!card) return;
+            if (!card) {
+                console.error("No more cards in deck!");
+                return;
+            };
             this.roundModel.dealTo(person, card);
             const totalPoints = this.pointsFrom(this.roundModel.cards[person]);
             Main.signalController.card.deal.emit({ person, card, totalPoints, resolve });

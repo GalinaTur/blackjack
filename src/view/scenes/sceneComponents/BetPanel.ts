@@ -6,10 +6,14 @@ import { GameScene } from "../GameScene";
 import { EChips, IPanel, TBets, } from "../../../data/types";
 import { Panel } from "./Panel";
 import { Animations } from "../../styles/Animations";
+import { ColorGradientFilter } from "pixi-filters";
+import { BUTTONS } from "../../../data/constants";
 
 export class BetPanel extends Panel implements IPanel {
-    private clearBetButton: Button;
-    private placeBetButton: Button;
+    private dealButton: Button;
+    private doubleButton: Button;
+    private undoButton: Button;
+    private clearButton: Button;
     private isButtonsActive = false;
     private chips: ChipView[] = [];
     private availableBets: TBets[] = [];
@@ -18,8 +22,10 @@ export class BetPanel extends Panel implements IPanel {
     constructor(availableBets: TBets[]) {
         super('bet_panel');
         // if (betSize > 0) this.isButtonsActive = true;
-        this.clearBetButton = new Button('Clear Bet', this.onClearBet, this.isButtonsActive);
-        this.placeBetButton = new Button('Place Bet', this.onPlaceBet, this.isButtonsActive);
+        this.dealButton = new Button(BUTTONS.bet.deal, this.onPlaceBet, this.isButtonsActive);
+        this.doubleButton = new Button(BUTTONS.bet.double, this.onPlaceBet, this.isButtonsActive);
+        this.undoButton = new Button(BUTTONS.bet.undo, this.onPlaceBet, this.isButtonsActive);
+        this.clearButton = new Button(BUTTONS.bet.clear, this.onClearBet, this.isButtonsActive);
         this.availableBets = availableBets;
     }
 
@@ -30,13 +36,17 @@ export class BetPanel extends Panel implements IPanel {
     }
 
     private setButtons() {
-        this.clearBetButton.position.set(183, -155);
-        this.clearBetButton.scale.set(0.7);
-        this.addChild(this.clearBetButton);
+        this.dealButton.position.set(Main.screenSize.width*0.5, -100);
+        this.addChild(this.dealButton);
 
-        this.placeBetButton.position.set(this.width - 183, -65);
-        this.placeBetButton.scale.set(0.7);
-        this.addChild(this.placeBetButton);
+        this.doubleButton.position.set(Main.screenSize.width*0.55, -100);
+        this.addChild(this.doubleButton);
+
+        this.undoButton.position.set(Main.screenSize.width*0.6, -100);
+        this.addChild(this.undoButton);
+
+        this.clearButton.position.set(Main.screenSize.width*0.65, -100);
+        this.addChild(this.clearButton);
     }
 
     private setChips() {
@@ -46,12 +56,9 @@ export class BetPanel extends Panel implements IPanel {
             const chip = new ChipView(name, this.availableBets[i], () => this.onChipClick(this.availableBets[i], chip));
             this.chips.push(chip);
 
-            chip.position.y = -Main.screenSize.height * 0.2;
-            chip.position.x = this.width * 0.322 + i * this.width * 0.14;
-            if (chip.position.x > this.width * 0.8) {
-                chip.position.y = -Main.screenSize.height * 0.08;
-                chip.position.x = -this.width * 0.31 + i * this.width * 0.14;
-            }
+            chip.scale.set(Math.max(Main.screenSize.width*3/10000, Main.screenSize.height*4/10000))
+            chip.position.y = -100;
+            chip.position.x = Main.screenSize.width*0.4 - i * Main.screenSize.width * 0.04;
             this.addChild(chip)
         }
     }
@@ -78,8 +85,8 @@ export class BetPanel extends Panel implements IPanel {
         this.isButtonsActive = Boolean(betSize);
         this.availableBets = availableBets;
         await this.updateChips();
-        this.clearBetButton.updateIsActive(this.isButtonsActive);
-        this.placeBetButton.updateIsActive(this.isButtonsActive);
+        this.clearButton.updateIsActive(this.isButtonsActive);
+        this.dealButton.updateIsActive(this.isButtonsActive);
     }
 
     private async updateChips() {

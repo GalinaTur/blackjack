@@ -1,4 +1,4 @@
-import { Application, Container, Text } from "pixi.js";
+import { Application, BlurFilter, Container, Text } from "pixi.js";
 import { Main } from "../main";
 import { Background } from "./scenes/sceneComponents/Background";
 import { InitialScene } from "./scenes/InitialScene";
@@ -12,13 +12,19 @@ import { FinalPanel } from "./scenes/sceneComponents/FinalPanel";
 import { TParticipants } from "../data/types";
 import { Textstyles } from "./styles/TextStyles";
 import { Panel } from "./scenes/sceneComponents/Panel";
+import { ColorGradientFilter, MotionBlurFilter } from "pixi-filters";
+import { Animations } from "./styles/Animations";
+import { Footer } from "./scenes/sceneComponents/Footer";
+import gsap from "gsap";
 
 export class GameView {
-    private appStage: Container;
+    private app: Application;
+    private background: Background | null = null;
     private currentScene: IScene<IStateInfo> | null = null;
     private currentFooterPanel: IPanel | null = null;
     private initialScene: InitialScene | null = null;
     private headerPanel: HeaderPanel | null = null;
+    private footer: Footer | null = null;
     private betPanel: BetPanel | null = null;
     private gamePanel: GamePanel | null = null;
     private finalPanel: FinalPanel | null = null;
@@ -27,7 +33,7 @@ export class GameView {
     private totalWin = 0;
 
     constructor(app: Application, playerBalance: number, totalWin: number) {
-        this.appStage = app.stage;
+        this.app = app;
         this.playerBalance = playerBalance;
         this.totalWin = totalWin;
         this.init();
@@ -35,7 +41,7 @@ export class GameView {
 
     private init() {
         this.setEventListeners();
-        this.appStage.addChild(new Background());
+        gsap.ticker.add(this.onResize.bind(this));
     }
 
     private setEventListeners() {
@@ -48,13 +54,22 @@ export class GameView {
 
     public async render(stateInfo: IStateInfo) {
         switch (stateInfo.currentState) {
+            case ERoundState.NOT_STARTED:
+                this.background = new Background();
+                this.background.blur();
+                this.app.stage.addChild(this.background);
+                break;
+
             case ERoundState.BETTING:
+                this.background?.unblur()
                 if (!this.gameScene) {
                     this.gameScene = new GameScene();
                     this.setCurrentScene(this.gameScene);
-                    this.renderHeaderPanel(stateInfo, this.playerBalance, this.totalWin);
                 }
-
+                this.renderHeaderPanel(stateInfo, this.playerBalance, this.totalWin);
+                this.renderFooter();
+                this.footer?.updateText('Place your bets...')
+                
                 if (!this.betPanel) {
                     // this.betPanel = new BetPanel(stateInfo.bet, stateInfo.availableBets);
                     this.betPanel = new BetPanel(stateInfo.availableBets);
@@ -83,7 +98,8 @@ export class GameView {
                 this.setCurrentFooterPanel(this.finalPanel);
 
                 if (stateInfo.win > 0) {
-                    this.renderWinPopup(stateInfo.win);
+                    const popup = await this.gameScene?.renderWinPopup(stateInfo.win);
+                    popup && this.app.stage.addChild(popup);
                 }
                 break;
         }
@@ -97,12 +113,18 @@ export class GameView {
     private renderHeaderPanel(stateInfo: IStateInfo, playerBalance: number, totalWin: number) {
         this.headerPanel = new HeaderPanel(stateInfo.win, playerBalance, totalWin);
         this.headerPanel.position.set(0, 0);
-        this.appStage.addChild(this.headerPanel);
+        this.app.stage.addChild(this.headerPanel);
     }
 
-    private setCurrentScene<T>(scene: IScene<T>) {
-        this.currentScene && this.appStage.removeChild(this.currentScene);
-        this.currentScene = this.appStage.addChild(scene);
+    private renderFooter() {
+        this.footer = new Footer();
+        this.app.stage.addChild(this.footer);
+    }
+
+    private  setCurrentScene<T>(scene: IScene<T>) {
+        this.currentScene && this.currentScene.deactivate();
+        this.currentScene = this.app.stage.addChild(scene);
+        console.log(this.currentScene)
     }
 
     private setCurrentFooterPanel(footerPanel: Panel) {
@@ -110,17 +132,6 @@ export class GameView {
         this.currentFooterPanel = footerPanel;
         this.currentScene && this.currentScene.addChild(footerPanel);
         this.currentFooterPanel.position.set(0, Main.screenSize.height)
-    }
-
-    private async renderWinPopup(winSize: number) {
-        const background = await Main.assetsLoader.getSprite('finalLabel');
-        background.anchor.set(0.5);
-        background.position.set(Main.screenSize.width / 2, Main.screenSize.height * 0.4)
-        const text = new Text(`${winSize}$`, Textstyles.WIN_TEXTSTYLE);
-        text.anchor.set(0.5, 0)
-        text.position.set(0, 80)
-        background.addChild(text);
-        this.appStage.addChild(background);
     }
 
     private onBetUpdate(data: { betValues: TBets[], sum: number, availableBets: TBets[] }) {
@@ -143,8 +154,16 @@ export class GameView {
 
     private async onRoundEnd(result: TRoundResult) {
         await this.gameScene?.onRoundEnd(result);
-        
+
         // this.deactivate();
+    }
+
+    public onResize() {
+        if (!this.background) return;
+        this.background?.onResize();
+        this.footer?.onResize();
+      this.currentScene?.onResize()
+
     }
     public deactivate() {
         this.headerPanel?.deactivate();

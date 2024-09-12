@@ -29,32 +29,56 @@ export const ASSETS_MANIFEST = {
                 },
                 {
                     name: 'background',
-                    srcs: '../../../assets/background.jpg',
+                    srcs: '../../../assets/background.png',
                 },
                 {
                     name: 'bgLogo',
                     srcs: '../../../assets/bgLogo.png',
                 },
-                {
-                    name: 'button',
-                    srcs: '../../../assets/button.png',
-                },
             ],
         },
         {
-            name: 'gameTableAssets',
+            name: 'buttons',
             assets: [
                 {
-                    name: 'header_panel',
-                    srcs: '../../../assets/headerPanel.png',
+                    name: 'clearBet',
+                    srcs: '../../../assets/buttons/clearBet.png',
                 },
                 {
-                    name: 'bet_panel',
-                    srcs: '../../../assets/betPanel.png',
+                    name: 'deal',
+                    srcs: '../../../assets/buttons/deal.png',
                 },
                 {
-                    name: 'game_panel',
-                    srcs: '../../../assets/gamePanel.png',
+                    name: 'double',
+                    srcs: '../../../assets/buttons/double.png',
+                },
+                {
+                    name: 'doubleBet',
+                    srcs: '../../../assets/buttons/doubleBet.png',
+                },
+                {
+                    name: 'hit',
+                    srcs: '../../../assets/buttons/hit.png',
+                },
+                {
+                    name: 'stand',
+                    srcs: '../../../assets/buttons/stand.png',
+                },
+                {
+                    name: 'insurance',
+                    srcs: '../../../assets/buttons/insurance.png',
+                },
+                {
+                    name: 'noInsurance',
+                    srcs: '../../../assets/buttons/noInsurance.png',
+                },
+                {
+                    name: 'split',
+                    srcs: '../../../assets/buttons/split.png',
+                },
+                {
+                    name: 'undo',
+                    srcs: '../../../assets/buttons/undo.png',
                 },
             ],
         },
@@ -88,6 +112,19 @@ export const ASSETS_MANIFEST = {
                 {
                     name: 'finalLabel',
                     srcs: '../../../assets/finalLabel.png',
+                },
+            ],
+        },
+        {
+            name: 'other',
+            assets: [
+                {
+                    name: 'cardsShoe',
+                    srcs: '../../../assets/shoe.png',
+                },
+                {
+                    name: 'cardsShoePart',
+                    srcs: '../../../assets/shoePart.png',
                 },
             ],
         },

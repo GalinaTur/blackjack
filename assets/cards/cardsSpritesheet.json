@@ -1,1063 +1,1063 @@
 {
 	"frames": {
-		"ten_of_clubs": {
-			"frame": {
-				"x": 2,
-				"y": 2,
-				"w": 250,
-				"h": 363
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 250,
-				"h": 363
-			},
-			"sourceSize": {
-				"w": 250,
-				"h": 363
-			}
-		},
-		"ten_of_diamonds": {
-			"frame": {
-				"x": 256,
-				"y": 2,
-				"w": 250,
-				"h": 363
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 250,
-				"h": 363
-			},
-			"sourceSize": {
-				"w": 250,
-				"h": 363
-			}
-		},
-		"ten_of_hearts": {
-			"frame": {
-				"x": 510,
-				"y": 2,
-				"w": 250,
-				"h": 363
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 250,
-				"h": 363
-			},
-			"sourceSize": {
-				"w": 250,
-				"h": 363
-			}
-		},
-		"ten_of_spades": {
-			"frame": {
-				"x": 764,
-				"y": 2,
-				"w": 250,
-				"h": 363
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 250,
-				"h": 363
-			},
-			"sourceSize": {
-				"w": 250,
-				"h": 363
-			}
-		},
-		"two_of_clubs": {
-			"frame": {
-				"x": 1018,
-				"y": 2,
-				"w": 250,
-				"h": 363
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 250,
-				"h": 363
-			},
-			"sourceSize": {
-				"w": 250,
-				"h": 363
-			}
-		},
-		"two_of_diamonds": {
-			"frame": {
-				"x": 1272,
-				"y": 2,
-				"w": 250,
-				"h": 363
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 250,
-				"h": 363
-			},
-			"sourceSize": {
-				"w": 250,
-				"h": 363
-			}
-		},
-		"two_of_hearts": {
-			"frame": {
-				"x": 1526,
-				"y": 2,
-				"w": 250,
-				"h": 363
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 250,
-				"h": 363
-			},
-			"sourceSize": {
-				"w": 250,
-				"h": 363
-			}
-		},
-		"two_of_spades": {
-			"frame": {
-				"x": 1780,
-				"y": 2,
-				"w": 250,
-				"h": 363
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 250,
-				"h": 363
-			},
-			"sourceSize": {
-				"w": 250,
-				"h": 363
-			}
-		},
-		"three_of_clubs": {
-			"frame": {
-				"x": 2,
-				"y": 369,
-				"w": 250,
-				"h": 363
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 250,
-				"h": 363
-			},
-			"sourceSize": {
-				"w": 250,
-				"h": 363
-			}
-		},
-		"three_of_diamonds": {
-			"frame": {
-				"x": 256,
-				"y": 369,
-				"w": 250,
-				"h": 363
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 250,
-				"h": 363
-			},
-			"sourceSize": {
-				"w": 250,
-				"h": 363
-			}
-		},
-		"three_of_hearts": {
-			"frame": {
-				"x": 510,
-				"y": 369,
-				"w": 250,
-				"h": 363
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 250,
-				"h": 363
-			},
-			"sourceSize": {
-				"w": 250,
-				"h": 363
-			}
-		},
-		"three_of_spades": {
-			"frame": {
-				"x": 764,
-				"y": 369,
-				"w": 250,
-				"h": 363
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 250,
-				"h": 363
-			},
-			"sourceSize": {
-				"w": 250,
-				"h": 363
-			}
-		},
-		"four_of_clubs": {
-			"frame": {
-				"x": 1018,
-				"y": 369,
-				"w": 250,
-				"h": 363
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 250,
-				"h": 363
-			},
-			"sourceSize": {
-				"w": 250,
-				"h": 363
-			}
-		},
-		"four_of_diamonds": {
-			"frame": {
-				"x": 1272,
-				"y": 369,
-				"w": 250,
-				"h": 363
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 250,
-				"h": 363
-			},
-			"sourceSize": {
-				"w": 250,
-				"h": 363
-			}
-		},
-		"four_of_hearts": {
-			"frame": {
-				"x": 1526,
-				"y": 369,
-				"w": 250,
-				"h": 363
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 250,
-				"h": 363
-			},
-			"sourceSize": {
-				"w": 250,
-				"h": 363
-			}
-		},
-		"four_of_spades": {
-			"frame": {
-				"x": 1780,
-				"y": 369,
-				"w": 250,
-				"h": 363
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 250,
-				"h": 363
-			},
-			"sourceSize": {
-				"w": 250,
-				"h": 363
-			}
-		},
-		"five_of_clubs": {
-			"frame": {
-				"x": 2,
-				"y": 736,
-				"w": 250,
-				"h": 363
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 250,
-				"h": 363
-			},
-			"sourceSize": {
-				"w": 250,
-				"h": 363
-			}
-		},
-		"five_of_diamonds": {
-			"frame": {
-				"x": 256,
-				"y": 736,
-				"w": 250,
-				"h": 363
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 250,
-				"h": 363
-			},
-			"sourceSize": {
-				"w": 250,
-				"h": 363
-			}
-		},
-		"five_of_hearts": {
-			"frame": {
-				"x": 510,
-				"y": 736,
-				"w": 250,
-				"h": 363
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 250,
-				"h": 363
-			},
-			"sourceSize": {
-				"w": 250,
-				"h": 363
-			}
-		},
-		"five_of_spades": {
-			"frame": {
-				"x": 764,
-				"y": 736,
-				"w": 250,
-				"h": 363
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 250,
-				"h": 363
-			},
-			"sourceSize": {
-				"w": 250,
-				"h": 363
-			}
-		},
-		"six_of_clubs": {
-			"frame": {
-				"x": 1018,
-				"y": 736,
-				"w": 250,
-				"h": 363
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 250,
-				"h": 363
-			},
-			"sourceSize": {
-				"w": 250,
-				"h": 363
-			}
-		},
-		"six_of_diamonds": {
-			"frame": {
-				"x": 1272,
-				"y": 736,
-				"w": 250,
-				"h": 363
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 250,
-				"h": 363
-			},
-			"sourceSize": {
-				"w": 250,
-				"h": 363
-			}
-		},
-		"six_of_hearts": {
-			"frame": {
-				"x": 1526,
-				"y": 736,
-				"w": 250,
-				"h": 363
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 250,
-				"h": 363
-			},
-			"sourceSize": {
-				"w": 250,
-				"h": 363
-			}
-		},
-		"six_of_spades": {
-			"frame": {
-				"x": 1780,
-				"y": 736,
-				"w": 250,
-				"h": 363
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 250,
-				"h": 363
-			},
-			"sourceSize": {
-				"w": 250,
-				"h": 363
-			}
-		},
-		"seven_of_clubs": {
-			"frame": {
-				"x": 2,
-				"y": 1103,
-				"w": 250,
-				"h": 363
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 250,
-				"h": 363
-			},
-			"sourceSize": {
-				"w": 250,
-				"h": 363
-			}
-		},
-		"seven_of_diamonds": {
-			"frame": {
-				"x": 256,
-				"y": 1103,
-				"w": 250,
-				"h": 363
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 250,
-				"h": 363
-			},
-			"sourceSize": {
-				"w": 250,
-				"h": 363
-			}
-		},
-		"seven_of_hearts": {
-			"frame": {
-				"x": 510,
-				"y": 1103,
-				"w": 250,
-				"h": 363
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 250,
-				"h": 363
-			},
-			"sourceSize": {
-				"w": 250,
-				"h": 363
-			}
-		},
-		"seven_of_spades": {
-			"frame": {
-				"x": 764,
-				"y": 1103,
-				"w": 250,
-				"h": 363
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 250,
-				"h": 363
-			},
-			"sourceSize": {
-				"w": 250,
-				"h": 363
-			}
-		},
-		"eight_of_clubs": {
-			"frame": {
-				"x": 1018,
-				"y": 1103,
-				"w": 250,
-				"h": 363
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 250,
-				"h": 363
-			},
-			"sourceSize": {
-				"w": 250,
-				"h": 363
-			}
-		},
-		"eight_of_diamonds": {
-			"frame": {
-				"x": 1272,
-				"y": 1103,
-				"w": 250,
-				"h": 363
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 250,
-				"h": 363
-			},
-			"sourceSize": {
-				"w": 250,
-				"h": 363
-			}
-		},
-		"eight_of_hearts": {
-			"frame": {
-				"x": 1526,
-				"y": 1103,
-				"w": 250,
-				"h": 363
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 250,
-				"h": 363
-			},
-			"sourceSize": {
-				"w": 250,
-				"h": 363
-			}
-		},
-		"eight_of_spades": {
-			"frame": {
-				"x": 1780,
-				"y": 1103,
-				"w": 250,
-				"h": 363
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 250,
-				"h": 363
-			},
-			"sourceSize": {
-				"w": 250,
-				"h": 363
-			}
-		},
-		"nine_of_clubs": {
-			"frame": {
-				"x": 2,
-				"y": 1470,
-				"w": 250,
-				"h": 363
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 250,
-				"h": 363
-			},
-			"sourceSize": {
-				"w": 250,
-				"h": 363
-			}
-		},
-		"nine_of_diamonds": {
-			"frame": {
-				"x": 256,
-				"y": 1470,
-				"w": 250,
-				"h": 363
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 250,
-				"h": 363
-			},
-			"sourceSize": {
-				"w": 250,
-				"h": 363
-			}
-		},
-		"nine_of_hearts": {
-			"frame": {
-				"x": 510,
-				"y": 1470,
-				"w": 250,
-				"h": 363
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 250,
-				"h": 363
-			},
-			"sourceSize": {
-				"w": 250,
-				"h": 363
-			}
-		},
-		"nine_of_spades": {
-			"frame": {
-				"x": 764,
-				"y": 1470,
-				"w": 250,
-				"h": 363
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 250,
-				"h": 363
-			},
-			"sourceSize": {
-				"w": 250,
-				"h": 363
-			}
-		},
 		"ace_of_clubs": {
 			"frame": {
-				"x": 1018,
-				"y": 1470,
-				"w": 250,
-				"h": 363
+				"x": 1,
+				"y": 1,
+				"w": 69,
+				"h": 100
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 250,
-				"h": 363
+				"w": 69,
+				"h": 100
 			},
 			"sourceSize": {
-				"w": 250,
-				"h": 363
+				"w": 69,
+				"h": 100
 			}
 		},
 		"ace_of_diamonds": {
 			"frame": {
-				"x": 1272,
-				"y": 1470,
-				"w": 250,
-				"h": 363
+				"x": 72,
+				"y": 1,
+				"w": 69,
+				"h": 100
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 250,
-				"h": 363
+				"w": 69,
+				"h": 100
 			},
 			"sourceSize": {
-				"w": 250,
-				"h": 363
+				"w": 69,
+				"h": 100
 			}
 		},
 		"ace_of_hearts": {
 			"frame": {
-				"x": 1526,
-				"y": 1470,
-				"w": 250,
-				"h": 363
+				"x": 143,
+				"y": 1,
+				"w": 69,
+				"h": 100
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 250,
-				"h": 363
+				"w": 69,
+				"h": 100
 			},
 			"sourceSize": {
-				"w": 250,
-				"h": 363
+				"w": 69,
+				"h": 100
 			}
 		},
 		"ace_of_spades": {
 			"frame": {
-				"x": 1780,
-				"y": 1470,
-				"w": 250,
-				"h": 363
+				"x": 214,
+				"y": 1,
+				"w": 69,
+				"h": 100
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 250,
-				"h": 363
+				"w": 69,
+				"h": 100
 			},
 			"sourceSize": {
-				"w": 250,
-				"h": 363
+				"w": 69,
+				"h": 100
 			}
 		},
-		"cards_back": {
+		"card_back": {
 			"frame": {
-				"x": 2,
-				"y": 1837,
-				"w": 250,
-				"h": 363
+				"x": 285,
+				"y": 1,
+				"w": 69,
+				"h": 100
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 250,
-				"h": 363
+				"w": 69,
+				"h": 100
 			},
 			"sourceSize": {
-				"w": 250,
-				"h": 363
+				"w": 69,
+				"h": 100
+			}
+		},
+		"eight_of_clubs": {
+			"frame": {
+				"x": 356,
+				"y": 1,
+				"w": 69,
+				"h": 100
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 69,
+				"h": 100
+			},
+			"sourceSize": {
+				"w": 69,
+				"h": 100
+			}
+		},
+		"eight_of_diamonds": {
+			"frame": {
+				"x": 427,
+				"y": 1,
+				"w": 69,
+				"h": 100
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 69,
+				"h": 100
+			},
+			"sourceSize": {
+				"w": 69,
+				"h": 100
+			}
+		},
+		"eight_of_hearts": {
+			"frame": {
+				"x": 498,
+				"y": 1,
+				"w": 69,
+				"h": 100
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 69,
+				"h": 100
+			},
+			"sourceSize": {
+				"w": 69,
+				"h": 100
+			}
+		},
+		"eight_of_spades": {
+			"frame": {
+				"x": 1,
+				"y": 103,
+				"w": 69,
+				"h": 100
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 69,
+				"h": 100
+			},
+			"sourceSize": {
+				"w": 69,
+				"h": 100
+			}
+		},
+		"five_of_clubs": {
+			"frame": {
+				"x": 72,
+				"y": 103,
+				"w": 69,
+				"h": 100
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 69,
+				"h": 100
+			},
+			"sourceSize": {
+				"w": 69,
+				"h": 100
+			}
+		},
+		"five_of_diamonds": {
+			"frame": {
+				"x": 143,
+				"y": 103,
+				"w": 69,
+				"h": 100
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 69,
+				"h": 100
+			},
+			"sourceSize": {
+				"w": 69,
+				"h": 100
+			}
+		},
+		"five_of_hearts": {
+			"frame": {
+				"x": 214,
+				"y": 103,
+				"w": 69,
+				"h": 100
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 69,
+				"h": 100
+			},
+			"sourceSize": {
+				"w": 69,
+				"h": 100
+			}
+		},
+		"five_of_spades": {
+			"frame": {
+				"x": 285,
+				"y": 103,
+				"w": 69,
+				"h": 100
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 69,
+				"h": 100
+			},
+			"sourceSize": {
+				"w": 69,
+				"h": 100
+			}
+		},
+		"four_of_clubs": {
+			"frame": {
+				"x": 356,
+				"y": 103,
+				"w": 69,
+				"h": 100
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 69,
+				"h": 100
+			},
+			"sourceSize": {
+				"w": 69,
+				"h": 100
+			}
+		},
+		"four_of_diamonds": {
+			"frame": {
+				"x": 427,
+				"y": 103,
+				"w": 69,
+				"h": 100
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 69,
+				"h": 100
+			},
+			"sourceSize": {
+				"w": 69,
+				"h": 100
+			}
+		},
+		"four_of_hearts": {
+			"frame": {
+				"x": 498,
+				"y": 103,
+				"w": 69,
+				"h": 100
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 69,
+				"h": 100
+			},
+			"sourceSize": {
+				"w": 69,
+				"h": 100
+			}
+		},
+		"four_of_spades": {
+			"frame": {
+				"x": 1,
+				"y": 205,
+				"w": 69,
+				"h": 100
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 69,
+				"h": 100
+			},
+			"sourceSize": {
+				"w": 69,
+				"h": 100
 			}
 		},
 		"jack_of_clubs": {
 			"frame": {
-				"x": 256,
-				"y": 1837,
-				"w": 250,
-				"h": 363
+				"x": 72,
+				"y": 205,
+				"w": 69,
+				"h": 100
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 250,
-				"h": 363
+				"w": 69,
+				"h": 100
 			},
 			"sourceSize": {
-				"w": 250,
-				"h": 363
+				"w": 69,
+				"h": 100
 			}
 		},
 		"jack_of_diamonds": {
 			"frame": {
-				"x": 510,
-				"y": 1837,
-				"w": 250,
-				"h": 363
+				"x": 143,
+				"y": 205,
+				"w": 69,
+				"h": 100
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 250,
-				"h": 363
+				"w": 69,
+				"h": 100
 			},
 			"sourceSize": {
-				"w": 250,
-				"h": 363
+				"w": 69,
+				"h": 100
 			}
 		},
 		"jack_of_hearts": {
 			"frame": {
-				"x": 764,
-				"y": 1837,
-				"w": 250,
-				"h": 363
+				"x": 214,
+				"y": 205,
+				"w": 69,
+				"h": 100
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 250,
-				"h": 363
+				"w": 69,
+				"h": 100
 			},
 			"sourceSize": {
-				"w": 250,
-				"h": 363
+				"w": 69,
+				"h": 100
 			}
 		},
 		"jack_of_spades": {
 			"frame": {
-				"x": 1018,
-				"y": 1837,
-				"w": 250,
-				"h": 363
+				"x": 285,
+				"y": 205,
+				"w": 69,
+				"h": 100
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 250,
-				"h": 363
+				"w": 69,
+				"h": 100
 			},
 			"sourceSize": {
-				"w": 250,
-				"h": 363
+				"w": 69,
+				"h": 100
 			}
 		},
 		"king_of_clubs": {
 			"frame": {
-				"x": 1272,
-				"y": 1837,
-				"w": 250,
-				"h": 363
+				"x": 356,
+				"y": 205,
+				"w": 69,
+				"h": 100
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 250,
-				"h": 363
+				"w": 69,
+				"h": 100
 			},
 			"sourceSize": {
-				"w": 250,
-				"h": 363
+				"w": 69,
+				"h": 100
 			}
 		},
 		"king_of_diamonds": {
 			"frame": {
-				"x": 1526,
-				"y": 1837,
-				"w": 250,
-				"h": 363
+				"x": 427,
+				"y": 205,
+				"w": 69,
+				"h": 100
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 250,
-				"h": 363
+				"w": 69,
+				"h": 100
 			},
 			"sourceSize": {
-				"w": 250,
-				"h": 363
+				"w": 69,
+				"h": 100
 			}
 		},
 		"king_of_hearts": {
 			"frame": {
-				"x": 1780,
-				"y": 1837,
-				"w": 250,
-				"h": 363
+				"x": 498,
+				"y": 205,
+				"w": 69,
+				"h": 100
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 250,
-				"h": 363
+				"w": 69,
+				"h": 100
 			},
 			"sourceSize": {
-				"w": 250,
-				"h": 363
+				"w": 69,
+				"h": 100
 			}
 		},
 		"king_of_spades": {
 			"frame": {
-				"x": 2034,
-				"y": 2,
-				"w": 250,
-				"h": 363
+				"x": 1,
+				"y": 307,
+				"w": 69,
+				"h": 100
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 250,
-				"h": 363
+				"w": 69,
+				"h": 100
 			},
 			"sourceSize": {
-				"w": 250,
-				"h": 363
+				"w": 69,
+				"h": 100
+			}
+		},
+		"nine_of_clubs": {
+			"frame": {
+				"x": 72,
+				"y": 307,
+				"w": 69,
+				"h": 100
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 69,
+				"h": 100
+			},
+			"sourceSize": {
+				"w": 69,
+				"h": 100
+			}
+		},
+		"nine_of_diamonds": {
+			"frame": {
+				"x": 143,
+				"y": 307,
+				"w": 69,
+				"h": 100
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 69,
+				"h": 100
+			},
+			"sourceSize": {
+				"w": 69,
+				"h": 100
+			}
+		},
+		"nine_of_hearts": {
+			"frame": {
+				"x": 214,
+				"y": 307,
+				"w": 69,
+				"h": 100
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 69,
+				"h": 100
+			},
+			"sourceSize": {
+				"w": 69,
+				"h": 100
+			}
+		},
+		"nine_of_spades": {
+			"frame": {
+				"x": 285,
+				"y": 307,
+				"w": 69,
+				"h": 100
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 69,
+				"h": 100
+			},
+			"sourceSize": {
+				"w": 69,
+				"h": 100
 			}
 		},
 		"queen_of_clubs": {
 			"frame": {
-				"x": 2034,
-				"y": 369,
-				"w": 250,
-				"h": 363
+				"x": 356,
+				"y": 307,
+				"w": 69,
+				"h": 100
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 250,
-				"h": 363
+				"w": 69,
+				"h": 100
 			},
 			"sourceSize": {
-				"w": 250,
-				"h": 363
+				"w": 69,
+				"h": 100
 			}
 		},
 		"queen_of_diamonds": {
 			"frame": {
-				"x": 2034,
-				"y": 736,
-				"w": 250,
-				"h": 363
+				"x": 427,
+				"y": 307,
+				"w": 69,
+				"h": 100
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 250,
-				"h": 363
+				"w": 69,
+				"h": 100
 			},
 			"sourceSize": {
-				"w": 250,
-				"h": 363
+				"w": 69,
+				"h": 100
 			}
 		},
 		"queen_of_hearts": {
 			"frame": {
-				"x": 2034,
-				"y": 1103,
-				"w": 250,
-				"h": 363
+				"x": 498,
+				"y": 307,
+				"w": 69,
+				"h": 100
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 250,
-				"h": 363
+				"w": 69,
+				"h": 100
 			},
 			"sourceSize": {
-				"w": 250,
-				"h": 363
+				"w": 69,
+				"h": 100
 			}
 		},
 		"queen_of_spades": {
 			"frame": {
-				"x": 2034,
-				"y": 1470,
-				"w": 250,
-				"h": 363
+				"x": 1,
+				"y": 409,
+				"w": 69,
+				"h": 100
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 250,
-				"h": 363
+				"w": 69,
+				"h": 100
 			},
 			"sourceSize": {
-				"w": 250,
-				"h": 363
+				"w": 69,
+				"h": 100
+			}
+		},
+		"seven_of_clubs": {
+			"frame": {
+				"x": 72,
+				"y": 409,
+				"w": 69,
+				"h": 100
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 69,
+				"h": 100
+			},
+			"sourceSize": {
+				"w": 69,
+				"h": 100
+			}
+		},
+		"seven_of_diamonds": {
+			"frame": {
+				"x": 143,
+				"y": 409,
+				"w": 69,
+				"h": 100
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 69,
+				"h": 100
+			},
+			"sourceSize": {
+				"w": 69,
+				"h": 100
+			}
+		},
+		"seven_of_hearts": {
+			"frame": {
+				"x": 214,
+				"y": 409,
+				"w": 69,
+				"h": 100
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 69,
+				"h": 100
+			},
+			"sourceSize": {
+				"w": 69,
+				"h": 100
+			}
+		},
+		"seven_of_spades": {
+			"frame": {
+				"x": 285,
+				"y": 409,
+				"w": 69,
+				"h": 100
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 69,
+				"h": 100
+			},
+			"sourceSize": {
+				"w": 69,
+				"h": 100
+			}
+		},
+		"six_of_clubs": {
+			"frame": {
+				"x": 356,
+				"y": 409,
+				"w": 69,
+				"h": 100
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 69,
+				"h": 100
+			},
+			"sourceSize": {
+				"w": 69,
+				"h": 100
+			}
+		},
+		"six_of_diamonds": {
+			"frame": {
+				"x": 427,
+				"y": 409,
+				"w": 69,
+				"h": 100
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 69,
+				"h": 100
+			},
+			"sourceSize": {
+				"w": 69,
+				"h": 100
+			}
+		},
+		"six_of_hearts": {
+			"frame": {
+				"x": 498,
+				"y": 409,
+				"w": 69,
+				"h": 100
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 69,
+				"h": 100
+			},
+			"sourceSize": {
+				"w": 69,
+				"h": 100
+			}
+		},
+		"six_of_spades": {
+			"frame": {
+				"x": 1,
+				"y": 511,
+				"w": 69,
+				"h": 100
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 69,
+				"h": 100
+			},
+			"sourceSize": {
+				"w": 69,
+				"h": 100
+			}
+		},
+		"ten_of_clubs": {
+			"frame": {
+				"x": 72,
+				"y": 511,
+				"w": 69,
+				"h": 100
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 69,
+				"h": 100
+			},
+			"sourceSize": {
+				"w": 69,
+				"h": 100
+			}
+		},
+		"ten_of_diamonds": {
+			"frame": {
+				"x": 143,
+				"y": 511,
+				"w": 69,
+				"h": 100
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 69,
+				"h": 100
+			},
+			"sourceSize": {
+				"w": 69,
+				"h": 100
+			}
+		},
+		"ten_of_hearts": {
+			"frame": {
+				"x": 214,
+				"y": 511,
+				"w": 69,
+				"h": 100
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 69,
+				"h": 100
+			},
+			"sourceSize": {
+				"w": 69,
+				"h": 100
+			}
+		},
+		"ten_of_spades": {
+			"frame": {
+				"x": 285,
+				"y": 511,
+				"w": 69,
+				"h": 100
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 69,
+				"h": 100
+			},
+			"sourceSize": {
+				"w": 69,
+				"h": 100
+			}
+		},
+		"three_of_clubs": {
+			"frame": {
+				"x": 356,
+				"y": 511,
+				"w": 69,
+				"h": 100
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 69,
+				"h": 100
+			},
+			"sourceSize": {
+				"w": 69,
+				"h": 100
+			}
+		},
+		"three_of_diamonds": {
+			"frame": {
+				"x": 427,
+				"y": 511,
+				"w": 69,
+				"h": 100
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 69,
+				"h": 100
+			},
+			"sourceSize": {
+				"w": 69,
+				"h": 100
+			}
+		},
+		"three_of_hearts": {
+			"frame": {
+				"x": 498,
+				"y": 511,
+				"w": 69,
+				"h": 100
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 69,
+				"h": 100
+			},
+			"sourceSize": {
+				"w": 69,
+				"h": 100
+			}
+		},
+		"three_of_spades": {
+			"frame": {
+				"x": 569,
+				"y": 1,
+				"w": 69,
+				"h": 100
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 69,
+				"h": 100
+			},
+			"sourceSize": {
+				"w": 69,
+				"h": 100
+			}
+		},
+		"two_of_clubs": {
+			"frame": {
+				"x": 569,
+				"y": 103,
+				"w": 69,
+				"h": 100
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 69,
+				"h": 100
+			},
+			"sourceSize": {
+				"w": 69,
+				"h": 100
+			}
+		},
+		"two_of_diamonds": {
+			"frame": {
+				"x": 569,
+				"y": 205,
+				"w": 69,
+				"h": 100
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 69,
+				"h": 100
+			},
+			"sourceSize": {
+				"w": 69,
+				"h": 100
+			}
+		},
+		"two_of_hearts": {
+			"frame": {
+				"x": 569,
+				"y": 307,
+				"w": 69,
+				"h": 100
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 69,
+				"h": 100
+			},
+			"sourceSize": {
+				"w": 69,
+				"h": 100
+			}
+		},
+		"two_of_spades": {
+			"frame": {
+				"x": 569,
+				"y": 409,
+				"w": 69,
+				"h": 100
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 69,
+				"h": 100
+			},
+			"sourceSize": {
+				"w": 69,
+				"h": 100
 			}
 		}
 	},
@@ -1067,8 +1067,8 @@
 		"image": "cardsSpritesheet.png",
 		"format": "RGBA8888",
 		"size": {
-			"w": 2286,
-			"h": 2202
+			"w": 639,
+			"h": 612
 		},
 		"scale": "1"
 	}

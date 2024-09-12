@@ -43,7 +43,6 @@ export class ChipView extends Container {
     private async setSprite(name: string) {
         this.image = await Main.assetsLoader.getSprite(name);
         this.image.anchor.set(0.5);
-        this.scale.set(Main.screenSize.height / 1000);
         this.setSize();
         this.addChild(this.image);
     }

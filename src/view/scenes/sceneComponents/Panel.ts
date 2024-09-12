@@ -6,20 +6,20 @@ import { Main } from "../../../main";
 
 export class Panel extends Container implements IPanel {
     protected background: Sprite | null = null;
-    protected dropShadowFilter: DropShadowFilter;
+    // protected dropShadowFilter: DropShadowFilter;
     private backgroundName: string = "";
 
     constructor(name: string) {
         super();
         this.backgroundName = name;
-        this.dropShadowFilter = new DropShadowFilter(Effects.FOOTER_PANEL_DROP_SHADOW);
+        // this.dropShadowFilter = new DropShadowFilter(Effects.FOOTER_PANEL_DROP_SHADOW);
 
         this.init();
     }
 
     protected async init(): Promise<void> {
-        await this.setBackground();
-        this.filters = [this.dropShadowFilter];
+        // await this.setBackground();
+        // this.filters = [this.dropShadowFilter];
     }
 
     private async setBackground(): Promise<void> {

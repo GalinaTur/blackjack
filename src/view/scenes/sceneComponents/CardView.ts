@@ -7,9 +7,9 @@ import { Animations } from "../../styles/Animations";
 
 export class CardView extends Container {
     private card: CardModel;
-    private image: Sprite | null = null;
-    private backImage: Sprite | null = null;
-    private dropShadowFilter: DropShadowFilter;
+    private _image: Sprite | null = null;
+    private _backImage: Sprite | null = null;
+    public dropShadowFilter: DropShadowFilter;
     public value: string = '';
 
     constructor(card: CardModel) {
@@ -20,28 +20,30 @@ export class CardView extends Container {
 
         this.dropShadowFilter = new DropShadowFilter(Effects.CARD_DROP_SHADOW);
         this.filters = [this.dropShadowFilter];
-        this.position.set(500, -1500);
     }
 
     private async setImage() {
-        this.backImage = await Main.assetsLoader.getSprite('cards_back');
-        this.image = await Main.assetsLoader.getSprite(this.value);
-
-        this.backImage.anchor.set(0.5);
-        this.backImage.scale.set(0.4);
-
-        this.image.anchor.set(0.5);
-        this.image.scale.set(0.4);
-
-        this.card.hidden? this.addChild(this.backImage) : this.addChild(this.image);
+        this._backImage = await Main.assetsLoader.getSprite('card_back');
+        this._image = await Main.assetsLoader.getSprite(this.value);
+        this.addChild(this._backImage);
     }
 
     public async open() {
         if (this.card.hidden) return;
-        if (!this. image || !this.backImage) return;
+        if (!this._image || !this.backImage) return;
 
-        this.image.scale.x = 0;
-        this.addChildAt(this.image, 0);
-        await Animations.cards.open(this.backImage, this.image);
+        this._image.scale.y = this.backImage.scale.y;
+        this._image.scale.x = 0;
+        this.addChildAt(this._image, 0);
+        await Animations.cards.open(this);
+    }
+
+    get image() {
+        if (this.card.hidden) return;
+        return this._image;
+    }
+
+    get backImage() {
+        return this._backImage;
     }
 }

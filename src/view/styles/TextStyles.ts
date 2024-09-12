@@ -2,15 +2,29 @@ import { TextStyle } from "pixi.js";
 
 export class Textstyles {
     public static BUTTON_TEXTSTYLE: Partial<TextStyle> = {
-        fontSize: 36,
+        fontSize: 16,
         fill: "#ffffff",
-        fontFamily: "SairaBlackItalic",
-        strokeThickness: 4,
+        fontFamily: "Saira",
     }
 
     public static LABEL_TEXTSTYLE: Partial<TextStyle> = {
         ...this.BUTTON_TEXTSTYLE,
         fontSize: 28,
+    }
+
+    public static FOOTER_TEXTSTYLE: Partial<TextStyle> = {
+        fill: "#ffffff",
+        fontFamily: "SairaBlackItalic",
+        fontSize: 24,
+        strokeThickness:1,
+        letterSpacing: 1.4,
+        stroke: "#000000",
+    }
+
+    public static FOOTER_SIGN_TEXTSTYLE: Partial<TextStyle> = {
+        fill: "#000000",
+        fontFamily: "Saira",
+        fontSize: 15,
     }
 
     public static HEADER_TEXTSTYLE: Partial<TextStyle> = {

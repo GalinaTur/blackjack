@@ -1,3 +1,5 @@
+import { IButton } from "./types";
+
 export const ALL_BETS = [1, 5, 10, 25, 100, 500, 1000, 5000] as const;
 
 export const RANKS = ['two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'jack', 'queen', 'king', 'ace'] as const;
@@ -10,3 +12,50 @@ export const HEADER_FIELDS = {
     win: 'Win',
     totalWin: 'Total Win'
 };
+
+export const BUTTONS = {
+    bet: {
+        clear: {
+            text: 'Clear',
+            imgID: 'clearBet',
+        },
+        double: {
+            text: 'Double',
+            imgID: 'doubleBet',
+        },
+        undo: {
+            text: 'Undo',
+            imgID: 'undo',
+        },
+        deal: {
+            text: 'Deal',
+            imgID: 'deal',
+        }
+    },
+    game: {
+        hit: {
+            text: 'Hit',
+            imgID: 'hit',
+        },
+        stand: {
+            text: 'Stand',
+            imgID:'stand',
+        },
+        doubleDown: {
+            text: 'Double',
+            imgID: 'double',
+        },
+        split: {
+            text: 'Split',
+            imgID:'split',
+        },
+        insure: {
+            text: 'Insure',
+            imgID: 'insurance',
+        },
+        noInsure: {
+            text: 'No Insure',
+            imgID: 'noInsurance',
+        }
+    }
+}

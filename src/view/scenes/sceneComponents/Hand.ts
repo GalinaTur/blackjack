@@ -1,4 +1,4 @@
-import { Container, Sprite, Text } from "pixi.js";
+import { Container, Point, Sprite, Text } from "pixi.js";
 import { CardView } from "./CardView";
 import { Main } from "../../../main";
 import { Textstyles } from "../../styles/TextStyles";
@@ -16,11 +16,14 @@ export class Hand extends Container {
     private init() {
         this.sortableChildren = true;
     }
-
-    public async dealCard(card: CardView) {
+    
+    public async dealCard(card: CardView, globalPosition: Point) {
         this.addChild(card);
+        card.backImage && card.backImage.scale.set(1.3);
+        const localPosition = this.toLocal(globalPosition);
+        card.position.set(localPosition.x, localPosition.y);
+        await Animations.cards.deal(card, this._cards.length-1, card.open.bind(card));
         this._cards.push(card);
-        await Animations.cards.deal(card, this._cards.length-1);
     }
 
     private addLabel() {
@@ -35,7 +38,7 @@ export class Hand extends Container {
 
         this.pointsLabel = await Main.assetsLoader.getSprite("points_label");
         this.pointsLabel.anchor.set(0, 0.5);
-        this.pointsLabel.position.set(-50, 35);
+        this.pointsLabel.position.set(-50, 85);
         this.pointsLabel.scale.set(0, 1);
         this.pointsLabel.zIndex = 1;
 

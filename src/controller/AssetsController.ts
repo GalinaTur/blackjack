@@ -6,8 +6,9 @@ export class AssetsLoader {
         await Assets.init({ manifest: ASSETS_MANIFEST });
         await Assets.loadBundle('fonts');
         await Assets.loadBundle('initialAssets');
-        await Assets.loadBundle('gameTableAssets');
+        await Assets.loadBundle('buttons');
         await Assets.loadBundle('labels');
+        await Assets.loadBundle('other');
         await Assets.load('../../../assets/cards/cardsSpritesheet.json');
         await Assets.load('../../../assets/chips/chipsSpritesheet.json');
     };

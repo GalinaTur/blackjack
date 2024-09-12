@@ -2,6 +2,7 @@ import { Main } from "../../../main";
 import { Button } from "./Button";
 import { ERoundState, IPanel } from "../../../data/types";
 import { Panel } from "./Panel";
+import { BUTTONS } from "../../../data/constants";
 
 export class GamePanel extends Panel implements IPanel {
     private splitButton: Button;
@@ -11,10 +12,10 @@ export class GamePanel extends Panel implements IPanel {
 
     constructor() {
         super('game_panel');
-        this.splitButton = new Button('Split', this.onSplit, false);
-        this.doubleButton = new Button('Double', this.onDouble, false);
-        this.hitButton = new Button('Hit', this.onHit, false);
-        this.standButton = new Button('Stand', this.onStand, false);
+        this.splitButton = new Button(BUTTONS.game.split, this.onSplit, false);
+        this.doubleButton = new Button(BUTTONS.game.doubleDown, this.onDouble, false);
+        this.hitButton = new Button(BUTTONS.game.hit, this.onHit, false);
+        this.standButton = new Button(BUTTONS.game.stand, this.onStand, false);
     }
 
     protected async init(): Promise<void> {
@@ -23,17 +24,13 @@ export class GamePanel extends Panel implements IPanel {
     }
 
     private setButtons() {
-        this.splitButton.position.set(Main.screenSize.width * 0.4, -50);
-        this.splitButton.scale.set(0.7);
+        this.splitButton.position.set(Main.screenSize.width * 0.4, -100);
 
-        this.doubleButton.position.set(Main.screenSize.width * 0.55, -50);
-        this.doubleButton.scale.set(0.7);
+        this.doubleButton.position.set(Main.screenSize.width * 0.55, -100);
 
-        this.standButton.position.set(Main.screenSize.width * 0.7, -50);
-        this.standButton.scale.set(0.7);
+        this.standButton.position.set(Main.screenSize.width * 0.7, -100);
 
-        this.hitButton.position.set(Main.screenSize.width * 0.85, -50);
-        this.hitButton.scale.set(0.7);
+        this.hitButton.position.set(Main.screenSize.width * 0.85, -100);
 
         this.addChild(this.splitButton, this.doubleButton, this.standButton, this.hitButton);
     }

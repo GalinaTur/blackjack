@@ -28,8 +28,13 @@ export class Main {
             },
         });
 
+        this.app.ticker.stop();
+        gsap.ticker.add(() => {
+            this.app.render();
+        });
+
         (globalThis as any).__PIXI_APP__ = this.app;
-        this.app.ticker.add(() => {
+        gsap.ticker.add(() => {
             Main.screenSize = {
                 width: window.innerWidth,
                 height: window.innerHeight,

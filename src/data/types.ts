@@ -17,7 +17,13 @@ export type TRoundResult = "playerBJ" | "dealerBJ" | "win" | "doubleWin" | "lose
 export type TPanels = 'betPanel' | 'gamePanel' | 'finalPanel';
 export interface IScene<T> extends Container {
     onResize(): void,
+    deactivate(): Promise<void> | void,
     // onUpdate(data: IStateInfo): void,
+}
+
+export interface IButton {
+    text: string,
+    imgID: string
 }
 
 export interface IPanel extends Container {
@@ -44,7 +50,6 @@ export interface IPoints {
     dealer: number,
     player: number,
 }
-
 
 export enum ERoundState {
     NOT_STARTED,

@@ -19,7 +19,7 @@ export class DeckModel {
 
     private shuffle(): void {
         for (let i = this._deck.length - 1; i >= 0; i--) {
-            const k = Math.round(Math.random() * (1 + i));
+            const k = Math.floor(Math.random() * (1 + i));
             [this._deck[i], this._deck[k]] = [this._deck[k], this._deck[i]];
         }
     }

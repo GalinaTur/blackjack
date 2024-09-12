@@ -1,10 +1,10 @@
 import { DropShadowFilter } from "pixi-filters";
 
 export class Effects {
-    public static FOOTER_PANEL_DROP_SHADOW = {
+    public static FOOTER_DROP_SHADOW = {
         blur: 5,
         quality: 3,
-        alpha: 0.5,
+        alpha: 1,
         offset: {
             x: 0,
             y: -10,
@@ -39,8 +39,8 @@ export class Effects {
         quality: 1,
         alpha: 0.5,
         offset: {
-            x: -2,
-            y: -1,
+            x: 2,
+            y: 1,
         },
         color: 0x000000
     }
