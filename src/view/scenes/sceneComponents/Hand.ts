@@ -4,6 +4,7 @@ import { Main } from "../../../main";
 import { Textstyles } from "../../styles/TextStyles";
 import { Animations } from "../../styles/Animations";
 
+
 export class Hand extends Container {
     private pointsLabel: Sprite | null = null;
     private _cards: CardView[] = [];
@@ -16,13 +17,13 @@ export class Hand extends Container {
     private init() {
         this.sortableChildren = true;
     }
-    
+
     public async dealCard(card: CardView, globalPosition: Point) {
         this.addChild(card);
         card.backImage && card.backImage.scale.set(1.3);
         const localPosition = this.toLocal(globalPosition);
         card.position.set(localPosition.x, localPosition.y);
-        await Animations.cards.deal(card, this._cards.length-1, card.open.bind(card));
+        await Animations.cards.deal(card, this._cards.length - 1, card.open.bind(card));
         this._cards.push(card);
     }
 

@@ -13,11 +13,12 @@ export class Animations {
         unblur(bg: Background) {
             gsap.to(bg.blurFilter, {
                 blur: 0,
-                duration: 0.4,
-                ease: 'sine.inOut',
+                duration: 0.5,
+                ease: 'circ.inOut',
             })
-        },
+        }
     }
+
 
     public static initialLogo = {
         scale(logo: Sprite) {
@@ -45,6 +46,31 @@ export class Animations {
         }
     }
 
+    public static button = {
+        enable(button: Container) {
+            gsap.to(button, {
+                id: 'enableButton',
+                pixi: {
+                    scale: 1,
+                    alpha: 1,
+                },
+                duration: 0.2,
+                ease: 'back.out',
+            })
+        },
+        disable(button: Container) {
+            gsap.to(button, {
+                id: 'disableButton',
+                pixi: {
+                    scale: 0,
+                    alpha: 0
+                },
+                duration: 0.2,
+                ease: 'back.in',
+            })
+        }
+    }
+
     public static chip = {
         place(chip: ChipView, index: number) {
             gsap.to(chip, {
@@ -52,8 +78,7 @@ export class Animations {
                 pixi: {
                     positionX: Main.screenSize.width * 0.4,
                     positionY: Main.screenSize.height * 0.55 - 7 * index,
-                    scaleX: chip.scale.x * 0.6,
-                    scaleY: chip.scale.y * 0.5
+                    scaleY: chip.scale.y * 0.7
                 },
                 duration: 0.5,
                 ease: 'expo.inOut',
@@ -120,7 +145,7 @@ export class Animations {
                         positionY: 0,
                         angle: 0
                     },
-                    duration: 1.5,
+                    duration: 1,
                     ease: "circ.out",
                     onStart: () => {
                         resolve(true)
@@ -132,7 +157,6 @@ export class Animations {
         open(card: CardView) {
             return new Promise((resolve) => {
                 const cardScale = card.backImage!.scale.y;
-                console.log(cardScale)
                 gsap.to(card.backImage, {
                     id: 'flipCard',
                     pixi: {
@@ -163,7 +187,7 @@ export class Animations {
                         });
                         gsap.to({ x: card.dropShadowFilter.offset.x, y: card.dropShadowFilter.offset.y }, {
                             x: 20,
-                            y: 10,
+                            y: -10,
                             duration: 0.3,
                             ease: 'sine.inOut',
                             yoyo: true,
@@ -221,11 +245,11 @@ export class Animations {
             return new Promise(resolve => gsap.to(element, {
                 id: 'removeChipStack',
                 pixi: {
-                    positionX: element.position.x - Main.screenSize.width / 2,
+                    positionY: element.position.y + Main.screenSize.height,
                 },
                 delay: 0.2,
-                duration: 1,
-                ease: 'back.inOut',
+                duration: 0.7,
+                ease: 'back.in',
                 onComplete: resolve,
             }))
         }

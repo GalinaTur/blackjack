@@ -4,6 +4,7 @@ import { Main } from "../../../main";
 import { Textstyles } from "../../styles/TextStyles";
 import { Effects } from "../../styles/Effects";
 import { IButton } from "../../../data/types";
+import { Animations } from "../../styles/Animations";
 
 export class Button extends Container {
     private image: Sprite | null = null;
@@ -17,12 +18,14 @@ export class Button extends Container {
     constructor(buttonInfo: IButton, onClick: (() => void), isActive: boolean) {
         super();
         this.isActive = isActive;
-        this.on('pointerdown', onClick);
+        this.on('pointerdown', () => {
+            onClick()
+        });
         this.on('pointerover', this.onPointerOver);
         this.on('pointerout', this.onPointerOut);
         this.colorMatrixFilter = new ColorMatrixFilter();
         this.dropShadowFilter = new DropShadowFilter(Effects.BUTTON_DROP_SHADOW);
-        this.glowFilter = new GlowFilter({distance: 20,innerStrength:5, outerStrength:0, color: 0xffffff, alpha: 0.01});
+        this.glowFilter = new GlowFilter({ distance: 20, innerStrength: 5, outerStrength: 0, color: 0xffffff, alpha: 0.01 });
         this.init();
         this.setImage(buttonInfo.imgID)
             .then(this.setText.bind(this, buttonInfo.text));
@@ -33,7 +36,10 @@ export class Button extends Container {
         this.cursor = "pointer";
         this.filters = [this.dropShadowFilter];
         this.colorMatrixFilter.desaturate();
-        if (!this.isActive) this.disable();
+        if (!this.isActive) {
+            this.scale.set(0);
+            this.disable();
+        }
     }
 
     private async setImage(imgID: string) {
@@ -65,27 +71,25 @@ export class Button extends Container {
     //     const buttonRatio = this.background.height / this.background.width;
     // }
 
-    private onPointerOver() {
-        console.log('he')
+    private async onPointerOver() {
         this.colorMatrixFilter.brightness(1.2, false);
         this.filters.push(this.colorMatrixFilter)
     }
 
     private onPointerOut() {
         this.colorMatrixFilter.brightness(1, false);
-        this.filters = [this.colorMatrixFilter,...this.filters.filter(f => f!== this.colorMatrixFilter)];
+        this.filters = [this.colorMatrixFilter, ...this.filters.filter(f => f !== this.colorMatrixFilter)];
     }
 
     private enable() {
-        this.filters = this.filters.filter(f => {
-            return f !== this.colorMatrixFilter;
-        })
+        Animations.button.enable(this);
         this.eventMode = "static";
         this.cursor = "pointer";
+        this.onPointerOut()
     }
 
     private disable() {
-        this.filters.push(this.colorMatrixFilter);
+        Animations.button.disable(this);
         this.eventMode = "none";
         this.cursor = "default";
     }

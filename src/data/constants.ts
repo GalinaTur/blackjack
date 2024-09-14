@@ -1,6 +1,6 @@
 import { IButton } from "./types";
 
-export const ALL_BETS = [1, 5, 10, 25, 100, 500, 1000, 5000] as const;
+export const ALL_BETS = [1, 5, 25, 100, 500, 2000] as const;
 
 export const RANKS = ['two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'jack', 'queen', 'king', 'ace'] as const;
 export const SUITS = ['hearts', 'diamonds', 'clubs', 'spades'] as const;
@@ -57,5 +57,15 @@ export const BUTTONS = {
             text: 'No Insure',
             imgID: 'noInsurance',
         }
+    },
+    final:{
+        repeat: {
+            text: 'Repeat',
+            imgID: 'repeat',
+        },
+        topUp: {
+            text: 'Top Up',
+            imgID: 'topUp',
+        },
     }
 }

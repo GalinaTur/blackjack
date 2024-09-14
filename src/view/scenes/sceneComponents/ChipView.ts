@@ -24,7 +24,6 @@ export class ChipView extends Container {
         this.chipName = name;
         this.value = value;
         this.setSprite(this.chipName)
-            .then(this.setText.bind(this, String(value)));
 
         this.on('pointerdown', onClick);
 
@@ -43,24 +42,10 @@ export class ChipView extends Container {
     private async setSprite(name: string) {
         this.image = await Main.assetsLoader.getSprite(name);
         this.image.anchor.set(0.5);
-        this.setSize();
         this.addChild(this.image);
     }
 
-    private setText(data: string | null) {
-        if (!data) return
-        if (!this.image) return;
+    public onResize() {
 
-        this.text = new Text(data, Textstyles.BUTTON_TEXTSTYLE);
-        this.text.anchor.set(0.5);
-        this.addChild(this.text);
-    }
-
-    private async setSize() {
-        if (this.image === null) return;
-        const buttonRatio = this.image.height / this.image.width;
-
-        // this.image.width = Main.screenSize.width * 0.1;
-        // this.image.height = this.image.width * buttonRatio;
     }
 }

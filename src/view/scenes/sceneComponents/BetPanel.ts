@@ -1,64 +1,58 @@
-import { Point } from "pixi.js";
+import { Container, Point } from "pixi.js";
 import { Main } from "../../../main";
 import { Button } from "./Button";
 import { ChipView } from "./ChipView";
 import { GameScene } from "../GameScene";
 import { EChips, IPanel, TBets, } from "../../../data/types";
-import { Panel } from "./Panel";
 import { Animations } from "../../styles/Animations";
-import { ColorGradientFilter } from "pixi-filters";
 import { BUTTONS } from "../../../data/constants";
 
-export class BetPanel extends Panel implements IPanel {
-    private dealButton: Button;
-    private doubleButton: Button;
-    private undoButton: Button;
-    private clearButton: Button;
+export class BetPanel extends Container implements IPanel {
+    private dealButton: Button | null = null;
+    private doubleButton: Button | null = null;
+    private undoButton: Button | null = null;
+    private clearButton: Button | null = null;
     private isButtonsActive = false;
     private chips: ChipView[] = [];
     private availableBets: TBets[] = [];
     private lastChoosedChip: ChipView | null = null
 
     constructor(availableBets: TBets[]) {
-        super('bet_panel');
+        super();
         // if (betSize > 0) this.isButtonsActive = true;
-        this.dealButton = new Button(BUTTONS.bet.deal, this.onPlaceBet, this.isButtonsActive);
-        this.doubleButton = new Button(BUTTONS.bet.double, this.onPlaceBet, this.isButtonsActive);
-        this.undoButton = new Button(BUTTONS.bet.undo, this.onPlaceBet, this.isButtonsActive);
-        this.clearButton = new Button(BUTTONS.bet.clear, this.onClearBet, this.isButtonsActive);
         this.availableBets = availableBets;
+        this.init();
     }
 
-    protected async init(): Promise<void> {
-        await super.init();
-        this.setButtons();
-        this.setChips();
+    private async init(): Promise<void> {
+        await this.setButtons();
+        await this.setChips();
     }
 
-    private setButtons() {
-        this.dealButton.position.set(Main.screenSize.width*0.5, -100);
-        this.addChild(this.dealButton);
+    private async setButtons() {
+        this.dealButton = new Button(BUTTONS.bet.deal, this.onPlaceBet, this.isButtonsActive);
+        this.doubleButton = new Button(BUTTONS.bet.double, this.onDoubleBet, this.isButtonsActive);
+        this.undoButton = new Button(BUTTONS.bet.undo, this.onUndoBet, this.isButtonsActive);
+        this.clearButton = new Button(BUTTONS.bet.clear, this.onClearBet, this.isButtonsActive);
 
-        this.doubleButton.position.set(Main.screenSize.width*0.55, -100);
-        this.addChild(this.doubleButton);
+        this.dealButton.position.set(Main.screenSize.width * 0.6, -100);
+        this.doubleButton.position.set(Main.screenSize.width * 0.7, -100);
+        this.undoButton.position.set(Main.screenSize.width * 0.8, -100);
+        this.clearButton.position.set(Main.screenSize.width * 0.9, -100);
 
-        this.undoButton.position.set(Main.screenSize.width*0.6, -100);
-        this.addChild(this.undoButton);
-
-        this.clearButton.position.set(Main.screenSize.width*0.65, -100);
-        this.addChild(this.clearButton);
+        this.addChild(this.dealButton, this.doubleButton, this.undoButton, this.clearButton);
     }
 
-    private setChips() {
+    private async setChips() {
         for (let i = 0; i < this.availableBets.length; i++) {
             const key: string = this.availableBets[i] + '$';
             const name = EChips[key as keyof typeof EChips];
             const chip = new ChipView(name, this.availableBets[i], () => this.onChipClick(this.availableBets[i], chip));
             this.chips.push(chip);
 
-            chip.scale.set(Math.max(Main.screenSize.width*3/10000, Main.screenSize.height*4/10000))
+            chip.scale.set(0.7)
             chip.position.y = -100;
-            chip.position.x = Main.screenSize.width*0.4 - i * Main.screenSize.width * 0.04;
+            chip.position.x = Main.screenSize.width * 0.4 - i * Main.screenSize.width * 0.07;
             this.addChild(chip)
         }
     }
@@ -71,22 +65,34 @@ export class BetPanel extends Panel implements IPanel {
         Main.signalController.bet.placed.emit();
     }
 
+    private onDoubleBet() {
+        Main.signalController.bet.doubled.emit();
+    }
+
+    
+    private onUndoBet() {
+        Main.signalController.bet.removedLast.emit();
+    }
+
     private async onChipClick(value: TBets, chip: ChipView) {
         const parent = this.parent as GameScene
         const key = `${value}$`;
         const newChip = new ChipView(EChips[key as keyof typeof EChips], value, () => { });
         newChip.position = newChip.toLocal(this.toGlobal(new Point(chip.x, chip.y)));
+        newChip.scale.set(chip.scale.x, chip.scale.y);
         this.lastChoosedChip = chip;
         await parent.addChipToStack(newChip);
         Main.signalController.bet.added.emit(value);
     }
 
-    public async onBetUpdate(betSize: number, availableBets: TBets[]) {
+    public async onBetUpdate(betSize: number, availableBets: TBets[], isDoubleAllowed: boolean) {
         this.isButtonsActive = Boolean(betSize);
         this.availableBets = availableBets;
         await this.updateChips();
-        this.clearButton.updateIsActive(this.isButtonsActive);
-        this.dealButton.updateIsActive(this.isButtonsActive);
+        this.clearButton && this.clearButton.updateIsActive(this.isButtonsActive);
+        this.doubleButton && this.doubleButton.updateIsActive(isDoubleAllowed && this.isButtonsActive);
+        this.undoButton && this.undoButton.updateIsActive(this.isButtonsActive);
+        this.dealButton && this.dealButton.updateIsActive(this.isButtonsActive);
     }
 
     private async updateChips() {
@@ -118,6 +124,18 @@ export class BetPanel extends Panel implements IPanel {
         await Animations.chip.hide(chip);
     }
 
+    public onResize() {
+
+        this.chips.forEach((chip, index) => {
+            chip.position.x = Main.screenSize.width * 0.4 - index * Main.screenSize.width * 0.07;
+            this.addChild(chip)
+        });
+
+        this.dealButton?.position.set(Main.screenSize.width * 0.6, -100);
+        this.doubleButton?.position.set(Main.screenSize.width * 0.7, -100);
+        this.undoButton?.position.set(Main.screenSize.width * 0.8, -100);
+        this.clearButton?.position.set(Main.screenSize.width * 0.9, -100);
+    }
 
     public deactivate(): void {
         this.parent.removeChild(this);

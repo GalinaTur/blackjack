@@ -6,7 +6,7 @@ export class Background extends Container {
     private background: Sprite | null = null;
     private logo: Sprite | null = null;
 
-    public blurFilter = new BlurFilter(10, 1, 1);
+    public blurFilter = new BlurFilter(20, 1, 1);
 
     constructor() {
         super();

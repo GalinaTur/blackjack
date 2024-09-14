@@ -31,6 +31,8 @@ export class GameScene extends Container implements IScene<void> {
         this.setEventListeners();
         this.dealersHand.position.set(Main.screenSize.width / 2, Main.screenSize.height * 0.2);
         this.playersHand.position.set(Main.screenSize.width / 2, Main.screenSize.height * 0.6);
+        this.dealersHand.scale.set(0.8);
+        this.dealersHand.skew.x = -0.01;
         this.addChild(this.dealersHand, this.playersHand);
     }
 
@@ -52,7 +54,7 @@ export class GameScene extends Container implements IScene<void> {
         const image = await Main.assetsLoader.getSprite('BJ_label');
         image.scale.set(0.6)
         image.anchor.set(0.5);
-        image.position.set(30, 20);
+        image.position.set(30, 70);
         image.zIndex = 2;
         const shine = await this.setShine();
         shine.position.set(image.position.x, image.position.y);
@@ -64,7 +66,7 @@ export class GameScene extends Container implements IScene<void> {
     private async setRegularLabel(parent: Container, message: string) {
         const image = await Main.assetsLoader.getSprite('regular_label');
         image.anchor.set(0.5);
-        image.position.set(100, 35);
+        image.position.set(100, 85);
         const text = new Text(message, Textstyles.LABEL_TEXTSTYLE);
         text.anchor.set(0.5);
         image.addChild(text);
@@ -74,7 +76,7 @@ export class GameScene extends Container implements IScene<void> {
     private async setWinLabel(parent: Container, message: string) {
         const image = await Main.assetsLoader.getSprite('win_label');
         image.anchor.set(0.5);
-        image.position.set(100, 35);
+        image.position.set(100, 85);
         const text = new Text(message, Textstyles.LABEL_TEXTSTYLE);
         text.anchor.set(0.5);
         image.addChild(text);
@@ -157,7 +159,9 @@ export class GameScene extends Container implements IScene<void> {
         shoe.anchor.set(0, 0);
         shoePart.anchor.set(0, 0.44);
         this.cardsShoe.addChild(shoe);
+        this.cardsShoe.scale.set(Main.screenSize.height / 600);
         this.cardsShoe.sortableChildren = true;
+        this.cardsShoe.position.set(Main.screenSize.width * 0.75, 0);
         shoePart.zIndex = 2;
         shoePart.position.set(shoe.position.x, shoePart.height)
         SHOE_RATIO = this.cardsShoe.width / this.cardsShoe.height
@@ -206,7 +210,10 @@ export class GameScene extends Container implements IScene<void> {
     }
 
     public onResize() {
-        this.cardsShoe.scale.set(Main.screenSize.height / 600)
+        this.cardsShoe.scale.set(Main.screenSize.height / 600);
+
+        this.dealersHand.position.set(Main.screenSize.width / 2, Main.screenSize.height * 0.2);
+        this.playersHand.position.set(Main.screenSize.width / 2, Main.screenSize.height * 0.6);
 
         if (Main.screenSize.height > Main.screenSize.width) {
             this.cardsShoe.position.set(Main.screenSize.width * 0.80, 30);

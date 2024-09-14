@@ -32,29 +32,35 @@ export class RoundController {
         Main.signalController.bet.placed.add(this.onBetPlaced, this);
         Main.signalController.player.hit.add(this.onPlayerHit, this);
         Main.signalController.player.stand.add(this.onPlayerStand, this);
+        Main.signalController.player.double.add(this.onPlayerDoubleDown, this);
     }
 
     private async handleNextAction(state: ERoundState) {
         let dealTo: TParticipants = 'player';
         switch (state) {
-            case ERoundState.NOT_STARTED: 
-            this.gameView.render(this.roundModel.roundStateInfo)
-            break; 
-            case ERoundState.BETTING: 
-            // this.bettingController.setInitialBet();
-            break;
+            case ERoundState.NOT_STARTED:
+                this.gameView.render(this.roundModel.roundStateInfo)
+                break;
+            case ERoundState.BETTING:
+                // this.bettingController.setInitialBet();
+                break;
 
             case ERoundState.CARDS_DEALING:
                 while (!this.roundModel.isDealingEnded()) {
                     await this.dealCardTo(dealTo)
                     dealTo = dealTo === 'player' ? 'dealer' : 'player';
                 }
-                if(! await this.checkForBJ()) this.changeState(ERoundState.PLAYERS_TURN);
+                if (! await this.checkForBJ()) this.changeState(ERoundState.PLAYERS_TURN);
                 break;
 
             case ERoundState.PLAYERS_TURN:
-                if (this.pointsController.isWin(this.playersCards)) this.endRound('win');
-                if (this.pointsController.isBust(this.playersCards)) this.endRound('playerBust');
+                if (this.pointsController.isWin(this.playersCards)) {
+                    this.endRound('win')
+                } else if (this.pointsController.isBust(this.playersCards)) {
+                    this.endRound('playerBust');
+                } else {
+                    this.gameView.render(this.roundModel.roundStateInfo);
+                }
                 break;
 
             case ERoundState.DEALERS_TURN:
@@ -104,6 +110,16 @@ export class RoundController {
     private onPlayerStand() {
         if (this.roundModel.state !== ERoundState.PLAYERS_TURN) return;
         this.changeState(ERoundState.DEALERS_TURN);
+    }
+
+    private async onPlayerDoubleDown() {
+        if (this.roundModel.state !== ERoundState.PLAYERS_TURN) return;
+        await this.dealCardTo('player');
+        if (this.pointsController.isBust(this.playersCards)) {
+            this.endRound('playerBust');
+        } else {
+        this.onPlayerStand();
+        }
     }
 
     private async dealerPlay() {
@@ -193,5 +209,6 @@ export class RoundController {
         Main.signalController.bet.placed.remove(this.onBetPlaced);
         Main.signalController.player.hit.remove(this.onPlayerHit);
         Main.signalController.player.stand.remove(this.onPlayerStand);
+        Main.signalController.player.double.remove(this.onPlayerDoubleDown);
     }
 }

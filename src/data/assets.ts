@@ -80,6 +80,14 @@ export const ASSETS_MANIFEST = {
                     name: 'undo',
                     srcs: '../../../assets/buttons/undo.png',
                 },
+                {
+                    name: 'repeat',
+                    srcs: '../../../assets/buttons/repeat.png',
+                },
+                {
+                    name: 'topUp',
+                    srcs: '../../../assets/buttons/topUp.png',
+                },
             ],
         },
         {

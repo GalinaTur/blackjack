@@ -8,6 +8,7 @@ export class BettingController {
     private roundModel: RoundModel;
     private gameController: GameController;
     private betValues: TBets[] = [];
+    private betsHistory: Array<TBets | number> = [];
 
     constructor(roundModel: RoundModel, gameController: GameController) {
         this.init();
@@ -18,6 +19,9 @@ export class BettingController {
     private init() {
         Main.signalController.bet.added.add(this.onBetAdd, this);
         Main.signalController.bet.cleared.add(this.onClearBet, this);
+        Main.signalController.bet.doubled.add(this.onDoubledBet, this);
+        Main.signalController.bet.removedLast.add(this.onRemoveLast, this);
+        Main.signalController.player.double.add(this.onPlayerDoubleDown, this);
         Main.signalController.round.end.add(this.onRoundEnd, this);
     }
 
@@ -25,36 +29,56 @@ export class BettingController {
         if (value > this.gameController.playerBalance) return;
         this.roundModel.increaseBet(value);
         this.gameController.removeFromBalance(value);
-        const availableBets = this.setAvailableBets();
 
-        Main.signalController.bet.updated.emit({ betValues: this.betValues, sum: this.roundModel.betSize, availableBets: availableBets });
-        Main.signalController.balance.updated.emit(this.gameController.playerBalance);
+        this.betsHistory.push(value);
+        this.emitChanges();
     }
 
     private onClearBet() {
         const bet = this.roundModel.betSize;
         this.roundModel.clearBet();
         this.gameController.addToBalance(bet);
-        this.setAvailableBets();
-        const availableBets = this.setAvailableBets();
 
-        Main.signalController.bet.updated.emit({ betValues: this.betValues, sum: this.roundModel.betSize, availableBets: availableBets });
-        Main.signalController.balance.updated.emit(this.gameController.playerBalance);
+        this.betsHistory = [];
+        this.emitChanges();
+    }
+
+    private onRemoveLast() {
+        const lastValue = this.betsHistory.pop();
+        if (!lastValue) return;
+        this.roundModel.decreaseBet(lastValue);
+        this.gameController.addToBalance(lastValue);
+        this.emitChanges();
+    }
+
+    private onDoubledBet() {
+        const valueToAdd = this.roundModel.betSize;
+        this.roundModel.increaseBet(valueToAdd);
+        this.gameController.removeFromBalance(valueToAdd);
+        this.betsHistory.push(valueToAdd);
+        this.emitChanges();
+    }
+
+    private onPlayerDoubleDown() {
+        this.onDoubledBet();
     }
 
     private onRoundEnd(result: TRoundResult) {
-        const win = this.setWin(result);
+        const win = this.setWinToBalance(result);
         this.gameController.previousBet = this.roundModel.betSize;
-        this.roundModel.clearBet();
         if (win) {
             this.roundModel.winSize = win;
             this.gameController.addToTotalWin(win);
         }
 
-        const availableBets = this.setAvailableBets();
-
-        Main.signalController.bet.updated.emit({ betValues: this.betValues, sum: this.roundModel.betSize, availableBets: availableBets });
+        this.emitChanges();
         Main.signalController.winSize.updated.emit({ win: win, totalWin: this.gameController.totalWin });
+    }
+
+    private emitChanges() {
+        const availableBets = this.setAvailableBets();
+        const isDoubleAllowed = this.roundModel.betSize <= this.gameController.playerBalance;
+        Main.signalController.bet.updated.emit({ betValues: this.betValues, sum: this.roundModel.betSize, availableBets: availableBets, isDoubleBetAllowed: isDoubleAllowed });
         Main.signalController.balance.updated.emit(this.gameController.playerBalance);
     }
 
@@ -70,17 +94,15 @@ export class BettingController {
         };
         this.roundModel.increaseBet(bet);
         this.gameController.removeFromBalance(bet);
-        const availableBets = this.setAvailableBets();
 
-        Main.signalController.bet.updated.emit({ betValues: this.betValues, sum: this.roundModel.betSize, availableBets: availableBets });
-        Main.signalController.balance.updated.emit(this.gameController.playerBalance);
+        this.emitChanges();
     }
 
     private checkIfCanSplice(choosedBets: TBets[]) {
 
     }
 
-    private setWin(result: TRoundResult) {
+    private setWinToBalance(result: TRoundResult) {
         const bet = this.roundModel.betSize;
         let win = 0;
         switch (result) {
@@ -88,22 +110,25 @@ export class BettingController {
                 win = bet * 1.5;
                 this.gameController.addToBalance(win + bet);
                 break;
-                case 'win':
+            case 'win':
             case 'dealerBust':
                 win = bet;
                 this.gameController.addToBalance(win + bet);
                 break;
-                case 'push':
-                    this.gameController.addToBalance(bet);
-                    break;
-                }
-                console.log(`%cResult: ${result}, Bet: ${bet}, Win: ${win}`, 'color: yellow');
+            case 'push':
+                this.gameController.addToBalance(bet);
+                break;
+        }
+        console.log(`%cResult: ${result}, Bet: ${bet}, Win: ${win}`, 'color: yellow');
         return win;
     }
 
     public deactivate() {
         Main.signalController.bet.added.remove(this.onBetAdd);
+        Main.signalController.bet.doubled.remove(this.onDoubledBet);
+        Main.signalController.bet.removedLast.remove(this.onRemoveLast);
         Main.signalController.bet.cleared.remove(this.onClearBet);
+        Main.signalController.player.double.remove(this.onPlayerDoubleDown);
         Main.signalController.round.end.remove(this.onRoundEnd);
     }
 }

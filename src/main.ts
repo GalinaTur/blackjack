@@ -14,6 +14,7 @@ export class Main {
         height: window.innerHeight,
     }
     private _app: Application;
+    private gameController: GameController | null = null;
 
     constructor() {
         this._app = new Application({
@@ -27,38 +28,40 @@ export class Main {
                 click: true,
             },
         });
-
-        this.app.ticker.stop();
-        gsap.ticker.add(() => {
-            this.app.render();
-        });
-
-        (globalThis as any).__PIXI_APP__ = this.app;
-        gsap.ticker.add(() => {
-            Main.screenSize = {
-                width: window.innerWidth,
-                height: window.innerHeight,
-            }
-        })
-        this.app.ticker.start();
-        this.app.stage.sortableChildren = true;
     }
 
+    public async init() {
+        (globalThis as any).__PIXI_APP__ = this.app;
+        Main.APP = this.app;
+        this.app.stage.sortableChildren = true;
+        await Main.assetsLoader.init();
+        this.gameController = new GameController(this.app);
+        document.body.appendChild(this.app.view as HTMLCanvasElement);
+    }
+    
     get app() {
         return this._app;
     }
 
-    public async init() {
-        Main.APP = this.app;
-        document.body.appendChild(this.app.view as HTMLCanvasElement);
-        await Main.assetsLoader.init();
-        const gameController = new GameController(this.app);
-        gameController.init();
+    public onResize() {
+        this.app.renderer.resize(Main.screenSize.width, Main.screenSize.height);
+        this.gameController?.onResize();
     }
 }
 
 const main = new Main();
 main.init();
+
+window.addEventListener('resize', () => {
+    Main.screenSize = {
+        width: window.innerWidth,
+        height: window.innerHeight,
+    }
+    Main.APP.renderer.resize(Main.screenSize.width, Main.screenSize.height);
+    main.onResize()
+
+    requestAnimationFrame(() => Main.APP.render());
+});
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(Main.APP);

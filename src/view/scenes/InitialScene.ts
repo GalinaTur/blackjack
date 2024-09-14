@@ -36,9 +36,6 @@ export class InitialScene extends Container implements IScene<void> {
         Main.signalController.round.start.emit();
     }
 
-    public onUpdate() {
-
-    }
 
     public onResize(): void {
         if (!this.logo) return

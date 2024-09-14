@@ -1,4 +1,4 @@
-import { Application, BlurFilter, Container, Text } from "pixi.js";
+import { Application } from "pixi.js";
 import { Main } from "../main";
 import { Background } from "./scenes/sceneComponents/Background";
 import { InitialScene } from "./scenes/InitialScene";
@@ -10,10 +10,6 @@ import { BetPanel } from "./scenes/sceneComponents/BetPanel";
 import { GamePanel } from "./scenes/sceneComponents/GamePanel";
 import { FinalPanel } from "./scenes/sceneComponents/FinalPanel";
 import { TParticipants } from "../data/types";
-import { Textstyles } from "./styles/TextStyles";
-import { Panel } from "./scenes/sceneComponents/Panel";
-import { ColorGradientFilter, MotionBlurFilter } from "pixi-filters";
-import { Animations } from "./styles/Animations";
 import { Footer } from "./scenes/sceneComponents/Footer";
 import gsap from "gsap";
 
@@ -41,7 +37,6 @@ export class GameView {
 
     private init() {
         this.setEventListeners();
-        gsap.ticker.add(this.onResize.bind(this));
     }
 
     private setEventListeners() {
@@ -61,7 +56,12 @@ export class GameView {
                 break;
 
             case ERoundState.BETTING:
-                this.background?.unblur()
+                if (!this.background) {
+                    this.background = new Background();
+                    this.app.stage.addChild(this.background);
+                }
+                this.background?.unblur();
+
                 if (!this.gameScene) {
                     this.gameScene = new GameScene();
                     this.setCurrentScene(this.gameScene);
@@ -69,14 +69,11 @@ export class GameView {
                 this.renderHeaderPanel(stateInfo, this.playerBalance, this.totalWin);
                 this.renderFooter();
                 this.footer?.updateText('Place your bets...')
-                
+
                 if (!this.betPanel) {
-                    // this.betPanel = new BetPanel(stateInfo.bet, stateInfo.availableBets);
                     this.betPanel = new BetPanel(stateInfo.availableBets);
                     this.setCurrentFooterPanel(this.betPanel);
                 } else {
-                    // await this.betPanel.onBetUpdate(stateInfo.bet, stateInfo.availableBets);
-                    // await this.betPanel.onBetUpdate(stateInfo.availableBets);
                 }
                 break;
 
@@ -86,11 +83,11 @@ export class GameView {
                 break;
 
             case ERoundState.PLAYERS_TURN:
-                this.gamePanel?.updateButtons(stateInfo.currentState);
+                this.gamePanel?.updateButtons(stateInfo.currentState, stateInfo.cards.player);
                 break;
 
             case ERoundState.DEALERS_TURN:
-                this.gamePanel?.updateButtons(stateInfo.currentState);
+                // this.gamePanel?.updateButtons(stateInfo.currentState, stateInfo.cards.player);
                 break;
 
             case ERoundState.ROUND_OVER:
@@ -121,23 +118,23 @@ export class GameView {
         this.app.stage.addChild(this.footer);
     }
 
-    private  setCurrentScene<T>(scene: IScene<T>) {
+    private setCurrentScene<T>(scene: IScene<T>) {
         this.currentScene && this.currentScene.deactivate();
         this.currentScene = this.app.stage.addChild(scene);
         console.log(this.currentScene)
     }
 
-    private setCurrentFooterPanel(footerPanel: Panel) {
+    private setCurrentFooterPanel(footerPanel: IPanel) {
         this.currentFooterPanel && this.currentFooterPanel.deactivate();
         this.currentFooterPanel = footerPanel;
-        this.currentScene && this.currentScene.addChild(footerPanel);
         this.currentFooterPanel.position.set(0, Main.screenSize.height)
+        this.currentScene && this.currentScene.addChild(footerPanel);
     }
 
-    private onBetUpdate(data: { betValues: TBets[], sum: number, availableBets: TBets[] }) {
-        const { betValues, sum, availableBets } = data;
+    private onBetUpdate(data: { betValues: TBets[], sum: number, availableBets: TBets[], isDoubleBetAllowed: boolean }) {
+        const { betValues, sum, availableBets, isDoubleBetAllowed } = data;
         this.headerPanel?.onBetUpdate(sum);
-        this.betPanel?.onBetUpdate(sum, availableBets);
+        this.betPanel?.onBetUpdate(sum, availableBets, isDoubleBetAllowed);
     }
 
     private async onCardDeal(data: { person: TParticipants, card: CardModel, totalPoints: number, resolve: (value: unknown) => void }) {
@@ -154,15 +151,17 @@ export class GameView {
 
     private async onRoundEnd(result: TRoundResult) {
         await this.gameScene?.onRoundEnd(result);
-
-        // this.deactivate();
     }
 
     public onResize() {
         if (!this.background) return;
         this.background?.onResize();
         this.footer?.onResize();
-      this.currentScene?.onResize()
+        this.currentScene?.onResize()
+        if (this.currentFooterPanel) {
+            this.currentFooterPanel.position.set(0, Main.APP.view.height);
+            this.currentFooterPanel.onResize()
+        }
 
     }
     public deactivate() {

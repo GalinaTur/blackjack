@@ -17,8 +17,16 @@ export class RoundModel {
         roundResult: null,
     }
 
+    constructor(initialState: ERoundState) {
+        this._roundStateInfo.currentState = initialState;
+    }
+
     public increaseBet(value: number) {
         this._roundStateInfo.bet += value
+    }
+
+    public decreaseBet(value: number) {
+        this._roundStateInfo.bet -= value
     }
 
     public clearBet() {

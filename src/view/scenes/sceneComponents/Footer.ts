@@ -58,6 +58,7 @@ export class Footer extends Container {
         if (!this.background) return;
         if (!this.text) return;
         this.background.width = Main.screenSize.width;
+        this.background.height = Main.screenSize.height*0.05;
         this.text.position.x = Main.screenSize.width*0.5;
         this.position.set(0, Main.screenSize.height - this.height);
     }

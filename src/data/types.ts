@@ -27,7 +27,8 @@ export interface IButton {
 }
 
 export interface IPanel extends Container {
-    deactivate(): void
+    deactivate(): void;
+    onResize(): void;
 }
 
 export interface IStateInfo {
@@ -61,14 +62,12 @@ export enum ERoundState {
 }
 
 export enum EChips {
-    '1$' = 'chipWhite',
-    '5$' = 'chipRed',
-    '10$' = 'chipOrange',
-    '25$' = 'chipGreen',
-    '100$' = 'chipBlack',
-    '500$' = 'chipPurple',
-    '1000$' = 'chipYellow',
-    '5000$' = 'chipBlue',
+    '1$' = 'brownChip',
+    '5$' = 'greenChip',
+    '25$' = 'blueChip',
+    '100$' = 'purpleChip',
+    '500$' = 'redChip',
+    '2000$' = 'blackChip',
 }
 
 export enum ERankPoints {

@@ -4,7 +4,7 @@ import { GameView } from "../view/GameView";
 import { RoundController } from "./RoundController";
 import { Main } from "../main";
 import { BettingController } from "./BettingController";
-import { IStateInfo } from "../data/types";
+import { ERoundState, IStateInfo } from "../data/types";
 
 export class GameController {
     private app: Application;
@@ -20,12 +20,13 @@ export class GameController {
     constructor(app: Application) {
         this.app = app;
         this.gameView = new GameView(this.app, this.playerBalance, this.totalWin);
-        this.roundModel = new RoundModel();
+        this.roundModel = new RoundModel(ERoundState.NOT_STARTED);
         this.bettingController = new BettingController(this.roundModel, this);
         this.roundController = new RoundController(this.roundModel, this.gameView, this.bettingController);
+        this.init();
     }
 
-    public init() {
+    private init(){
         this.gameView && this.gameView.renderInitialScene();
         this.setEventListeners();
     }
@@ -42,7 +43,7 @@ export class GameController {
         this.roundController.deactivate()
         this.app.stage.removeChildren();
         this.gameView = new GameView(this.app, this.playerBalance, this._totalWin);
-        this.roundModel = new RoundModel();
+        this.roundModel = new RoundModel(ERoundState.BETTING);
         this.bettingController = new BettingController(this.roundModel, this);
         this.roundController = new RoundController(this.roundModel, this.gameView, this.bettingController);
         Main.signalController.round.start.emit();
@@ -79,5 +80,9 @@ export class GameController {
 
     public removeFromBalance(value: number) {
         this._playerBalance -= value;
+    }
+
+    public onResize() {
+        this.gameView?.onResize();
     }
 }

@@ -1,38 +1,42 @@
 import { Main } from "../../../main";
 import { Button } from "./Button";
 import { IPanel } from "../../../data/types";
-import { Panel } from "./Panel";
+import { Container } from "pixi.js";
+import { BUTTONS } from "../../../data/constants";
 
-export class FinalPanel extends Panel implements IPanel {
-    // private rebetButton: Button;
-    // private newHandButton: Button;
+export class FinalPanel extends Container implements IPanel {
+    private repeatButton: Button;
+    private topUpButton: Button;
 
     constructor() {
-        super('game_panel');
-        // this.rebetButton = new Button('Rebet', this.onRebet, true);
-        // this.newHandButton = new Button('New Hand', this.onNewHand, true);
+        super();
+        this.repeatButton = new Button(BUTTONS.final.repeat, this.onRepeat, true);
+        this.topUpButton = new Button(BUTTONS.final.topUp, this.onTopUp, true);
+        this.init();
     }
 
     protected async init() {
-        await super.init();
         this.setButtons();
     }
 
-    private setButtons() {
-        // this.rebetButton.position.set(Main.screenSize.width*0.85, -50);
-        // this.rebetButton.scale.set(0.7);
-        // this.addChild(this.rebetButton);
 
-        // this.newHandButton.position.set(Main.screenSize.width*0.7, -50);
-        // this.newHandButton.scale.set(0.7);
-        // this.addChild(this.newHandButton);
+    private setButtons() {
+        this.repeatButton.position.set(Main.screenSize.width * 0.85, -100);
+        this.topUpButton.position.set(Main.screenSize.width * 0.7, -100);
+
+        this.addChild(this.repeatButton, this.topUpButton);
     }
 
-    private onRebet() {
+    private onRepeat() {
         Main.signalController.round.new.emit();
     }
 
-    private onNewHand() {
+    private onTopUp() {
+    }
+
+    public onResize(): void {
+        this.repeatButton.position.set(Main.screenSize.width * 0.85, -100);
+        this.topUpButton.position.set(Main.screenSize.width * 0.7, -100);
     }
 
     public deactivate(): void {
