@@ -3,13 +3,11 @@ import { BevelFilter, DropShadowFilter } from "pixi-filters";
 import { Main } from "../../../main";
 import { Textstyles } from "../../styles/TextStyles";
 import { Effects } from "../../styles/Effects";
-import { TBets } from "../../../data/types";
+import { EChips, TBets } from "../../../data/types";
 
 export class ChipView extends Container {
     public value: TBets;
     private image: Sprite | null = null;
-    private chipName: string = '';
-    private text: Text | null = null;
     public dropShadowFilter: DropShadowFilter;
     public hidden = false;
 
@@ -19,13 +17,12 @@ export class ChipView extends Container {
         thickness: 1,
     }
 
-    constructor(name: string, value: TBets, onClick: (() => void)) {
+    constructor(value: TBets, onClick?: (() => void)) {
         super();
-        this.chipName = name;
         this.value = value;
-        this.setSprite(this.chipName)
 
-        this.on('pointerdown', onClick);
+
+        onClick && this.on('pointerdown', onClick);
 
         this.dropShadowFilter = new DropShadowFilter(Effects.CHIP_DROP_SHADOW);
         this.bevelFilter = new BevelFilter(this.bevelFilterOptions);
@@ -33,16 +30,24 @@ export class ChipView extends Container {
         this.init();
     }
 
-    private init() {
+    private async init() {
+        await this.setSprite()
         this.eventMode = "static";
         this.cursor = "pointer";
         this.filters = [this.dropShadowFilter, this.bevelFilter];
     }
 
-    private async setSprite(name: string) {
+    private async setSprite() {
+        const key: string = this.value + '$';
+        const name = EChips[key as keyof typeof EChips];
         this.image = await Main.assetsLoader.getSprite(name);
         this.image.anchor.set(0.5);
+        this.image.scale.set(0.7)
         this.addChild(this.image);
+    }
+
+    public placeToStack() {
+
     }
 
     public onResize() {

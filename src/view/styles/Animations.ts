@@ -73,7 +73,7 @@ export class Animations {
 
     public static chip = {
         place(chip: ChipView, index: number) {
-            gsap.to(chip, {
+            return new Promise((resolve) => {gsap.to(chip, {
                 id: 'moveChip',
                 pixi: {
                     positionX: Main.screenSize.width * 0.4,
@@ -82,18 +82,8 @@ export class Animations {
                 },
                 duration: 0.5,
                 ease: 'expo.inOut',
-                onStart: () => Animations.chip.increaseBevelEffect(chip),
-            })
-        },
-        increaseBevelEffect(chip: ChipView) {
-            gsap.to(chip.bevelFilter, {
-                thickness: 7,
-                rotation: 240,
-                duration: 0.3,
-                shadowAlpha: 0.1,
-                lightAlpha: 0.6,
-                ease: 'expo.in',
-            })
+                onComplete: resolve
+            })})
         },
         hide(chip: ChipView) {
             return new Promise((resolve) => gsap.to(chip, {

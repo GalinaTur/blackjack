@@ -9,7 +9,7 @@ import { Animations } from "../../styles/Animations";
 export class Button extends Container {
     private image: Sprite | null = null;
     private text: Text | null = null;
-    private isActive: boolean;
+    private _isActive: boolean;
     private colorMatrixFilter: ColorMatrixFilter;
     private dropShadowFilter: DropShadowFilter;
     private glowFilter: GlowFilter
@@ -17,7 +17,7 @@ export class Button extends Container {
 
     constructor(buttonInfo: IButton, onClick: (() => void), isActive: boolean) {
         super();
-        this.isActive = isActive;
+        this._isActive = isActive;
         this.on('pointerdown', () => {
             onClick()
         });
@@ -36,7 +36,7 @@ export class Button extends Container {
         this.cursor = "pointer";
         this.filters = [this.dropShadowFilter];
         this.colorMatrixFilter.desaturate();
-        if (!this.isActive) {
+        if (!this._isActive) {
             this.scale.set(0);
             this.disable();
         }
@@ -94,9 +94,13 @@ export class Button extends Container {
         this.cursor = "default";
     }
 
+    get isActive() {
+        return this._isActive
+    }
+
     public updateIsActive(isActive: boolean) {
-        if (this.isActive === isActive) return;
-        this.isActive = isActive;
-        this.isActive ? this.enable() : this.disable();
+        if (this._isActive === isActive) return;
+        this._isActive = isActive;
+        this._isActive ? this.enable() : this.disable();
     }
 }

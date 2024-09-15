@@ -59,7 +59,8 @@ export class RoundController {
                 } else if (this.pointsController.isBust(this.playersCards)) {
                     this.endRound('playerBust');
                 } else {
-                    this.gameView.render(this.roundModel.roundStateInfo);
+                    const isSplitAllowed = this.pointsController.isSplitAllowed(this.playersCards);
+                    this.gameView.render(this.roundModel.roundStateInfo, isSplitAllowed);
                 }
                 break;
 

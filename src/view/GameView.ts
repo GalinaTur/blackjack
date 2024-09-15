@@ -27,6 +27,7 @@ export class GameView {
     private gameScene: GameScene | null = null;
     private playerBalance = 0;
     private totalWin = 0;
+    private isDoubleAllowed = false;
 
     constructor(app: Application, playerBalance: number, totalWin: number) {
         this.app = app;
@@ -47,7 +48,7 @@ export class GameView {
         Main.signalController.round.changeState.add(this.render, this);
     }
 
-    public async render(stateInfo: IStateInfo) {
+    public async render(stateInfo: IStateInfo, isSplitAllowed?: boolean){
         switch (stateInfo.currentState) {
             case ERoundState.NOT_STARTED:
                 this.background = new Background();
@@ -78,12 +79,12 @@ export class GameView {
                 break;
 
             case ERoundState.CARDS_DEALING:
-                this.gamePanel = new GamePanel();
+                this.gamePanel = new GamePanel(this.isDoubleAllowed);
                 this.setCurrentFooterPanel(this.gamePanel);
                 break;
 
             case ERoundState.PLAYERS_TURN:
-                this.gamePanel?.updateButtons(stateInfo.currentState, stateInfo.cards.player);
+                this.gamePanel?.updateButtons(stateInfo.currentState, stateInfo.cards.player, isSplitAllowed);
                 break;
 
             case ERoundState.DEALERS_TURN:
@@ -121,7 +122,6 @@ export class GameView {
     private setCurrentScene<T>(scene: IScene<T>) {
         this.currentScene && this.currentScene.deactivate();
         this.currentScene = this.app.stage.addChild(scene);
-        console.log(this.currentScene)
     }
 
     private setCurrentFooterPanel(footerPanel: IPanel) {
@@ -131,10 +131,12 @@ export class GameView {
         this.currentScene && this.currentScene.addChild(footerPanel);
     }
 
-    private onBetUpdate(data: { betValues: TBets[], sum: number, availableBets: TBets[], isDoubleBetAllowed: boolean }) {
-        const { betValues, sum, availableBets, isDoubleBetAllowed } = data;
+    private onBetUpdate(data: { betsStack: TBets[], sum: number, availableBets: TBets[], isDoubleBetAllowed: boolean }) {
+        const { betsStack, sum, availableBets, isDoubleBetAllowed } = data;
+        this.isDoubleAllowed = isDoubleBetAllowed;
         this.headerPanel?.onBetUpdate(sum);
         this.betPanel?.onBetUpdate(sum, availableBets, isDoubleBetAllowed);
+        this.gameScene?.onChipsStackUpdate(betsStack);
     }
 
     private async onCardDeal(data: { person: TParticipants, card: CardModel, totalPoints: number, resolve: (value: unknown) => void }) {

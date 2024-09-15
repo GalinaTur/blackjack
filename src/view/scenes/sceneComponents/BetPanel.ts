@@ -45,12 +45,9 @@ export class BetPanel extends Container implements IPanel {
 
     private async setChips() {
         for (let i = 0; i < this.availableBets.length; i++) {
-            const key: string = this.availableBets[i] + '$';
-            const name = EChips[key as keyof typeof EChips];
-            const chip = new ChipView(name, this.availableBets[i], () => this.onChipClick(this.availableBets[i], chip));
+            
+            const chip = new ChipView(this.availableBets[i], () => this.onChipClick(this.availableBets[i], chip));
             this.chips.push(chip);
-
-            chip.scale.set(0.7)
             chip.position.y = -100;
             chip.position.x = Main.screenSize.width * 0.4 - i * Main.screenSize.width * 0.07;
             this.addChild(chip)
@@ -76,8 +73,7 @@ export class BetPanel extends Container implements IPanel {
 
     private async onChipClick(value: TBets, chip: ChipView) {
         const parent = this.parent as GameScene
-        const key = `${value}$`;
-        const newChip = new ChipView(EChips[key as keyof typeof EChips], value, () => { });
+        const newChip = new ChipView(value, () => { });
         newChip.position = newChip.toLocal(this.toGlobal(new Point(chip.x, chip.y)));
         newChip.scale.set(chip.scale.x, chip.scale.y);
         this.lastChoosedChip = chip;

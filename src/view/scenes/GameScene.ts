@@ -1,7 +1,7 @@
 import { Container, Point, SpriteMaskFilter, Text } from "pixi.js";
 import { Main } from "../../main";
 import { CardView } from "./sceneComponents/CardView";
-import { TRoundResult, IScene } from "../../data/types";
+import { TRoundResult, IScene, TBets, EChips } from "../../data/types";
 import { Textstyles } from "../styles/TextStyles";
 import { CardModel } from "../../model/CardModel";
 import { TParticipants } from "../../data/types";
@@ -129,14 +129,38 @@ export class GameScene extends Container implements IScene<void> {
         this.dealersHand.points = points;
     }
 
-    public addChipToStack(chip: ChipView) {
+    public async addChipToStack(chip: ChipView) {
         const index = this.chipsStack.children.length;
-        Animations.chip.place(chip, index);
         chip.dropShadowFilter.offset.x = -6 * index;
         chip.dropShadowFilter.offset.y = 0;
         chip.dropShadowFilter.alpha -= 0.1 * index;
         chip.dropShadowFilter.blur += 0.5 * index;
+        chip.bevelFilter.thickness = 7,
+        chip.bevelFilter.rotation = 240,
+        chip.bevelFilter.shadowAlpha = 0.1,
+        chip.bevelFilter.lightAlpha = 0.5,
         this.chipsStack.addChild(chip);
+        await Animations.chip.place(chip, index);
+        this.chipsStack.removeChildren();
+    }
+
+    public async onChipsStackUpdate(chipsStack: TBets[]) {
+        this.chipsStack.removeChildren();
+        chipsStack.forEach(async (value, index) => {
+            const chip = new ChipView(value);
+            chip.dropShadowFilter.offset.x = -6 * index;
+            chip.dropShadowFilter.offset.y = 0;
+            chip.dropShadowFilter.alpha -= 0.1 * index;
+            chip.dropShadowFilter.blur += 0.5 * index;
+            chip.bevelFilter.thickness = 7,
+            chip.bevelFilter.rotation = 240,
+            chip.bevelFilter.shadowAlpha = 0.1,
+            chip.bevelFilter.lightAlpha = 0.5,
+            chip.position.x = Main.screenSize.width * 0.4,
+            chip.position.y = Main.screenSize.height * 0.55 - 7 * index,
+            chip.scale.y = 0.7;
+            this.chipsStack.addChild(chip);
+        })
     }
 
     public async renderWinPopup(winSize: number) {

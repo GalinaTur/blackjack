@@ -30,7 +30,7 @@ export class SignalsController {
 
     public bet = {
         added: new Signal<TBets>(),
-        updated: new Signal<{betValues: TBets[], sum:number, availableBets: TBets[], isDoubleBetAllowed: boolean}>(),
+        updated: new Signal<{betsStack: TBets[], sum:number, availableBets: TBets[], isDoubleBetAllowed: boolean}>(),
         removedLast: new Signal<void>(),
         placed: new Signal<void>(),
         cleared: new Signal<void>(),

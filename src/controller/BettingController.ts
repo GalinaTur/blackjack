@@ -7,7 +7,7 @@ import { GameController } from "./GameController";
 export class BettingController {
     private roundModel: RoundModel;
     private gameController: GameController;
-    private betValues: TBets[] = [];
+    // private betsStack: TBets[] = [];
     private betsHistory: Array<TBets | number> = [];
 
     constructor(roundModel: RoundModel, gameController: GameController) {
@@ -53,6 +53,7 @@ export class BettingController {
 
     private onDoubledBet() {
         const valueToAdd = this.roundModel.betSize;
+    if (this.gameController.playerBalance < valueToAdd) return;
         this.roundModel.increaseBet(valueToAdd);
         this.gameController.removeFromBalance(valueToAdd);
         this.betsHistory.push(valueToAdd);
@@ -76,9 +77,10 @@ export class BettingController {
     }
 
     private emitChanges() {
+        const betsStack = this.setBetsStack();
         const availableBets = this.setAvailableBets();
         const isDoubleAllowed = this.roundModel.betSize <= this.gameController.playerBalance;
-        Main.signalController.bet.updated.emit({ betValues: this.betValues, sum: this.roundModel.betSize, availableBets: availableBets, isDoubleBetAllowed: isDoubleAllowed });
+        Main.signalController.bet.updated.emit({ betsStack: betsStack, sum: this.roundModel.betSize, availableBets: availableBets, isDoubleBetAllowed: isDoubleAllowed });
         Main.signalController.balance.updated.emit(this.gameController.playerBalance);
     }
 
@@ -98,8 +100,23 @@ export class BettingController {
         this.emitChanges();
     }
 
-    private checkIfCanSplice(choosedBets: TBets[]) {
+    private setBetsStack() {
+        let betSize = this.roundModel.betSize;
+        const betsMap: Map<TBets, number> = new Map<TBets, number>();
+        const betsStack: TBets[] = []
+        for (let i = ALL_BETS.length - 1; i >= 0; i--) {
+            const bet = ALL_BETS[i];
+            if (bet <= betSize) {
+                const amount = Math.floor(betSize / bet);
+                betSize = betSize % bet;
+                betsMap.set(bet, amount);
+            }
+        }
 
+        for (let [bet, amount] of betsMap.entries()) {
+            betsStack.push(...Array(amount).fill(bet));
+        }
+        return betsStack;
     }
 
     private setWinToBalance(result: TRoundResult) {

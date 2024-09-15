@@ -10,13 +10,15 @@ export class GamePanel extends Container implements IPanel {
     private doubleButton: Button;
     private hitButton: Button;
     private standButton: Button;
+    private isDoubleAllowed: boolean;
 
-    constructor() {
+    constructor(isDoubleAllowed: boolean) {
         super();
         this.splitButton = new Button(BUTTONS.game.split, this.onSplit.bind(this), false);
         this.doubleButton = new Button(BUTTONS.game.doubleDown, this.onDouble.bind(this), false);
         this.hitButton = new Button(BUTTONS.game.hit, this.onHit.bind(this), false);
         this.standButton = new Button(BUTTONS.game.stand, this.onStand.bind(this), false);
+        this.isDoubleAllowed = isDoubleAllowed
         this.init();
     }
 
@@ -56,9 +58,12 @@ export class GamePanel extends Container implements IPanel {
         this.disableButtons();
     }
 
-    public updateButtons(state: ERoundState, cards: CardModel[]) {
+    public updateButtons(state: ERoundState, cards: CardModel[], isSplitAllowed?: boolean) {
         this.updateHitStandButtons(state);
-        this.updateDoubleButton(cards)
+        if (isSplitAllowed) this.splitButton.updateIsActive(isSplitAllowed);
+        if (this.isDoubleAllowed)  {
+        this.updateDoubleButton(cards);
+        }
     }
 
     private updateHitStandButtons(state: ERoundState) {
@@ -67,8 +72,8 @@ export class GamePanel extends Container implements IPanel {
         this.standButton.updateIsActive(isActive);
     }
 
-    private updateDoubleButton(cards: CardModel[]) {
-        const isActive = (cards.length === 2) ? true : false;
+    public updateDoubleButton(cards: CardModel[]) {
+        const isActive = cards.length === 2;
         this.doubleButton.updateIsActive(isActive);
     }
 

@@ -29,6 +29,11 @@ export class PointsController {
         return ERankPoints[card.rank];
     }
 
+    public isSplitAllowed(cards: CardModel[]) {
+        if (cards.length !== 2) return false;
+        return this.getCardPoints(cards[0]) === this.getCardPoints(cards[1]);
+    }
+
     public isTie(cards: ICardsDealed) {
         return this.calcPoints(cards.dealer) === this.calcPoints(cards.player);
     }
