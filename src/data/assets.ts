@@ -134,6 +134,14 @@ export const ASSETS_MANIFEST = {
                     name: 'cardsShoePart',
                     srcs: '../../../assets/shoePart.png',
                 },
+                {
+                    name: 'pointer',
+                    srcs: '../../../assets/pointer.png',
+                },
+                {
+                    name: 'pointerShine',
+                    srcs: '../../../assets/pointerShine.png',
+                },
             ],
         },
     ],

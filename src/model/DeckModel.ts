@@ -22,6 +22,11 @@ export class DeckModel {
             const k = Math.floor(Math.random() * (1 + i));
             [this._deck[i], this._deck[k]] = [this._deck[k], this._deck[i]];
         }
+        //for split feature (delete this);
+        this._deck.push(new CardModel('two', 'spades'));
+        this._deck.push(new CardModel('ace', 'hearts'));
+        this._deck.push(new CardModel('two', 'clubs'));
+        // this._deck.push(new CardModel('king', 'hearts'));
     }
 
     public getCard(): CardModel | null {

@@ -4,6 +4,7 @@ import { AssetsLoader } from "./controller/AssetsController";
 import { GameController } from "./controller/GameController";
 import PixiPlugin from "gsap/PixiPlugin";
 import gsap from "gsap";
+import { MotionPathPlugin } from "gsap/all";
 
 export class Main {
     public static APP: Application;
@@ -64,4 +65,5 @@ window.addEventListener('resize', () => {
 });
 
 gsap.registerPlugin(PixiPlugin);
+gsap.registerPlugin(MotionPathPlugin);
 PixiPlugin.registerPIXI(Main.APP);

@@ -21,8 +21,8 @@ export class FinalPanel extends Container implements IPanel {
 
 
     private setButtons() {
-        this.repeatButton.position.set(Main.screenSize.width * 0.85, -100);
-        this.topUpButton.position.set(Main.screenSize.width * 0.7, -100);
+        this.repeatButton.position.set(Main.screenSize.width * 0.7, -100);
+        this.topUpButton.position.set(Main.screenSize.width * 0.8, -100);
 
         this.addChild(this.repeatButton, this.topUpButton);
     }
@@ -35,8 +35,8 @@ export class FinalPanel extends Container implements IPanel {
     }
 
     public onResize(): void {
-        this.repeatButton.position.set(Main.screenSize.width * 0.85, -100);
-        this.topUpButton.position.set(Main.screenSize.width * 0.7, -100);
+        this.repeatButton.position.set(Main.screenSize.width * 0.7, -100);
+        this.topUpButton.position.set(Main.screenSize.width * 0.8, -100);
     }
 
     public deactivate(): void {

@@ -13,9 +13,8 @@ export class BetPanel extends Container implements IPanel {
     private undoButton: Button | null = null;
     private clearButton: Button | null = null;
     private isButtonsActive = false;
-    private chips: ChipView[] = [];
     private availableBets: TBets[] = [];
-    private lastChoosedChip: ChipView | null = null
+    public chips: ChipView[] = [];
 
     constructor(availableBets: TBets[]) {
         super();
@@ -63,7 +62,7 @@ export class BetPanel extends Container implements IPanel {
     }
 
     private onDoubleBet() {
-        Main.signalController.bet.doubled.emit();
+        Main.signalController.player.double.emit();
     }
 
     
@@ -73,11 +72,8 @@ export class BetPanel extends Container implements IPanel {
 
     private async onChipClick(value: TBets, chip: ChipView) {
         const parent = this.parent as GameScene
-        const newChip = new ChipView(value, () => { });
-        newChip.position = newChip.toLocal(this.toGlobal(new Point(chip.x, chip.y)));
-        newChip.scale.set(chip.scale.x, chip.scale.y);
-        this.lastChoosedChip = chip;
-        await parent.addChipToStack(newChip);
+        const globalPosition = this.toGlobal(new Point(chip.x, chip.y));
+        await parent.onChipClick(value, globalPosition);
         Main.signalController.bet.added.emit(value);
     }
 
@@ -109,14 +105,8 @@ export class BetPanel extends Container implements IPanel {
 
     private async hide(chip: ChipView) {
         if (chip.hidden) return;
-
         chip.eventMode = 'none';
         chip.hidden = true;
-
-        if (chip === this.lastChoosedChip) {
-            chip.position.y += 200;
-            return;
-        }
         await Animations.chip.hide(chip);
     }
 

@@ -1,4 +1,4 @@
-import { ERoundState, ICardsDealed, IStateInfo, TBets, TRoundResult } from "../data/types";
+import { ERoundState, ICardsDealed, IRoundResult, IStateInfo, TBets, TParticipants, TResult } from "../data/types";
 import { CardModel } from "./CardModel";
 
 export class RoundModel {
@@ -7,19 +7,22 @@ export class RoundModel {
         availableBets: [],
         bet: 0,
         win: 0,
-        currentState: ERoundState.NOT_STARTED,
+        currentState: ERoundState.BETTING,
         cards: {
             dealer: [],
             player: [],
             split: [],
         },
         isSplitAllowed: false,
-        roundResult: null,
+        roundResult: {
+            main: null,
+            split: null
+        },
     }
 
-    constructor(initialState: ERoundState) {
-        this._roundStateInfo.currentState = initialState;
-    }
+    // constructor(initialState: ERoundState) {
+    //     this._roundStateInfo.currentState = initialState;
+    // }
 
     public increaseBet(value: number) {
         this._roundStateInfo.bet += value
@@ -79,8 +82,24 @@ export class RoundModel {
         return this._roundStateInfo.win;
     }
 
-    set result(roundResult: TRoundResult) {
-        this._roundStateInfo.roundResult = roundResult;
+    set result(roundResult: TResult) {
+        if (this.state === ERoundState.SPLIT_TURN) {
+            this._roundStateInfo.roundResult.split = roundResult;
+        } else {
+            this._roundStateInfo.roundResult.main = roundResult;
+        }
+    }
+
+    public setResult(roundResult: TResult, hand: TParticipants) {
+        if (hand === 'split') {
+            this._roundStateInfo.roundResult.split = roundResult;
+            return;
+        }
+        this._roundStateInfo.roundResult.main = roundResult;
+    }
+
+    public getResult() {
+        return this._roundStateInfo.roundResult;
     }
 
     set availableBets(bets: TBets[]) {

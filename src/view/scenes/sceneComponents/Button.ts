@@ -82,7 +82,7 @@ export class Button extends Container {
     }
 
     private enable() {
-        Animations.button.enable(this);
+       Animations.button.enable(this);
         this.eventMode = "static";
         this.cursor = "pointer";
         this.onPointerOut()

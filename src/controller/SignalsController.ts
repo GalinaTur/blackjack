@@ -1,6 +1,6 @@
-import { TBets, TParticipants } from "../data/types";
+import { IRoundResult, TBets, TParticipants, TResult } from "../data/types";
 import { CardModel } from "../model/CardModel";
-import { IStateInfo, TRoundResult } from "../data/types";
+import { IStateInfo } from "../data/types";
 
 class Signal<T = void>  {
     private subscribers: { func: ((data: T) => void), ctx: unknown }[] = [];
@@ -9,8 +9,14 @@ class Signal<T = void>  {
         this.subscribers.push({ func, ctx });
     }
 
-    public emit(data: T) {
-        this.subscribers.forEach(sub => sub.func.call(sub.ctx, data));
+    public addPriority(func: ((data: T) => void), ctx: unknown) {
+        this.subscribers.unshift({ func, ctx });
+    }
+
+    public async emit(data: T): Promise<void> {
+        for (const subscriber of this.subscribers) {
+            await subscriber.func.call(subscriber.ctx, data);
+        }
     }
 
     public remove(func: ((data: T) => void)) {
@@ -22,20 +28,19 @@ class Signal<T = void>  {
 
 export class SignalsController {
     public round = {
-        changeState: new Signal<IStateInfo>(),
         start: new Signal<void>(),
-        end: new Signal<TRoundResult>(),
+        end: new Signal<IRoundResult>(),
         new: new Signal<void>(),
     }
 
     public bet = {
         added: new Signal<TBets>(),
-        updated: new Signal<{betsStack: TBets[], sum:number, availableBets: TBets[], isDoubleBetAllowed: boolean}>(),
+        updated: new Signal<{betsStack: TBets[], sum:number, availableBets?: TBets[], isDoubleBetAllowed?: boolean}>(),
         removedLast: new Signal<void>(),
         placed: new Signal<void>(),
         cleared: new Signal<void>(),
         rebet: new Signal<void>(),
-        doubled: new Signal<void>(),
+        doubled: new Signal<void >(),
     }
 
     public balance = {
@@ -57,6 +62,7 @@ export class SignalsController {
         double: new Signal<void>(),
         split: new Signal<void>(),
         insure: new Signal<void>(),
+        endTurn: new Signal<IRoundResult>(),
     }
 
     public dealer = {

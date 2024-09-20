@@ -34,8 +34,8 @@ export class PointsController {
         return this.getCardPoints(cards[0]) === this.getCardPoints(cards[1]);
     }
 
-    public isTie(cards: ICardsDealed) {
-        return this.calcPoints(cards.dealer) === this.calcPoints(cards.player);
+    public isTie(dealerCards: CardModel[], playerCards: CardModel[]) {
+        return this.calcPoints(dealerCards) === this.calcPoints(playerCards);
     }
 
     public isBust(cards: CardModel[]) {

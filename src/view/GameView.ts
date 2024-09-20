@@ -4,7 +4,7 @@ import { Background } from "./scenes/sceneComponents/Background";
 import { InitialScene } from "./scenes/InitialScene";
 import { GameScene } from "./scenes/GameScene";
 import { HeaderPanel } from "./scenes/sceneComponents/HeaderPanel";
-import { ERoundState, IPanel, IScene, IStateInfo, TBets, TRoundResult } from "../data/types";
+import { ERoundState, IPanel, IScene, IStateInfo, TBets, IRoundResult, TResult } from "../data/types";
 import { CardModel } from "../model/CardModel";
 import { BetPanel } from "./scenes/sceneComponents/BetPanel";
 import { GamePanel } from "./scenes/sceneComponents/GamePanel";
@@ -28,6 +28,7 @@ export class GameView {
     private playerBalance = 0;
     private totalWin = 0;
     private isDoubleAllowed = false;
+    private splitActivated = false;
 
     constructor(app: Application, playerBalance: number, totalWin: number) {
         this.app = app;
@@ -44,11 +45,11 @@ export class GameView {
         Main.signalController.bet.updated.add(this.onBetUpdate, this);
         Main.signalController.card.deal.add(this.onCardDeal, this);
         Main.signalController.card.open.add(this.onCardOpen, this);
-        Main.signalController.round.end.add(this.onRoundEnd, this);
-        Main.signalController.round.changeState.add(this.render, this);
+        // Main.signalController.round.end.add(this.onRoundEnd, this);
+        Main.signalController.player.endTurn.add(this.onTurnEnd, this);
     }
 
-    public async render(stateInfo: IStateInfo, isSplitAllowed?: boolean){
+    public async render(stateInfo: IStateInfo, isSplitAllowed?: boolean) {
         switch (stateInfo.currentState) {
             case ERoundState.NOT_STARTED:
                 this.background = new Background();
@@ -84,14 +85,28 @@ export class GameView {
                 break;
 
             case ERoundState.PLAYERS_TURN:
+                stateInfo.cards.player.length === 2 &&  this.gameScene?.setActiveHand('player');
+                if (stateInfo.cards.split.length === 1 && !this.splitActivated) {
+                    await this.gameScene?.splitCards(stateInfo.cards.player, stateInfo.cards.split);
+                    this.splitActivated = true;
+                    this.gameScene?.setActiveHand('player');
+                }
                 this.gamePanel?.updateButtons(stateInfo.currentState, stateInfo.cards.player, isSplitAllowed);
                 break;
 
+            case ERoundState.SPLIT_TURN:
+                if (stateInfo.cards.split.length === 2) {
+                    this.gameScene && await this.gameScene.setActiveHand('split');
+                }
+                this.gamePanel && this.gamePanel.updateButtons(stateInfo.currentState, stateInfo.cards.split);
+                break;
+
             case ERoundState.DEALERS_TURN:
-                // this.gamePanel?.updateButtons(stateInfo.currentState, stateInfo.cards.player);
+                this.gameScene && await this.gameScene.setActiveHand('dealer');
                 break;
 
             case ERoundState.ROUND_OVER:
+                this.gameScene && await this.gameScene.setActiveHand('dealer');
                 this.finalPanel = new FinalPanel();
                 this.setCurrentFooterPanel(this.finalPanel);
 
@@ -131,12 +146,14 @@ export class GameView {
         this.currentScene && this.currentScene.addChild(footerPanel);
     }
 
-    private onBetUpdate(data: { betsStack: TBets[], sum: number, availableBets: TBets[], isDoubleBetAllowed: boolean }) {
+    private onBetUpdate(data: { betsStack: TBets[], sum: number, availableBets?: TBets[], isDoubleBetAllowed?: boolean }) {
         const { betsStack, sum, availableBets, isDoubleBetAllowed } = data;
-        this.isDoubleAllowed = isDoubleBetAllowed;
         this.headerPanel?.onBetUpdate(sum);
-        this.betPanel?.onBetUpdate(sum, availableBets, isDoubleBetAllowed);
-        this.gameScene?.onChipsStackUpdate(betsStack);
+        if (availableBets && typeof isDoubleBetAllowed === 'boolean') {
+            this.isDoubleAllowed = isDoubleBetAllowed;
+            this.betPanel?.onBetUpdate(sum, availableBets, isDoubleBetAllowed);
+        }
+        this.gameScene?.onBetUpdate(betsStack);
     }
 
     private async onCardDeal(data: { person: TParticipants, card: CardModel, totalPoints: number, resolve: (value: unknown) => void }) {
@@ -151,8 +168,13 @@ export class GameView {
         resolve(true);
     }
 
-    private async onRoundEnd(result: TRoundResult) {
-        await this.gameScene?.onRoundEnd(result);
+    // private async onRoundEnd(result: IRoundResult) {
+    //     result.main && await this.gameScene?.onTurnEnd(result);
+    // }
+
+    private async onTurnEnd(result: IRoundResult) {
+        await this.gameScene?.onTurnEnd(result);
+        // result.split && await this.gameScene?.onTurnEnd(result.split);
     }
 
     public onResize() {
@@ -173,7 +195,7 @@ export class GameView {
         Main.signalController.bet.updated.remove(this.onBetUpdate);
         Main.signalController.card.deal.remove(this.onCardDeal);
         Main.signalController.card.open.remove(this.onCardOpen);
-        Main.signalController.round.end.remove(this.onRoundEnd);
-        Main.signalController.round.changeState.remove(this.render);
+        // Main.signalController.round.end.remove(this.onRoundEnd);
+        Main.signalController.player.endTurn.remove(this.onTurnEnd);
     }
 }

@@ -15,9 +15,7 @@ export class CardView extends Container {
     constructor(card: CardModel) {
         super();
         this.card = card;
-        this.setImage();
         this.value = card.value;
-
         this.dropShadowFilter = new DropShadowFilter(Effects.CARD_DROP_SHADOW);
         this.filters = [this.dropShadowFilter];
     }
@@ -25,16 +23,22 @@ export class CardView extends Container {
     private async setImage() {
         this._backImage = await Main.assetsLoader.getSprite('card_back');
         this._image = await Main.assetsLoader.getSprite(this.value);
+        this._backImage.anchor.set(0.5)
+        this._image.anchor.set(0.5);
         this.addChild(this._backImage);
+        this._image.scale.x = 0;
+        this.addChild(this._image);
     }
 
-    public async open() {
+    public open() {
         if (this.card.hidden) return;
-        if (!this._image || !this.backImage) return;
+        if (!this._backImage || !this._image) return;
+        this._backImage.scale.x = 0;
+        this._image.scale.x = this._image.scale.y;
+    }
 
-        this._image.scale.y = this.backImage.scale.y;
-        this._image.scale.x = 0;
-        this.addChildAt(this._image, 0);
+    public async animatedOpen() {
+        if (this.card.hidden) return;
         await Animations.cards.open(this);
     }
 
@@ -45,5 +49,11 @@ export class CardView extends Container {
 
     get backImage() {
         return this._backImage;
+    }
+
+    public static async build(card: CardModel) {
+        const cardView = new CardView(card);
+        await cardView.setImage();
+        return cardView;
     }
 }

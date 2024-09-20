@@ -1,112 +1,63 @@
-import { Container, Point, SpriteMaskFilter, Text } from "pixi.js";
+import { Container, Point, Sprite, SpriteMaskFilter, Text } from "pixi.js";
 import { Main } from "../../main";
 import { CardView } from "./sceneComponents/CardView";
-import { TRoundResult, IScene, TBets, EChips } from "../../data/types";
+import { IRoundResult, IScene, TBets, TResult } from "../../data/types";
 import { Textstyles } from "../styles/TextStyles";
 import { CardModel } from "../../model/CardModel";
 import { TParticipants } from "../../data/types";
-import { ChipView } from "./sceneComponents/ChipView";
 import { Animations } from "../styles/Animations";
 import { Hand } from "./sceneComponents/Hand";
-
-let SHOE_RATIO: number = 0;
+import { PlayersHand } from "./sceneComponents/PlayersHand";
 
 export class GameScene extends Container implements IScene<void> {
     private cardsShoe = new Container();
     private dealersHand = new Hand();
-    private playersHand = new Hand();
-    private splitHand = new Hand();
+    private playersHand = new PlayersHand();
+    private splitHand = new PlayersHand();
     private chipsStack = new Container();
+    private activeHand: PlayersHand | null = null;
 
     constructor() {
         super();
         this.init();
-        this.sortableChildren = true;
-        this.chipsStack.zIndex = 1;
-        this.addChild(this.chipsStack);
     }
 
     private async init() {
         await this.setShoe();
         this.setEventListeners();
-        this.dealersHand.position.set(Main.screenSize.width / 2, Main.screenSize.height * 0.2);
-        this.playersHand.position.set(Main.screenSize.width / 2, Main.screenSize.height * 0.6);
-        this.dealersHand.scale.set(0.8);
-        this.dealersHand.skew.x = -0.01;
+        this.sortableChildren = true;
+        this.chipsStack.zIndex = 1;
+        this.dealersHand.position.set(Main.screenSize.width / 2, Main.screenSize.height * 0.3);
+        this.playersHand.position.set(Main.screenSize.width / 2, Main.screenSize.height * 0.65);
+        this.playersHand.addChild(this.chipsStack);
         this.addChild(this.dealersHand, this.playersHand);
     }
 
     private setEventListeners() {
         Main.signalController.bet.cleared.add(this.onBetClear, this);
+        Main.signalController.player.double.addPriority(this.onDoubleBet, this);
+        // Main.signalController.bet.doubled.addPriority(this.onDoubleBet, this);
     }
 
-    private async setPushLabel() {
-        const image = await Main.assetsLoader.getSprite('regular_label');
-        image.anchor.set(0.5);
-        image.position.set(Main.screenSize.width / 2, Main.screenSize.height / 2);
-        const text = new Text("PUSH", Textstyles.LABEL_TEXTSTYLE);
-        text.anchor.set(0.5);
-        image.addChild(text);
-        this.addChild(image);
-    }
-
-    private async setBJLabel(parent: Container) {
-        const image = await Main.assetsLoader.getSprite('BJ_label');
-        image.scale.set(0.6)
-        image.anchor.set(0.5);
-        image.position.set(30, 70);
-        image.zIndex = 2;
-        const shine = await this.setShine();
-        shine.position.set(image.position.x, image.position.y);
-        shine.anchor.y = 0.4
-        parent.addChild(shine);
-        parent.addChild(image);
-    }
-
-    private async setRegularLabel(parent: Container, message: string) {
-        const image = await Main.assetsLoader.getSprite('regular_label');
-        image.anchor.set(0.5);
-        image.position.set(100, 85);
-        const text = new Text(message, Textstyles.LABEL_TEXTSTYLE);
-        text.anchor.set(0.5);
-        image.addChild(text);
-        parent.addChild(image);
-    }
-
-    private async setWinLabel(parent: Container, message: string) {
-        const image = await Main.assetsLoader.getSprite('win_label');
-        image.anchor.set(0.5);
-        image.position.set(100, 85);
-        const text = new Text(message, Textstyles.LABEL_TEXTSTYLE);
-        text.anchor.set(0.5);
-        image.addChild(text);
-        const shine = await this.setShine();
-        shine.position.set(image.position.x, image.position.y);
-        parent.addChild(shine);
-        parent.addChild(image);
-    }
-
-    // private async createLabel(message: string, imageName: string) {
-    //     const image = await Main.assetsLoader.getSprite('win_label');
-    //     image.anchor.set(0.5);
-    //     image.position.set(100, 35);
-    //     const text = new Text(message, Textstyles.LABEL_TEXTSTYLE);
-    //     text.anchor.set(0.5);
-    //     image.addChild(text);
-    // }
-
-    private async setShine() {
-        const shine = await Main.assetsLoader.getSprite('shine');
-        shine.anchor.set(0.5);
-        shine.scale.set(0.8)
-        return shine;
+    public async setActiveHand(hand: TParticipants) {
+        if (hand === 'player') {
+            this.activeHand = this.playersHand;
+            await this.playersHand.setPointer();
+        } else if (hand === 'split') {
+            this.activeHand = this.splitHand;
+            this.playersHand.removePointer();
+            await this.splitHand.setPointer()
+        } else if (hand === 'dealer') {
+            this.playersHand.removePointer();
+            this.splitHand.removePointer();
+        }
     }
 
     public async onCardDeal(person: TParticipants, card: CardModel, points: number) {
-        const cardView = new CardView(card);
+        const cardView = await CardView.build(card);
         cardView.scale.set(0.89)
-        cardView.angle = -44;
-        cardView.position.set(-2, 111);
+        cardView.angle = -45;
+        cardView.position.set(50, 121);
         this.cardsShoe.addChild(cardView);
         await Animations.cards.pull(cardView);
         const globalPosition = this.cardsShoe.toGlobal(new Point(cardView.x, cardView.y));
@@ -115,6 +66,7 @@ export class GameScene extends Container implements IScene<void> {
         let hand: Hand | null = null;
         if (person === 'dealer') hand = this.dealersHand;
         if (person === 'player') hand = this.playersHand;
+        if (person === 'split') hand = this.splitHand;
         if (!hand) return;
 
         await hand.dealCard(cardView, globalPosition);
@@ -125,42 +77,8 @@ export class GameScene extends Container implements IScene<void> {
     public async onCardOpen(card: CardModel, points: number) {
         const cardView = this.dealersHand.cards.find((cardView) => cardView.value === card.value);
         if (!cardView) return;
-        await cardView.open();
+        await cardView.animatedOpen();
         this.dealersHand.points = points;
-    }
-
-    public async addChipToStack(chip: ChipView) {
-        const index = this.chipsStack.children.length;
-        chip.dropShadowFilter.offset.x = -6 * index;
-        chip.dropShadowFilter.offset.y = 0;
-        chip.dropShadowFilter.alpha -= 0.1 * index;
-        chip.dropShadowFilter.blur += 0.5 * index;
-        chip.bevelFilter.thickness = 7,
-        chip.bevelFilter.rotation = 240,
-        chip.bevelFilter.shadowAlpha = 0.1,
-        chip.bevelFilter.lightAlpha = 0.5,
-        this.chipsStack.addChild(chip);
-        await Animations.chip.place(chip, index);
-        this.chipsStack.removeChildren();
-    }
-
-    public async onChipsStackUpdate(chipsStack: TBets[]) {
-        this.chipsStack.removeChildren();
-        chipsStack.forEach(async (value, index) => {
-            const chip = new ChipView(value);
-            chip.dropShadowFilter.offset.x = -6 * index;
-            chip.dropShadowFilter.offset.y = 0;
-            chip.dropShadowFilter.alpha -= 0.1 * index;
-            chip.dropShadowFilter.blur += 0.5 * index;
-            chip.bevelFilter.thickness = 7,
-            chip.bevelFilter.rotation = 240,
-            chip.bevelFilter.shadowAlpha = 0.1,
-            chip.bevelFilter.lightAlpha = 0.5,
-            chip.position.x = Main.screenSize.width * 0.4,
-            chip.position.y = Main.screenSize.height * 0.55 - 7 * index,
-            chip.scale.y = 0.7;
-            this.chipsStack.addChild(chip);
-        })
     }
 
     public async renderWinPopup(winSize: number) {
@@ -188,47 +106,96 @@ export class GameScene extends Container implements IScene<void> {
         this.cardsShoe.position.set(Main.screenSize.width * 0.75, 0);
         shoePart.zIndex = 2;
         shoePart.position.set(shoe.position.x, shoePart.height)
-        SHOE_RATIO = this.cardsShoe.width / this.cardsShoe.height
 
         this.cardsShoe.addChild(shoePart);
         this.addChild(this.cardsShoe);
     }
 
-    private async onBetClear() {
-        await Animations.chipStack.remove(this.chipsStack);
+    private onBetClear() {
+        Animations.chipStack.remove(this.chipsStack);
         this.chipsStack.removeChildren();
-        this.chipsStack.position.set(0, 0)
+        this.chipsStack.position.set(0, 0);
     }
 
-    public async onRoundEnd(result: TRoundResult) {
+    public async onDoubleBet() {
+        this.activeHand ? await this.activeHand.doubleBet() : await this.playersHand.doubleBet();
+        Main.signalController.bet.doubled.emit();
+    }
+
+    public onBetUpdate(chipsStack: TBets[]) {
+        if (!this.splitHand.chipsStack) {
+            chipsStack.forEach((value, index) => {
+                setTimeout(() => {
+                    this.splitHand.addChipToStack(value, new Point(Main.screenSize.width * 0.2, Main.screenSize.height + 100))
+                }, 200 * index)
+            })
+        }
+        this.activeHand ? this.activeHand.onChipsStackUpdate(chipsStack) : this.playersHand.onChipsStackUpdate(chipsStack);
+        // else {
+        //     await this.splitHand.onChipsStackUpdate(chipsStack);
+        // }
+    }
+
+    public async onChipClick(value: TBets, globalPosition: Point) {
+        await this.playersHand.addChipToStack(value, globalPosition);
+    }
+
+    public async splitCards(playerCards: CardModel[], splitCards: CardModel[]) {
+        this.removeChild(this.playersHand);
+        this.splitHand = new PlayersHand();
+        this.playersHand = new PlayersHand()
+        this.playersHand.position.set(Main.screenSize.width / 2, Main.screenSize.height * 0.65);
+        this.splitHand.position.set(Main.screenSize.width / 1.9, Main.screenSize.height * 0.65);
+        this.playersHand.updateCards(playerCards)
+        this.splitHand.updateCards(splitCards)
+
+        this.addChild(this.splitHand);
+        this.addChild(this.playersHand);
+        await Animations.hand.split(this.playersHand, this.splitHand);
+    }
+
+    public onTurnEnd(result: IRoundResult) {
+        result.main && this.setLabels(result.main, 'player');
+        result.split && this.setLabels(result.split, 'split');
+    }
+
+    private setLabels(result: TResult, hand: TParticipants) {
+        const currentHand = hand === 'split' ? this.splitHand : this.playersHand
         switch (result) {
             case "dealerBJ":
-                this.setBJLabel(this.dealersHand);
-                this.setRegularLabel(this.playersHand, 'LOSE');
+                // this.setBJLabel(this.dealersHand);
+                // this.setRegularLabel(this.playersHand, 'LOSE');
+                this.dealersHand.setBJLabel();
+                currentHand.setRegularLabel('LOSE');
                 break;
             case "playerBJ":
-                this.setBJLabel(this.playersHand);
+                // this.setBJLabel(this.playersHand);
+                currentHand.setBJLabel();
                 break;
             case "playerBust":
-                this.setRegularLabel(this.playersHand, 'BUST');
+                // this.playersHand.addLabel(result)
+                // this.setRegularLabel(this.playersHand, 'BUST');
+                currentHand.setRegularLabel('BUST')
                 break;
             case "dealerBust":
-                this.setRegularLabel(this.dealersHand, 'BUST');
-                this.setWinLabel(this.playersHand, 'WIN');
+                // this.setRegularLabel(this.dealersHand, 'BUST');
+                // this.setWinLabel(this.playersHand, 'WIN');
+                this.dealersHand.setRegularLabel('BUST');
+                currentHand.setWinLabel('WIN');
                 break;
             case "win":
-                this.setWinLabel(this.playersHand, 'WIN');
+                currentHand.setWinLabel('WIN');
                 break;
             case "lose":
-                this.setRegularLabel(this.playersHand, 'LOSE');
+                currentHand.setRegularLabel('LOSE')
                 break;
             case "push":
-                this.setPushLabel();
+                // currentHand.setRegularLabel('PUSH')
                 break;
             case "pushBJ":
-                this.setBJLabel(this.dealersHand);
-                this.setBJLabel(this.playersHand);
-                this.setPushLabel();
+                currentHand.setBJLabel();
+                this.dealersHand.setBJLabel();
+                // this.setPushLabel();
                 break;
         }
     }
@@ -236,8 +203,8 @@ export class GameScene extends Container implements IScene<void> {
     public onResize() {
         this.cardsShoe.scale.set(Main.screenSize.height / 600);
 
-        this.dealersHand.position.set(Main.screenSize.width / 2, Main.screenSize.height * 0.2);
-        this.playersHand.position.set(Main.screenSize.width / 2, Main.screenSize.height * 0.6);
+        // this.dealersHand.position.set(Main.screenSize.width / 2, Main.screenSize.height * 0.2);
+        // this.playersHand.position.set(Main.screenSize.width / 2, Main.screenSize.height * 0.6);
 
         if (Main.screenSize.height > Main.screenSize.width) {
             this.cardsShoe.position.set(Main.screenSize.width * 0.80, 30);
@@ -248,5 +215,6 @@ export class GameScene extends Container implements IScene<void> {
 
     public deactivate() {
         Main.signalController.bet.cleared.remove(this.onBetClear);
+        Main.signalController.player.double.remove(this.onDoubleBet);
     }
 }

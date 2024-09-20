@@ -2,7 +2,7 @@ import { Container } from "pixi.js";
 import { ALL_BETS, RANKS, SUITS } from "./constants";
 import { CardModel } from "../model/CardModel";
 
-export type TParticipants = 'dealer' | 'player';
+export type TParticipants = 'dealer' | 'player' | 'split';
 
 export type TRank = typeof RANKS[number];
 export type TSuit = typeof SUITS[number];
@@ -10,7 +10,7 @@ export type TValue = `${TRank}_of_${TSuit}`;
 
 export type TBets = typeof ALL_BETS[number];
 
-export type TRoundResult = "playerBJ" | "dealerBJ" | "win" | "doubleWin" | "lose"
+export type TResult = "playerBJ" | "dealerBJ" | "win" | "doubleWin" | "lose"
     | "push" | "pushBJ" | "playerBust" | "dealerBust"
     | "surrender" | "insurance" 
 
@@ -26,6 +26,11 @@ export interface IButton {
     imgID: string
 }
 
+export interface IRoundResult {
+    main: TResult | null,
+    split: TResult | null
+}
+
 export interface IPanel extends Container {
     deactivate(): void;
     onResize(): void;
@@ -38,7 +43,7 @@ export interface IStateInfo {
     currentState: ERoundState,
     cards: ICardsDealed,
     isSplitAllowed: boolean,
-    roundResult: TRoundResult | null,
+    roundResult: IRoundResult
 }
 
 export interface ICardsDealed {
@@ -57,6 +62,7 @@ export enum ERoundState {
     BETTING,
     CARDS_DEALING,
     PLAYERS_TURN,
+    SPLIT_TURN,
     DEALERS_TURN,
     ROUND_OVER
 }

@@ -27,13 +27,13 @@ export class GamePanel extends Container implements IPanel {
     }
 
     private setButtons() {
-        this.splitButton.position.set(Main.screenSize.width * 0.4, -100);
+        this.splitButton.position.set(Main.screenSize.width * 0.9, -100);
 
-        this.doubleButton.position.set(Main.screenSize.width * 0.55, -100);
+        this.doubleButton.position.set(Main.screenSize.width * 0.8, -100);
 
         this.standButton.position.set(Main.screenSize.width * 0.7, -100);
 
-        this.hitButton.position.set(Main.screenSize.width * 0.85, -100);
+        this.hitButton.position.set(Main.screenSize.width * 0.6, -100);
 
         this.addChild(this.splitButton, this.doubleButton, this.standButton, this.hitButton);
     }
@@ -49,8 +49,8 @@ export class GamePanel extends Container implements IPanel {
     }
 
     private onDouble() {
-        Main.signalController.player.double.emit();
         this.disableButtons();
+        Main.signalController.player.double.emit();
     }
 
     private onSplit() {
@@ -60,20 +60,20 @@ export class GamePanel extends Container implements IPanel {
 
     public updateButtons(state: ERoundState, cards: CardModel[], isSplitAllowed?: boolean) {
         this.updateHitStandButtons(state);
-        if (isSplitAllowed) this.splitButton.updateIsActive(isSplitAllowed);
-        if (this.isDoubleAllowed)  {
-        this.updateDoubleButton(cards);
+        if (isSplitAllowed) this.splitButton.updateIsActive(isSplitAllowed && this.isDoubleAllowed);
+        if (this.isDoubleAllowed) {
+            this.updateDoubleButton(cards);
         }
     }
 
     private updateHitStandButtons(state: ERoundState) {
-        const isActive = (state === ERoundState.PLAYERS_TURN) ? true : false;
+        const isActive = (state === ERoundState.PLAYERS_TURN || state === ERoundState.SPLIT_TURN) ? true : false;
         this.hitButton.updateIsActive(isActive);
         this.standButton.updateIsActive(isActive);
     }
 
     public updateDoubleButton(cards: CardModel[]) {
-        const isActive = cards.length === 2;
+        const isActive = cards.length <= 2;
         this.doubleButton.updateIsActive(isActive);
     }
 
@@ -89,12 +89,12 @@ export class GamePanel extends Container implements IPanel {
     }
 
     public onResize() {
-        this.splitButton.position.set(Main.screenSize.width * 0.4, -100);
+        this.splitButton.position.set(Main.screenSize.width * 0.9, -100);
 
-        this.doubleButton.position.set(Main.screenSize.width * 0.55, -100);
+        this.doubleButton.position.set(Main.screenSize.width * 0.8, -100);
 
         this.standButton.position.set(Main.screenSize.width * 0.7, -100);
 
-        this.hitButton.position.set(Main.screenSize.width * 0.85, -100);
+        this.hitButton.position.set(Main.screenSize.width * 0.6, -100);
     }
 }
