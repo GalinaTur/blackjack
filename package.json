@@ -1,5 +1,6 @@
 {
   "name": "blackjack",
+  "homepage": "https://galinatur.github.io/blackjack/",
   "version": "1.0.0",
   "private": true,
   "scripts": {
