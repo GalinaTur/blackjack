@@ -5,17 +5,17 @@ export const ASSETS_MANIFEST = {
             assets: [
                 {
                     name: 'Saira',
-                    srcs: '../../../assets/fonts/Saira-Regular.ttf',
+                    srcs: './assets/fonts/Saira-Regular.ttf',
                     data: { family: 'Saira' },
                 },
                 {
                     name: 'SairaBlackItalic',
-                    srcs: '../../../assets/fonts/Saira-BlackItalic.ttf',
+                    srcs: './assets/fonts/Saira-BlackItalic.ttf',
                     data: { family: 'SairaBlackItalic' },
                 },
                 {
                     name: 'SairaLightItalic',
-                    srcs: '../../../assets/fonts/Saira-LightItalic.ttf',
+                    srcs: './assets/fonts/Saira-LightItalic.ttf',
                     data: { family: 'SairaLightItalic' },
                 },
             ],
@@ -25,15 +25,15 @@ export const ASSETS_MANIFEST = {
             assets: [
                 {
                     name: 'initialLogo',
-                    srcs: '../../../assets/initialLogo.png',
+                    srcs: './assets/initialLogo.png',
                 },
                 {
                     name: 'background',
-                    srcs: '../../../assets/background.png',
+                    srcs: './assets/background.png',
                 },
                 {
                     name: 'bgLogo',
-                    srcs: '../../../assets/bgLogo.png',
+                    srcs: './assets/bgLogo.png',
                 },
             ],
         },
@@ -42,51 +42,51 @@ export const ASSETS_MANIFEST = {
             assets: [
                 {
                     name: 'clearBet',
-                    srcs: '../../../assets/buttons/clearBet.png',
+                    srcs: './assets/buttons/clearBet.png',
                 },
                 {
                     name: 'deal',
-                    srcs: '../../../assets/buttons/deal.png',
+                    srcs: './assets/buttons/deal.png',
                 },
                 {
                     name: 'double',
-                    srcs: '../../../assets/buttons/double.png',
+                    srcs: './assets/buttons/double.png',
                 },
                 {
                     name: 'doubleBet',
-                    srcs: '../../../assets/buttons/doubleBet.png',
+                    srcs: './assets/buttons/doubleBet.png',
                 },
                 {
                     name: 'hit',
-                    srcs: '../../../assets/buttons/hit.png',
+                    srcs: './assets/buttons/hit.png',
                 },
                 {
                     name: 'stand',
-                    srcs: '../../../assets/buttons/stand.png',
+                    srcs: './assets/buttons/stand.png',
                 },
                 {
                     name: 'insurance',
-                    srcs: '../../../assets/buttons/insurance.png',
+                    srcs: './assets/buttons/insurance.png',
                 },
                 {
                     name: 'noInsurance',
-                    srcs: '../../../assets/buttons/noInsurance.png',
+                    srcs: './assets/buttons/noInsurance.png',
                 },
                 {
                     name: 'split',
-                    srcs: '../../../assets/buttons/split.png',
+                    srcs: './assets/buttons/split.png',
                 },
                 {
                     name: 'undo',
-                    srcs: '../../../assets/buttons/undo.png',
+                    srcs: './assets/buttons/undo.png',
                 },
                 {
                     name: 'repeat',
-                    srcs: '../../../assets/buttons/repeat.png',
+                    srcs: './assets/buttons/repeat.png',
                 },
                 {
                     name: 'topUp',
-                    srcs: '../../../assets/buttons/topUp.png',
+                    srcs: './assets/buttons/topUp.png',
                 },
             ],
         },
@@ -95,31 +95,31 @@ export const ASSETS_MANIFEST = {
             assets: [
                 {
                     name: 'points_label',
-                    srcs: '../../../assets/label.png',
+                    srcs: './assets/label.png',
                 },
                 {
                     name: 'BJ_label',
-                    srcs: '../../../assets/BJLabel.png',
+                    srcs: './assets/BJLabel.png',
                 },
                 {
                     name: 'regular_label',
-                    srcs: '../../../assets/regularLabel.png',
+                    srcs: './assets/regularLabel.png',
                 },
                 {
                     name: 'win_label',
-                    srcs: '../../../assets/winLabel.png',
+                    srcs: './assets/winLabel.png',
                 },
                 {
                     name: 'final_label',
-                    srcs: '../../../assets/finalLabel.png',
+                    srcs: './assets/finalLabel.png',
                 },
                 {
                     name: 'shine',
-                    srcs: '../../../assets/shine.png',
+                    srcs: './assets/shine.png',
                 },
                 {
                     name: 'finalLabel',
-                    srcs: '../../../assets/finalLabel.png',
+                    srcs: './assets/finalLabel.png',
                 },
             ],
         },
@@ -128,19 +128,19 @@ export const ASSETS_MANIFEST = {
             assets: [
                 {
                     name: 'cardsShoe',
-                    srcs: '../../../assets/shoe.png',
+                    srcs: './assets/shoe.png',
                 },
                 {
                     name: 'cardsShoePart',
-                    srcs: '../../../assets/shoePart.png',
+                    srcs: './assets/shoePart.png',
                 },
                 {
                     name: 'pointer',
-                    srcs: '../../../assets/pointer.png',
+                    srcs: './assets/pointer.png',
                 },
                 {
                     name: 'pointerShine',
-                    srcs: '../../../assets/pointerShine.png',
+                    srcs: './assets/pointerShine.png',
                 },
             ],
         },
