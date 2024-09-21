@@ -23,9 +23,9 @@ export class DeckModel {
             [this._deck[i], this._deck[k]] = [this._deck[k], this._deck[i]];
         }
         //for split feature (delete this);
-        this._deck.push(new CardModel('two', 'spades'));
-        this._deck.push(new CardModel('ace', 'hearts'));
-        this._deck.push(new CardModel('two', 'clubs'));
+        this._deck.push(new CardModel('king', 'spades'));
+        this._deck.push(new CardModel('four', 'hearts'));
+        this._deck.push(new CardModel('ace', 'clubs'));
         // this._deck.push(new CardModel('king', 'hearts'));
     }
 

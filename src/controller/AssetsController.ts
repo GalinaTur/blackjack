@@ -9,8 +9,8 @@ export class AssetsLoader {
         await Assets.loadBundle('buttons');
         await Assets.loadBundle('labels');
         await Assets.loadBundle('other');
-        await Assets.load('../../../assets/cards/cardsSpritesheet.json');
-        await Assets.load('../../../assets/chips/chipsSpritesheet.json');
+        await Assets.load('./assets/cards/cardsSpritesheet.json');
+        await Assets.load('./assets/chips/chipsSpritesheet.json');
     };
 
     public async getSprite(id: string): Promise<Sprite> {

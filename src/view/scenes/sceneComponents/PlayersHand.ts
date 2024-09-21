@@ -1,7 +1,7 @@
 import { Container, Point, Sprite } from "pixi.js";
 import { ChipView } from "./ChipView";
 import { Hand } from "./Hand";
-import { TBets } from "../../../data/types";
+import { TBets, TParticipants } from "../../../data/types";
 import { Animations } from "../../styles/Animations";
 import { CardModel } from "../../../model/CardModel";
 import { CardView } from "./CardView";
@@ -11,8 +11,8 @@ export class PlayersHand extends Hand {
     public chipsStack: Container | null = null;
     private pointer: Sprite | null = null;
 
-    constructor() {
-        super();
+    constructor(name: TParticipants) {
+        super(name);
         this.scale.set(1.3);
     }
 

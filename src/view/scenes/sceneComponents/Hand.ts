@@ -3,16 +3,18 @@ import { CardView } from "./CardView";
 import { Main } from "../../../main";
 import { Textstyles } from "../../styles/TextStyles";
 import { Animations } from "../../styles/Animations";
-import { TResult } from "../../../data/types";
+import { TParticipants, TResult } from "../../../data/types";
 
 
 export class Hand extends Container {
     private pointsLabel: Sprite | null = null;
     private _cards: CardView[] = [];
+    public name: TParticipants;
 
-    constructor() {
+    constructor(name: TParticipants) {
         super();
         this.init();
+        this.name = name;
     }
 
     private init() {

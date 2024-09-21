@@ -11,9 +11,9 @@ import { PlayersHand } from "./sceneComponents/PlayersHand";
 
 export class GameScene extends Container implements IScene<void> {
     private cardsShoe = new Container();
-    private dealersHand = new Hand();
-    private playersHand = new PlayersHand();
-    private splitHand = new PlayersHand();
+    private dealersHand = new Hand('dealer');
+    private playersHand = new PlayersHand('player');
+    private splitHand: PlayersHand | null = null;
     private chipsStack = new Container();
     private activeHand: PlayersHand | null = null;
 
@@ -46,10 +46,10 @@ export class GameScene extends Container implements IScene<void> {
         } else if (hand === 'split') {
             this.activeHand = this.splitHand;
             this.playersHand.removePointer();
-            await this.splitHand.setPointer()
+            this.splitHand && await this.splitHand.setPointer()
         } else if (hand === 'dealer') {
             this.playersHand.removePointer();
-            this.splitHand.removePointer();
+            this.splitHand && this.splitHand.removePointer();
         }
     }
 
@@ -119,14 +119,14 @@ export class GameScene extends Container implements IScene<void> {
 
     public async onDoubleBet() {
         this.activeHand ? await this.activeHand.doubleBet() : await this.playersHand.doubleBet();
-        Main.signalController.bet.doubled.emit();
+        Main.signalController.bet.doubled.emit(this.activeHand?.name || this.playersHand.name);
     }
 
     public onBetUpdate(chipsStack: TBets[]) {
-        if (!this.splitHand.chipsStack) {
+        if (this.splitHand && !this.splitHand.chipsStack) {
             chipsStack.forEach((value, index) => {
                 setTimeout(() => {
-                    this.splitHand.addChipToStack(value, new Point(Main.screenSize.width * 0.2, Main.screenSize.height + 100))
+                    this.splitHand!.addChipToStack(value, new Point(Main.screenSize.width * 0.2, Main.screenSize.height + 100))
                 }, 200 * index)
             })
         }
@@ -142,8 +142,8 @@ export class GameScene extends Container implements IScene<void> {
 
     public async splitCards(playerCards: CardModel[], splitCards: CardModel[]) {
         this.removeChild(this.playersHand);
-        this.splitHand = new PlayersHand();
-        this.playersHand = new PlayersHand()
+        this.splitHand = new PlayersHand('split');
+        this.playersHand = new PlayersHand('player')
         this.playersHand.position.set(Main.screenSize.width / 2, Main.screenSize.height * 0.65);
         this.splitHand.position.set(Main.screenSize.width / 1.9, Main.screenSize.height * 0.65);
         this.playersHand.updateCards(playerCards)
@@ -166,36 +166,33 @@ export class GameScene extends Container implements IScene<void> {
                 // this.setBJLabel(this.dealersHand);
                 // this.setRegularLabel(this.playersHand, 'LOSE');
                 this.dealersHand.setBJLabel();
-                currentHand.setRegularLabel('LOSE');
+                currentHand!.setRegularLabel('LOSE');
                 break;
             case "playerBJ":
                 // this.setBJLabel(this.playersHand);
-                currentHand.setBJLabel();
+                currentHand!.setBJLabel();
                 break;
             case "playerBust":
                 // this.playersHand.addLabel(result)
                 // this.setRegularLabel(this.playersHand, 'BUST');
-                currentHand.setRegularLabel('BUST')
+                currentHand!.setRegularLabel('BUST')
                 break;
             case "dealerBust":
                 // this.setRegularLabel(this.dealersHand, 'BUST');
                 // this.setWinLabel(this.playersHand, 'WIN');
                 this.dealersHand.setRegularLabel('BUST');
-                currentHand.setWinLabel('WIN');
+                currentHand!.setWinLabel('WIN');
                 break;
             case "win":
-                currentHand.setWinLabel('WIN');
+                currentHand!.setWinLabel('WIN');
                 break;
             case "lose":
-                currentHand.setRegularLabel('LOSE')
+                currentHand!.setRegularLabel('LOSE')
                 break;
             case "push":
-                // currentHand.setRegularLabel('PUSH')
-                break;
             case "pushBJ":
-                currentHand.setBJLabel();
-                this.dealersHand.setBJLabel();
-                // this.setPushLabel();
+                this.dealersHand.setRegularLabel('PUSH');
+                currentHand!.setRegularLabel('PUSH');
                 break;
         }
     }

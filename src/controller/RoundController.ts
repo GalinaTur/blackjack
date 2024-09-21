@@ -106,7 +106,7 @@ export class RoundController {
         this.changeState(ERoundState.CARDS_DEALING);
     }
 
-    private dealCardTo(person: TParticipants) {
+    private dealCardTo(person: TParticipants, doubleDown?: boolean) {
         return new Promise((resolve) => {
             const card = this.deck.getCard();
             if (!card) {
@@ -154,15 +154,16 @@ export class RoundController {
     }
 
     private onPlayerDoubleDown() {
+        const isDoubleDown = true;
         if (this.roundModel.state === ERoundState.PLAYERS_TURN) {
-            this.dealCardTo('player');
+            this.dealCardTo('player', isDoubleDown);
             if (this.pointsController.isBust(this.playersCards)) {
                 this.endTurn('playerBust');
             } else {
                 this.onPlayerStand();
             }
         } else if (this.roundModel.state === ERoundState.SPLIT_TURN) {
-            this.dealCardTo('split');
+            this.dealCardTo('split', isDoubleDown);
             if (this.pointsController.isBust(this.splitCards)) {
                 this.endTurn('playerBust');
             } else {

@@ -40,7 +40,7 @@ export class SignalsController {
         placed: new Signal<void>(),
         cleared: new Signal<void>(),
         rebet: new Signal<void>(),
-        doubled: new Signal<void >(),
+        doubled: new Signal<TParticipants>(),
     }
 
     public balance = {

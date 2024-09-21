@@ -71,7 +71,7 @@ export class Animations {
     }
 
     public static chip = {
-       place(chip: ChipView, index: number) {
+        place(chip: ChipView, index: number) {
             return new Promise((resolve) => {
                 gsap.to(chip, {
                     id: 'moveChip',
@@ -163,7 +163,7 @@ export class Animations {
                         scaleX: 0,
                     },
                     duration: 0.1,
-                    delay:0.2,
+                    delay: 0.2,
                     ease: 'power0.in',
                     onComplete: () => {
                         gsap.to(card.image!, {
@@ -233,8 +233,8 @@ export class Animations {
                 },
                 duration: 0.5,
                 onUpdate() {
-                    const number = Number(num.text);
-                    num.text = func(name, Math.round(number).toString());
+                    let number = Number(num.text).toFixed(1);
+                    num.text = func(name, number);
                 },
             })
         }
@@ -259,7 +259,7 @@ export class Animations {
             return new Promise(resolve => gsap.to(element, {
                 id: 'showPopup',
                 pixi: {
-                    scale: 1.1,
+                    scale: 0.6,
                 },
                 delay: 0.1,
                 yoyo: true,
@@ -363,7 +363,7 @@ export class Animations {
                     gsap.to(pointer, {
                         id: 'showPointer',
                         pixi: {
-                            positionY: pointer.position.y+5,
+                            positionY: pointer.position.y + 5,
                         },
                         duration: 0.3,
                         yoyo: true,
