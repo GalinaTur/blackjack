@@ -1,23 +1,25 @@
-import { Main } from "../../../main";
-import { Button } from "./Button";
-import { ERoundState, IPanel } from "../../../data/types";
-import { BUTTONS } from "../../../data/constants";
+import { Main } from "../../../../main";
+// import { Button } from "./Button";
+import { ERoundState, IPanel } from "../../../../data/types";
+import { BUTTONS } from "../../../../data/constants";
 import { Container } from "pixi.js";
-import { CardModel } from "../../../model/CardModel";
+import { CardModel } from "../../../../model/CardModel";
+import { Button } from "../buttons/Button";
+import { GameButton } from "../buttons/GameButton";
 
 export class GamePanel extends Container implements IPanel {
-    private splitButton: Button;
-    private doubleButton: Button;
-    private hitButton: Button;
-    private standButton: Button;
+    private splitButton: GameButton;
+    private doubleButton: GameButton;
+    private hitButton: GameButton;
+    private standButton: GameButton;
     private isDoubleAllowed: boolean;
 
     constructor(isDoubleAllowed: boolean) {
         super();
-        this.splitButton = new Button(BUTTONS.game.split, this.onSplit.bind(this), false);
-        this.doubleButton = new Button(BUTTONS.game.doubleDown, this.onDouble.bind(this), false);
-        this.hitButton = new Button(BUTTONS.game.hit, this.onHit.bind(this), false);
-        this.standButton = new Button(BUTTONS.game.stand, this.onStand.bind(this), false);
+        this.splitButton = new GameButton(BUTTONS.game.split, this.onSplit.bind(this), false);
+        this.doubleButton = new GameButton(BUTTONS.game.doubleDown, this.onDouble.bind(this), false);
+        this.hitButton = new GameButton(BUTTONS.game.hit, this.onHit.bind(this), false);
+        this.standButton = new GameButton(BUTTONS.game.stand, this.onStand.bind(this), false);
         this.isDoubleAllowed = isDoubleAllowed
         this.init();
     }

@@ -142,7 +142,19 @@ export const ASSETS_MANIFEST = {
                     name: 'pointerShine',
                     srcs: './assets/pointerShine.png',
                 },
+                {
+                    name: 'soundsOn',
+                    srcs: './assets/sounds-on.svg',
+                },
+                {
+                    name: 'soundsOff',
+                    srcs: './assets/sounds-off.svg',
+                },
             ],
         },
     ],
+}
+
+export const SOUNDS = {
+    backgroundMusic: './assets/sounds/background.mp3',
 }

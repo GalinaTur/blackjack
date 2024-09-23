@@ -4,11 +4,16 @@ import { Main } from "../../../main";
 import { Textstyles } from "../../styles/TextStyles";
 import { DropShadowFilter } from "pixi-filters";
 import { Effects } from "../../styles/Effects";
+import { Button } from "./buttons/Button";
+import { BUTTONS } from "../../../data/constants";
+import { SoundsButton } from "./buttons/SoundsButton";
 
 export class Footer extends Container {
-    text: Text | null = null;
-    dropShadowFilter = new DropShadowFilter(Effects.FOOTER_DROP_SHADOW);
-    background: Sprite | null = null;
+    private text: Text | null = null;
+    private dropShadowFilter = new DropShadowFilter(Effects.FOOTER_DROP_SHADOW);
+    private background: Sprite | null = null;
+
+    // private soundOffButton = new Button(BUTTONS.sounds.off,)
 
     constructor() {
         super()
@@ -19,8 +24,9 @@ export class Footer extends Container {
 
     init() {
         this.setBackground();
-        this.setText();
         this.setSignature();
+        this.setText();
+        this.setSoundsButton();
         this.position.set(0, Main.screenSize.height - this.height);
         this.filters = [this.dropShadowFilter];
     }
@@ -33,6 +39,17 @@ export class Footer extends Container {
         const texture = Main.APP.renderer.generateTexture(frame);
         this.background = new Sprite(texture);
         this.addChild(this.background);
+    }
+
+    private setSoundsButton(){
+        const soundsButton = new SoundsButton();
+        soundsButton.scale.set(0.1);
+        soundsButton.position.set(Main.screenSize.width*0.9, this.height/2);
+        this.addChild(soundsButton);
+    }
+
+    private onSoundsButtonClick() {
+
     }
 
     private setText() {

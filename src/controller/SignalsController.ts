@@ -70,4 +70,8 @@ export class SignalsController {
         stand: new Signal<void>(),
     }
 
+    public sounds = {
+        isOn: new Signal<boolean>(),
+    }
+
 }

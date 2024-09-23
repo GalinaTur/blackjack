@@ -38,8 +38,23 @@ export class Main {
         await Main.assetsLoader.init();
         this.gameController = new GameController(this.app);
         document.body.appendChild(this.app.view as HTMLCanvasElement);
+
+        gsap.registerPlugin(PixiPlugin);
+        gsap.registerPlugin(MotionPathPlugin);
+        PixiPlugin.registerPIXI(this.app);
+
+        window.addEventListener('resize', () => {
+            Main.screenSize = {
+                width: window.innerWidth,
+                height: window.innerHeight,
+            }
+            this.app.renderer.resize(Main.screenSize.width, Main.screenSize.height);
+            this.onResize()
+
+            requestAnimationFrame(() => Main.APP.render());
+        });
     }
-    
+
     get app() {
         return this._app;
     }
@@ -52,18 +67,3 @@ export class Main {
 
 const main = new Main();
 main.init();
-
-window.addEventListener('resize', () => {
-    Main.screenSize = {
-        width: window.innerWidth,
-        height: window.innerHeight,
-    }
-    Main.APP.renderer.resize(Main.screenSize.width, Main.screenSize.height);
-    main.onResize()
-
-    requestAnimationFrame(() => Main.APP.render());
-});
-
-gsap.registerPlugin(PixiPlugin);
-gsap.registerPlugin(MotionPathPlugin);
-PixiPlugin.registerPIXI(Main.APP);

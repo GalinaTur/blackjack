@@ -137,6 +137,7 @@ export class GameScene extends Container implements IScene<void> {
     }
 
     public async onChipClick(value: TBets, globalPosition: Point) {
+        const resolveAt = 'start';
         await this.playersHand.addChipToStack(value, globalPosition);
     }
 

@@ -1,6 +1,6 @@
 import { BlurFilter, Container, Rectangle, Sprite } from "pixi.js";
 import { Main } from "../../main";
-import { Button } from "./sceneComponents/Button";
+import { Button } from "./sceneComponents/buttons/Button";
 import { IScene } from "../../data/types";
 import { Animations } from "../styles/Animations";
 import gsap from "gsap";
@@ -33,9 +33,15 @@ export class InitialScene extends Container implements IScene<void> {
     }
 
     private onStartClick(): void {
+        this.setBackgroundMusic();
         Main.signalController.round.start.emit();
     }
 
+    private async setBackgroundMusic(){
+        const music = await Main.assetsLoader.getSound('backgroundMusic');
+        music.loop(true);
+        music.play();
+    }
 
     public onResize(): void {
         if (!this.logo) return

@@ -47,6 +47,7 @@ export class Animations {
 
     public static button = {
         enable(button: Container) {
+
             gsap.to(button, {
                 id: 'enableButton',
                 pixi: {
@@ -55,9 +56,12 @@ export class Animations {
                 },
                 duration: 0.2,
                 ease: 'back.out',
+
             })
+
         },
         disable(button: Container) {
+            return new Promise(resolve => {
             gsap.to(button, {
                 id: 'disableButton',
                 pixi: {
@@ -66,13 +70,15 @@ export class Animations {
                 },
                 duration: 0.2,
                 ease: 'back.in',
+                onComplete: resolve,
             })
+        })
         }
     }
 
     public static chip = {
         place(chip: ChipView, index: number) {
-            return new Promise((resolve) => {
+            return new Promise<void>((resolve) => {
                 gsap.to(chip, {
                     id: 'moveChip',
                     pixi: {
@@ -91,7 +97,7 @@ export class Animations {
                         type: 'cubic',
                     },
                     ease: 'power1.out',
-                    onComplete: resolve,
+                    onComplete: resolve
                 })
             })
         },

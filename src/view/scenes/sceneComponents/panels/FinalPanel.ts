@@ -1,17 +1,18 @@
-import { Main } from "../../../main";
-import { Button } from "./Button";
-import { IPanel } from "../../../data/types";
+import { Main } from "../../../../main";
+import { Button } from "../buttons/Button";
+import { IPanel } from "../../../../data/types";
 import { Container } from "pixi.js";
-import { BUTTONS } from "../../../data/constants";
+import { BUTTONS } from "../../../../data/constants";
+import { GameButton } from "../buttons/GameButton";
 
 export class FinalPanel extends Container implements IPanel {
-    private repeatButton: Button;
-    private topUpButton: Button;
+    private repeatButton: GameButton;
+    private topUpButton: GameButton;
 
     constructor() {
         super();
-        this.repeatButton = new Button(BUTTONS.final.repeat, this.onRepeat, true);
-        this.topUpButton = new Button(BUTTONS.final.topUp, this.onTopUp, true);
+        this.repeatButton = new GameButton(BUTTONS.final.repeat, this.onRepeat, true);
+        this.topUpButton = new GameButton(BUTTONS.final.topUp, this.onTopUp, true);
         this.init();
     }
 

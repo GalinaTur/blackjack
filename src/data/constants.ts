@@ -67,5 +67,15 @@ export const BUTTONS = {
             text: 'Top Up',
             imgID: 'topUp',
         },
+    },
+    sounds:{
+        on: {
+            text: '',
+            imgID: 'soundsOn',
+        },
+        off: {
+            text: '',
+            imgID: 'soundsOff',
+        },
     }
 }

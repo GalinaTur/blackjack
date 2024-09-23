@@ -46,10 +46,6 @@ export class ChipView extends Container {
         this.addChild(this.image);
     }
 
-    public placeToStack() {
-
-    }
-
     public onResize() {
 
     }

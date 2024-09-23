@@ -147,20 +147,7 @@ export class BettingController {
         const bet = this.splittedBet?.player || this.roundModel.betSize;
         let win = this.addWinToBalance(result.main, bet!);
         if (result.split) win += this.addWinToBalance(result.split, this.splittedBet?.split!);
-        // switch (result) {
-        //     case "playerBJ":
-        //         win = bet * 1.5;
-        //         this.gameController.addToBalance(win + bet);
-        //         break;
-            // case 'win':
-            // case 'dealerBust':
-            //     win = bet;
-            //     this.gameController.addToBalance(win + bet);
-            //     break;
-            // case 'push':
-            //     this.gameController.addToBalance(bet);
-            //     break;
-        // }
+      
         console.log(`%cResult: ${result.main}, Split: ${result.split || 'No'}, Bet: ${this.roundModel.betSize}, Win: ${win}, Balance: ${this.gameController.playerBalance}`, 'color: yellow');
         return win;
     }
