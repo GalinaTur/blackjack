@@ -79,3 +79,22 @@ export const BUTTONS = {
         },
     }
 }
+
+export const SOUNDS = {
+    welcome: 'welcome',
+    backgroundMusic: 'backgroundMusic',
+    // dealCard: ['dealCard1', 'dealCard2', 'dealCard3'],
+    dealCard: 'dealCard',
+    slideCard: 'slideCard',
+    flipCard: 'flipCard',
+    firstChipPlace: 'firstChipPlace',
+    chipPlace: 'chipPlace',
+    button: 'button',
+    dealerBlackjack: 'dealerBlackjack',
+    playerBlackjack: 'playerBlackjack',
+    win: 'win',
+    push: 'push',
+    tooMany: 'tooMany',
+    lose:'lose',
+    popup:'popup'
+}

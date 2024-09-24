@@ -1,6 +1,6 @@
 import { Assets, Sprite, extensions } from "pixi.js";
 import { ASSETS_MANIFEST, SOUNDS } from "../data/assets";
-import {Howl} from "howler";
+import { Howl } from "howler";
 import { Main } from "../main";
 
 export class AssetsLoader {
@@ -18,15 +18,20 @@ export class AssetsLoader {
     };
 
     private setEventListeners() {
-        Main.signalController.sounds.isOn.add((isSoundsOn)=>Howler.mute(!isSoundsOn), this);
+        Main.signalController.sounds.isOn.add((isSoundsOn) => Howler.mute(!isSoundsOn), this);
     }
+
+    private soundsStorage: { [key: string]: Howl } = {}
 
     public async getSprite(id: string): Promise<Sprite> {
         const texture = await Assets.get(id);
         return new Sprite(texture);
     }
 
-    public async getSound(id:string) {
+    public async getSound(id: string) {
+        if (this.soundsStorage[id]) {
+            return this.soundsStorage[id];
+        }
         const sound = new Howl({
             src: [SOUNDS[id as keyof typeof SOUNDS]]
         });

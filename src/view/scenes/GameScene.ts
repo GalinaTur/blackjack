@@ -8,6 +8,7 @@ import { TParticipants } from "../../data/types";
 import { Animations } from "../styles/Animations";
 import { Hand } from "./sceneComponents/Hand";
 import { PlayersHand } from "./sceneComponents/PlayersHand";
+import { SOUNDS } from "../../data/constants";
 
 export class GameScene extends Container implements IScene<void> {
     private cardsShoe = new Container();
@@ -77,8 +78,15 @@ export class GameScene extends Container implements IScene<void> {
     public async onCardOpen(card: CardModel, points: number) {
         const cardView = this.dealersHand.cards.find((cardView) => cardView.value === card.value);
         if (!cardView) return;
+        this.playOpenCardSound()
         await cardView.animatedOpen();
         this.dealersHand.points = points;
+    }
+
+    
+    private async playOpenCardSound(){
+        const sound = await Main.assetsLoader.getSound(SOUNDS.flipCard);
+        sound.play();
     }
 
     public async renderWinPopup(winSize: number) {
@@ -152,7 +160,13 @@ export class GameScene extends Container implements IScene<void> {
 
         this.addChild(this.splitHand);
         this.addChild(this.playersHand);
+        this.playSound(SOUNDS.slideCard);
         await Animations.hand.split(this.playersHand, this.splitHand);
+    }
+
+    private async playSound(soundID: string) {
+        const sound = await Main.assetsLoader.getSound(soundID);
+        sound.play();
     }
 
     public onTurnEnd(result: IRoundResult) {
@@ -168,32 +182,39 @@ export class GameScene extends Container implements IScene<void> {
                 // this.setRegularLabel(this.playersHand, 'LOSE');
                 this.dealersHand.setBJLabel();
                 currentHand!.setRegularLabel('LOSE');
+                this.playSound(SOUNDS.dealerBlackjack)
                 break;
             case "playerBJ":
                 // this.setBJLabel(this.playersHand);
                 currentHand!.setBJLabel();
+                this.playSound(SOUNDS.playerBlackjack)
                 break;
             case "playerBust":
                 // this.playersHand.addLabel(result)
                 // this.setRegularLabel(this.playersHand, 'BUST');
-                currentHand!.setRegularLabel('BUST')
+                currentHand!.setRegularLabel('BUST');
+                this.playSound(SOUNDS.tooMany);
                 break;
             case "dealerBust":
                 // this.setRegularLabel(this.dealersHand, 'BUST');
                 // this.setWinLabel(this.playersHand, 'WIN');
                 this.dealersHand.setRegularLabel('BUST');
                 currentHand!.setWinLabel('WIN');
+                this.playSound(SOUNDS.win)
                 break;
             case "win":
                 currentHand!.setWinLabel('WIN');
+                this.playSound(SOUNDS.win)
                 break;
             case "lose":
-                currentHand!.setRegularLabel('LOSE')
+                currentHand!.setRegularLabel('LOSE');
+                this.playSound(SOUNDS.lose); 
                 break;
             case "push":
             case "pushBJ":
                 this.dealersHand.setRegularLabel('PUSH');
                 currentHand!.setRegularLabel('PUSH');
+                this.playSound(SOUNDS.push)
                 break;
         }
     }

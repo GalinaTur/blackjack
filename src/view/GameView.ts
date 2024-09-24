@@ -12,6 +12,7 @@ import { FinalPanel } from "./scenes/sceneComponents/panels/FinalPanel";
 import { TParticipants } from "../data/types";
 import { Footer } from "./scenes/sceneComponents/Footer";
 import gsap from "gsap";
+import { SOUNDS } from "../data/constants";
 
 export class GameView {
     private app: Application;
@@ -112,6 +113,8 @@ export class GameView {
 
                 if (stateInfo.win > 0) {
                     const popup = await this.gameScene?.renderWinPopup(stateInfo.win);
+                    const sound = await Main.assetsLoader.getSound(SOUNDS.popup);
+                    sound.play();
                     popup && this.app.stage.addChild(popup);
                 }
                 break;

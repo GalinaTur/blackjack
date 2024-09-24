@@ -4,6 +4,7 @@ import { Textstyles } from "../../../styles/TextStyles";
 import { IButton } from "../../../../data/types";
 import { Animations } from "../../../styles/Animations";
 import { Button } from "./Button";
+import { SOUNDS } from "../../../../data/constants";
 
 export class GameButton extends Button {
     private _isActive: boolean;
@@ -13,6 +14,7 @@ export class GameButton extends Button {
         this._isActive = isActive;
         this.setTextFrame(buttonInfo.text);
         this.on('pointerdown', () => {
+            this.playSound(SOUNDS.button);
             onClick();
         });
 
@@ -61,6 +63,11 @@ export class GameButton extends Button {
         if (this._isActive === isActive) return;
         this._isActive = isActive;
         this._isActive ? this.enable() : await this.disable();
+    }
+
+    private async playSound(soundID: string) {
+        const sound = await Main.assetsLoader.getSound(soundID);
+        sound.play();
     }
 
     get isActive() {

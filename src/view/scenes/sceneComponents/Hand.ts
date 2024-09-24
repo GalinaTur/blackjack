@@ -3,7 +3,8 @@ import { CardView } from "./CardView";
 import { Main } from "../../../main";
 import { Textstyles } from "../../styles/TextStyles";
 import { Animations } from "../../styles/Animations";
-import { TParticipants, TResult } from "../../../data/types";
+import { TParticipants } from "../../../data/types";
+import { SOUNDS } from "../../../data/constants";
 
 
 export class Hand extends Container {
@@ -25,6 +26,7 @@ export class Hand extends Container {
         this.addChild(card);
         const localPosition = this.toLocal(globalPosition);
         card.position.set(localPosition.x, localPosition.y);
+        this.playSound(SOUNDS.dealCard);
         await Animations.cards.deal(card, this._cards.length - 1, card.animatedOpen.bind(card));
         this._cards.push(card);
     }
@@ -81,6 +83,11 @@ export class Hand extends Container {
         const text = this.pointsLabel.getChildAt(0) as Text;
         text.text = points.toString();
         Animations.cards.updatePointsLabel(this.pointsLabel);
+    }
+
+    protected async playSound(soundID: string) {
+        const sound = await Main.assetsLoader.getSound(soundID);
+        sound.play();
     }
 
     set points(points: number) {

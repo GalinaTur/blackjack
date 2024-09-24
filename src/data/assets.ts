@@ -156,5 +156,19 @@ export const ASSETS_MANIFEST = {
 }
 
 export const SOUNDS = {
+    welcome: './assets/sounds/welcome.wav',
     backgroundMusic: './assets/sounds/background.mp3',
+    dealCard: './assets/sounds/dealCard.ogg',
+    slideCard: './assets/sounds/slideCard.wav',
+    flipCard: './assets/sounds/flipCard.wav',
+    firstChipPlace: './assets/sounds/firstChipPlace.mp3',
+    chipPlace: './assets/sounds/chipPlace.wav',
+    button: './assets/sounds/button.wav',
+    dealerBlackjack: './assets/sounds/dealerBlackjack.wav',
+    playerBlackjack: './assets/sounds/playerBlackjack.wav',
+    win: './assets/sounds/win.wav',
+    push: './assets/sounds/push.wav',
+    tooMany: './assets/sounds/tooMany.mp3',
+    lose: './assets/sounds/lose.wav',
+    popup: './assets/sounds/popup.wav'
 }

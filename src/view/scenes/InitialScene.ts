@@ -4,6 +4,7 @@ import { Button } from "./sceneComponents/buttons/Button";
 import { IScene } from "../../data/types";
 import { Animations } from "../styles/Animations";
 import gsap from "gsap";
+import { SOUNDS } from "../../data/constants";
 
 export class InitialScene extends Container implements IScene<void> {
     private logo: Sprite | null = null;
@@ -33,13 +34,20 @@ export class InitialScene extends Container implements IScene<void> {
     }
 
     private onStartClick(): void {
-        this.setBackgroundMusic();
+        this.playSound(SOUNDS.welcome);
+        this.playBackgroundMusic();
         Main.signalController.round.start.emit();
     }
 
-    private async setBackgroundMusic(){
-        const music = await Main.assetsLoader.getSound('backgroundMusic');
+    private async playSound(soundID: string) {
+        const sound = await Main.assetsLoader.getSound(soundID);
+        sound.play();
+    }
+
+    private async playBackgroundMusic(){
+        const music = await Main.assetsLoader.getSound(SOUNDS.backgroundMusic);
         music.loop(true);
+        music.volume(0.1);
         music.play();
     }
 

@@ -6,6 +6,7 @@ import { Animations } from "../../styles/Animations";
 import { CardModel } from "../../../model/CardModel";
 import { CardView } from "./CardView";
 import { Main } from "../../../main";
+import { SOUNDS } from "../../../data/constants";
 
 export class PlayersHand extends Hand {
     public chipsStack: Container | null = null;
@@ -53,6 +54,7 @@ export class PlayersHand extends Hand {
         this.chipsStack!.addChild(newChip);
         newChip.position = this.toLocal(globalPosition);
         await Animations.chip.place(newChip, index);
+        this.chipsStack?.children.length === 1 ? this.playSound(SOUNDS.firstChipPlace) : this.playSound(SOUNDS.chipPlace)
     }
 
     public async onChipsStackUpdate(chipsStack: TBets[]) {
