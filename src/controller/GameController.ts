@@ -19,9 +19,9 @@ export class GameController {
 
     constructor(app: Application) {
         this.app = app;
-        this.gameView = new GameView(this.app, this.playerBalance, this.totalWin);
         this.roundModel = new RoundModel();
         this.roundModel.state = ERoundState.NOT_STARTED;
+        this.gameView = new GameView(this.app, this.playerBalance, this.totalWin, this.roundModel.state);
         this.bettingController = new BettingController(this.roundModel, this);
         this.roundController = new RoundController(this.roundModel, this.gameView, this.bettingController);
         this.init();
@@ -43,8 +43,8 @@ export class GameController {
         this.bettingController && this.bettingController.deactivate()
         this.roundController.deactivate()
         this.app.stage.removeChildren();
-        this.gameView = new GameView(this.app, this.playerBalance, this._totalWin);
         this.roundModel = new RoundModel();
+        this.gameView = new GameView(this.app, this.playerBalance, this._totalWin, this.roundModel.state);
         this.bettingController = new BettingController(this.roundModel, this);
         this.roundController = new RoundController(this.roundModel, this.gameView, this.bettingController);
         Main.signalController.round.start.emit();

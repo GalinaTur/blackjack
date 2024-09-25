@@ -1,5 +1,4 @@
 import { Main } from "../../../../main";
-import { Button } from "../buttons/Button";
 import { IPanel } from "../../../../data/types";
 import { Container } from "pixi.js";
 import { BUTTONS } from "../../../../data/constants";

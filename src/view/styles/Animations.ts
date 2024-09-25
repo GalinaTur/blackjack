@@ -101,6 +101,22 @@ export class Animations {
                 })
             })
         },
+        move(chip: ChipView, index: number) {
+            return new Promise<void>((resolve) => {
+                gsap.to(chip, {
+                    id: 'moveChip',
+                    pixi: {
+                        scaleX: 0.6,
+                        scaleY: 0.5,
+                        positionX: -80,
+                        positionY: -50 - 5 * index,
+                    },
+                    duration: 0.5,
+                    ease: 'power1.out',
+                    onComplete: resolve
+                })
+            })
+        },
         hide(chip: ChipView) {
             return new Promise((resolve) => gsap.to(chip, {
                 id: 'hideChip',
@@ -142,8 +158,8 @@ export class Animations {
                 })
             })
         },
-        deal(card: CardView, index: number, open: () => void) {
-            return new Promise((resolve) => {
+        deal(card: CardView, index: number, open: () => void, resolveAt: string) {
+            return new Promise<void>((resolve) => {
                 gsap.to(card, {
                     id: 'dealCard',
                     pixi: {
@@ -151,12 +167,15 @@ export class Animations {
                         positionY: 0,
                         angle: 0
                     },
-                    duration: 1,
+                    duration: 0.5,
                     ease: "circ.out",
                     onStart: () => {
-                        resolve(true)
+                        resolveAt === 'onStart' && resolve();
                         open();
                     },
+                    onComplete: () => {
+                        resolveAt === 'onComplete' && resolve();
+                    }
                 })
             })
         },

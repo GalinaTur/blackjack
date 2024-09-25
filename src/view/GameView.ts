@@ -4,7 +4,7 @@ import { Background } from "./scenes/sceneComponents/Background";
 import { InitialScene } from "./scenes/InitialScene";
 import { GameScene } from "./scenes/GameScene";
 import { HeaderPanel } from "./scenes/sceneComponents/HeaderPanel";
-import { ERoundState, IPanel, IScene, IStateInfo, TBets, IRoundResult, TResult } from "../data/types";
+import { ERoundState, IPanel, IScene, IStateInfo, TBets, IRoundResult } from "../data/types";
 import { CardModel } from "../model/CardModel";
 import { BetPanel } from "./scenes/sceneComponents/panels/BetPanel";
 import { GamePanel } from "./scenes/sceneComponents/panels/GamePanel";
@@ -30,11 +30,13 @@ export class GameView {
     private totalWin = 0;
     private isDoubleAllowed = false;
     private splitActivated = false;
+    private state: ERoundState;
 
-    constructor(app: Application, playerBalance: number, totalWin: number) {
+    constructor(app: Application, playerBalance: number, totalWin: number, state: ERoundState) {
         this.app = app;
         this.playerBalance = playerBalance;
         this.totalWin = totalWin;
+        this.state = state;
         this.init();
     }
 
@@ -43,10 +45,10 @@ export class GameView {
     }
 
     private setEventListeners() {
+        Main.signalController.round.stateChanged.add(this.onStateChanged, this);
         Main.signalController.bet.updated.add(this.onBetUpdate, this);
         Main.signalController.card.deal.add(this.onCardDeal, this);
         Main.signalController.card.open.add(this.onCardOpen, this);
-        // Main.signalController.round.end.add(this.onRoundEnd, this);
         Main.signalController.player.endTurn.add(this.onTurnEnd, this);
     }
 
@@ -86,20 +88,22 @@ export class GameView {
                 break;
 
             case ERoundState.PLAYERS_TURN:
-                stateInfo.cards.player.length === 2 &&  this.gameScene?.setActiveHand('player');
+                stateInfo.cards.player.length === 2 && await this.gameScene?.setActiveHand('player');
                 if (stateInfo.cards.split.length === 1 && !this.splitActivated) {
-                    await this.gameScene?.splitCards(stateInfo.cards.player, stateInfo.cards.split);
                     this.splitActivated = true;
-                    this.gameScene?.setActiveHand('player');
+                    await this.gameScene?.splitCards(stateInfo.cards.player, stateInfo.cards.split);
+                    return;
                 }
-                this.gamePanel?.updateButtons(stateInfo.currentState, stateInfo.cards.player, isSplitAllowed);
+                const splitAllowed = isSplitAllowed && !this.splitActivated
+                this.gamePanel?.updateButtons(stateInfo.currentState, stateInfo.cards.player, splitAllowed);
                 break;
 
             case ERoundState.SPLIT_TURN:
-                if (stateInfo.cards.split.length === 2) {
-                    this.gameScene && await this.gameScene.setActiveHand('split');
+                stateInfo.cards.split.length === 1 &&  await this.gameScene?.setActiveHand('split');
+                if (stateInfo.cards.split.length >= 2) {
+                    console.log(stateInfo.cards.split)
+                    this.gamePanel?.updateButtons(stateInfo.currentState, stateInfo.cards.split);
                 }
-                this.gamePanel && this.gamePanel.updateButtons(stateInfo.currentState, stateInfo.cards.split);
                 break;
 
             case ERoundState.DEALERS_TURN:
@@ -121,6 +125,9 @@ export class GameView {
         }
     }
 
+    private onStateChanged(state: ERoundState) {
+        this.state = state;
+    }
     public renderInitialScene() {
         this.initialScene = new InitialScene();
         this.setCurrentScene(this.initialScene);
@@ -161,7 +168,8 @@ export class GameView {
 
     private async onCardDeal(data: { person: TParticipants, card: CardModel, totalPoints: number, resolve: (value: unknown) => void }) {
         const { person, card, totalPoints, resolve } = data;
-        await this.gameScene?.onCardDeal(person, card, totalPoints);
+        const resolveAt = this.state === ERoundState.CARDS_DEALING ? 'onStart' : 'onComplete';
+        await this.gameScene?.onCardDeal(person, card, totalPoints, resolveAt);
         resolve(true);
     }
 
@@ -175,9 +183,8 @@ export class GameView {
     //     result.main && await this.gameScene?.onTurnEnd(result);
     // }
 
-    private async onTurnEnd(result: IRoundResult) {
-        await this.gameScene?.onTurnEnd(result);
-        // result.split && await this.gameScene?.onTurnEnd(result.split);
+    private onTurnEnd(result: IRoundResult) {
+        this.gameScene?.onTurnEnd(result);
     }
 
     public onResize() {

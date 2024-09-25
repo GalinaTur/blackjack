@@ -1,5 +1,5 @@
 import { ALL_BETS } from "../data/constants";
-import { IRoundResult, TBets, TParticipants, TResult } from "../data/types";
+import { ERoundState, IRoundResult, TBets, TParticipants, TResult } from "../data/types";
 import { Main } from "../main";
 import { RoundModel } from "../model/RoundModel";
 import { GameController } from "./GameController";
@@ -24,7 +24,6 @@ export class BettingController {
         Main.signalController.bet.cleared.add(this.onClearBet, this);
         Main.signalController.bet.doubled.add(this.onDoubledBet, this);
         Main.signalController.bet.removedLast.add(this.onRemoveLast, this);
-        // Main.signalController.player.double.add(this.onDoubledBet, this);
         Main.signalController.round.end.add(this.onRoundEnd, this);
     }
 
@@ -70,10 +69,6 @@ export class BettingController {
         this.emitChanges();
     }
 
-    // private onPlayerDoubleDown() {
-    //     this.doubleBet();
-    // }
-
     public onPlayerSplit() {
         this.splittedBet = {
             player: this.roundModel.betSize,
@@ -100,10 +95,15 @@ export class BettingController {
     private emitChanges() {
         let bet = this.splittedBet?.[this.activeHand] || this.roundModel.betSize;
         const betsStack = this.setBetsStack(bet);
-        const availableBets = this.setAvailableBets();
         const isDoubleAllowed = this.roundModel.betSize <= this.gameController.playerBalance;
-        Main.signalController.bet.updated.emit({ betsStack: betsStack, sum: this.roundModel.betSize, availableBets: availableBets, isDoubleBetAllowed: isDoubleAllowed });
         Main.signalController.balance.updated.emit(this.gameController.playerBalance);
+
+        if (this.roundModel.state === ERoundState.BETTING) {
+            const availableBets = this.setAvailableBets();
+            Main.signalController.bet.updated.emit({ betsStack: betsStack, sum: this.roundModel.betSize, availableBets: availableBets, isDoubleBetAllowed: isDoubleAllowed });
+            return;
+        }
+        Main.signalController.bet.updated.emit({ betsStack: betsStack, sum: this.roundModel.betSize, isDoubleBetAllowed: isDoubleAllowed });
     }
 
     public setAvailableBets() {
@@ -143,7 +143,6 @@ export class BettingController {
 
     private setWin(result: IRoundResult) {
         if (!result.main) return;
-        console.log(this.splittedBet?.player)
         const bet = this.splittedBet?.player || this.roundModel.betSize;
         let win = this.addWinToBalance(result.main, bet!);
         if (result.split) win += this.addWinToBalance(result.split, this.splittedBet?.split!);

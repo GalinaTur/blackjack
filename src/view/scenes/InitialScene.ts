@@ -36,6 +36,7 @@ export class InitialScene extends Container implements IScene<void> {
     private onStartClick(): void {
         this.playSound(SOUNDS.welcome);
         this.playBackgroundMusic();
+        this.eventMode = 'none';
         Main.signalController.round.start.emit();
     }
 

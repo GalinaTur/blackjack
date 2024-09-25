@@ -11,6 +11,7 @@ export class Hand extends Container {
     private pointsLabel: Sprite | null = null;
     private _cards: CardView[] = [];
     public name: TParticipants;
+    protected label: Sprite | null = null;
 
     constructor(name: TParticipants) {
         super();
@@ -22,29 +23,31 @@ export class Hand extends Container {
         this.sortableChildren = true;
     }
 
-    public async dealCard(card: CardView, globalPosition: Point) {
+    public async dealCard(card: CardView, globalPosition: Point, resolveAt: string) {
         this.addChild(card);
         const localPosition = this.toLocal(globalPosition);
         card.position.set(localPosition.x, localPosition.y);
         this.playSound(SOUNDS.dealCard);
-        await Animations.cards.deal(card, this._cards.length - 1, card.animatedOpen.bind(card));
+        await Animations.cards.deal(card, this._cards.length - 1, card.animatedOpen.bind(card), resolveAt);
         this._cards.push(card);
     }
 
     public async setRegularLabel(message: string) {
         const label = await this.createLabel('regular_label', message);
-        Animations.label.showRegular(label)
+        Animations.label.showRegular(label);
+        this.label = label
         this.addChild(label);
     }
 
     public async setBJLabel() {
-        const image = await Main.assetsLoader.getSprite('BJ_label');
-        image.scale.set(0)
-        image.anchor.set(0.5);
-        image.position.set(5);
-        image.zIndex = 2;
-        this.addChild(image);
-        Animations.label.showWin(image);
+        const label = await Main.assetsLoader.getSprite('BJ_label');
+        label.scale.set(0)
+        label.anchor.set(0.5);
+        label.position.set(5);
+        label.zIndex = 2;
+        this.addChild(label);
+        Animations.label.showWin(label);
+        this.label = label
     }
 
     protected async createLabel(img: string, message: string) {
@@ -96,5 +99,9 @@ export class Hand extends Container {
 
     get cards() {
         return this._cards;
+    }
+
+    get hasLabel() {
+        return Boolean(this.label);
     }
 }

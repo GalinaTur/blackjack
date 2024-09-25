@@ -46,8 +46,8 @@ export class GamePanel extends Container implements IPanel {
     }
 
     private onStand() {
-        Main.signalController.player.stand.emit();
         this.disableButtons();
+        Main.signalController.player.stand.emit();
     }
 
     private onDouble() {

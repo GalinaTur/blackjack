@@ -128,7 +128,8 @@ export class BetPanel extends Container implements IPanel {
             this.undoButton?.updateIsActive(false),
             this.clearButton?.updateIsActive(false),
         ]).then(() => {
-            this.parent.removeChild(this)
+            this.parent.removeChild(this);
+            this.destroy({children: true});
         })
     }
 }

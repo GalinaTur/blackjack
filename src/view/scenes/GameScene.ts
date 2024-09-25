@@ -9,6 +9,7 @@ import { Animations } from "../styles/Animations";
 import { Hand } from "./sceneComponents/Hand";
 import { PlayersHand } from "./sceneComponents/PlayersHand";
 import { SOUNDS } from "../../data/constants";
+import { ChipView } from "./sceneComponents/ChipView";
 
 export class GameScene extends Container implements IScene<void> {
     private cardsShoe = new Container();
@@ -36,7 +37,7 @@ export class GameScene extends Container implements IScene<void> {
 
     private setEventListeners() {
         Main.signalController.bet.cleared.add(this.onBetClear, this);
-        Main.signalController.player.double.addPriority(this.onDoubleBet, this);
+        Main.signalController.player.double.add(this.onDoubleBet, this);
         // Main.signalController.bet.doubled.addPriority(this.onDoubleBet, this);
     }
 
@@ -54,7 +55,7 @@ export class GameScene extends Container implements IScene<void> {
         }
     }
 
-    public async onCardDeal(person: TParticipants, card: CardModel, points: number) {
+    public async onCardDeal(person: TParticipants, card: CardModel, points: number, resolveAt: string) {
         const cardView = await CardView.build(card);
         cardView.scale.set(0.89)
         cardView.angle = -45;
@@ -70,12 +71,13 @@ export class GameScene extends Container implements IScene<void> {
         if (person === 'split') hand = this.splitHand;
         if (!hand) return;
 
-        await hand.dealCard(cardView, globalPosition);
+        await hand.dealCard(cardView, globalPosition, resolveAt);
         if (hand.cards.length < 2) return;
         hand.points = points;
     }
 
     public async onCardOpen(card: CardModel, points: number) {
+        console.log(this.dealersHand.cards)
         const cardView = this.dealersHand.cards.find((cardView) => cardView.value === card.value);
         if (!cardView) return;
         this.playOpenCardSound()
@@ -126,7 +128,9 @@ export class GameScene extends Container implements IScene<void> {
     }
 
     public async onDoubleBet() {
-        this.activeHand ? await this.activeHand.doubleBet() : await this.playersHand.doubleBet();
+        console.log(this.activeHand?.name)
+        const activeHand = this.activeHand || this.playersHand;
+        await activeHand.doubleBet();
         Main.signalController.bet.doubled.emit(this.activeHand?.name || this.playersHand.name);
     }
 
@@ -134,7 +138,7 @@ export class GameScene extends Container implements IScene<void> {
         if (this.splitHand && !this.splitHand.chipsStack) {
             chipsStack.forEach((value, index) => {
                 setTimeout(() => {
-                    this.splitHand!.addChipToStack(value, new Point(Main.screenSize.width * 0.2, Main.screenSize.height + 100))
+                    this.splitHand!.placeChip(value, new Point(Main.screenSize.width * 0.2, Main.screenSize.height + 100))
                 }, 200 * index)
             })
         }
@@ -145,18 +149,24 @@ export class GameScene extends Container implements IScene<void> {
     }
 
     public async onChipClick(value: TBets, globalPosition: Point) {
-        const resolveAt = 'start';
-        await this.playersHand.addChipToStack(value, globalPosition);
+        // const resolveAt = 'start';
+        await this.playersHand.placeChip(value, globalPosition);
     }
 
     public async splitCards(playerCards: CardModel[], splitCards: CardModel[]) {
         this.removeChild(this.playersHand);
+        const chipsStack = this.playersHand.chipsStack;
         this.splitHand = new PlayersHand('split');
-        this.playersHand = new PlayersHand('player')
+        this.playersHand = new PlayersHand('player');
+        chipsStack?.children.forEach(chip => {
+            const chipView = chip as ChipView;
+            this.playersHand.moveChip(chipView.value, chip.position);
+        })
+        chipsStack?.destroy({children:true})
         this.playersHand.position.set(Main.screenSize.width / 2, Main.screenSize.height * 0.65);
         this.splitHand.position.set(Main.screenSize.width / 1.9, Main.screenSize.height * 0.65);
-        this.playersHand.updateCards(playerCards)
-        this.splitHand.updateCards(splitCards)
+        this.playersHand.updateCards(playerCards);
+        this.splitHand.updateCards(splitCards);
 
         this.addChild(this.splitHand);
         this.addChild(this.playersHand);
@@ -175,41 +185,41 @@ export class GameScene extends Container implements IScene<void> {
     }
 
     private setLabels(result: TResult, hand: TParticipants) {
-        const currentHand = hand === 'split' ? this.splitHand : this.playersHand
+        const currentHand = hand === 'split' ? this.splitHand : this.playersHand;
+        if (currentHand?.hasLabel) return;
         switch (result) {
             case "dealerBJ":
-                // this.setBJLabel(this.dealersHand);
-                // this.setRegularLabel(this.playersHand, 'LOSE');
                 this.dealersHand.setBJLabel();
                 currentHand!.setRegularLabel('LOSE');
                 this.playSound(SOUNDS.dealerBlackjack)
                 break;
+
             case "playerBJ":
-                // this.setBJLabel(this.playersHand);
                 currentHand!.setBJLabel();
                 this.playSound(SOUNDS.playerBlackjack)
                 break;
+
             case "playerBust":
-                // this.playersHand.addLabel(result)
-                // this.setRegularLabel(this.playersHand, 'BUST');
                 currentHand!.setRegularLabel('BUST');
                 this.playSound(SOUNDS.tooMany);
                 break;
+
             case "dealerBust":
-                // this.setRegularLabel(this.dealersHand, 'BUST');
-                // this.setWinLabel(this.playersHand, 'WIN');
                 this.dealersHand.setRegularLabel('BUST');
                 currentHand!.setWinLabel('WIN');
                 this.playSound(SOUNDS.win)
                 break;
+
             case "win":
                 currentHand!.setWinLabel('WIN');
                 this.playSound(SOUNDS.win)
                 break;
+
             case "lose":
                 currentHand!.setRegularLabel('LOSE');
                 this.playSound(SOUNDS.lose); 
                 break;
+
             case "push":
             case "pushBJ":
                 this.dealersHand.setRegularLabel('PUSH');

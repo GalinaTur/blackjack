@@ -29,11 +29,11 @@ export const ASSETS_MANIFEST = {
                 },
                 {
                     name: 'background',
-                    srcs: './assets/background.png',
+                    srcs: './assets/gameTable/background.png',
                 },
                 {
                     name: 'bgLogo',
-                    srcs: './assets/bgLogo.png',
+                    srcs: './assets/gameTable/bgLogo.png',
                 },
             ],
         },
@@ -88,6 +88,14 @@ export const ASSETS_MANIFEST = {
                     name: 'topUp',
                     srcs: './assets/buttons/topUp.png',
                 },
+                {
+                    name: 'soundsOn',
+                    srcs: './assets/buttons/sounds-on.svg',
+                },
+                {
+                    name: 'soundsOff',
+                    srcs: './assets/buttons/sounds-off.svg',
+                },
             ],
         },
         {
@@ -95,31 +103,31 @@ export const ASSETS_MANIFEST = {
             assets: [
                 {
                     name: 'points_label',
-                    srcs: './assets/label.png',
+                    srcs: './assets/labels/label.png',
                 },
                 {
                     name: 'BJ_label',
-                    srcs: './assets/BJLabel.png',
+                    srcs: './assets/labels/BJLabel.png',
                 },
                 {
                     name: 'regular_label',
-                    srcs: './assets/regularLabel.png',
+                    srcs: './assets/labels/regularLabel.png',
                 },
                 {
                     name: 'win_label',
-                    srcs: './assets/winLabel.png',
+                    srcs: './assets/labels/winLabel.png',
                 },
                 {
                     name: 'final_label',
-                    srcs: './assets/finalLabel.png',
+                    srcs: './assets/labels/finalLabel.png',
                 },
                 {
                     name: 'shine',
-                    srcs: './assets/shine.png',
+                    srcs: './assets/labels/shine.png',
                 },
                 {
                     name: 'finalLabel',
-                    srcs: './assets/finalLabel.png',
+                    srcs: './assets/labels/finalLabel.png',
                 },
             ],
         },
@@ -128,11 +136,11 @@ export const ASSETS_MANIFEST = {
             assets: [
                 {
                     name: 'cardsShoe',
-                    srcs: './assets/shoe.png',
+                    srcs: './assets/gameTable/shoe.png',
                 },
                 {
                     name: 'cardsShoePart',
-                    srcs: './assets/shoePart.png',
+                    srcs: './assets/gameTable/shoePart.png',
                 },
                 {
                     name: 'pointer',
@@ -141,14 +149,6 @@ export const ASSETS_MANIFEST = {
                 {
                     name: 'pointerShine',
                     srcs: './assets/pointerShine.png',
-                },
-                {
-                    name: 'soundsOn',
-                    srcs: './assets/sounds-on.svg',
-                },
-                {
-                    name: 'soundsOff',
-                    srcs: './assets/sounds-off.svg',
                 },
             ],
         },

@@ -1,4 +1,4 @@
-import { IRoundResult, TBets, TParticipants, TResult } from "../data/types";
+import { ERoundState, IRoundResult, TBets, TParticipants, TResult } from "../data/types";
 import { CardModel } from "../model/CardModel";
 import { IStateInfo } from "../data/types";
 
@@ -15,7 +15,7 @@ class Signal<T = void>  {
 
     public async emit(data: T): Promise<void> {
         for (const subscriber of this.subscribers) {
-            await subscriber.func.call(subscriber.ctx, data);
+           subscriber.func.call(subscriber.ctx, data);
         }
     }
 
@@ -31,6 +31,7 @@ export class SignalsController {
         start: new Signal<void>(),
         end: new Signal<IRoundResult>(),
         new: new Signal<void>(),
+        stateChanged: new Signal<ERoundState>()
     }
 
     public bet = {
