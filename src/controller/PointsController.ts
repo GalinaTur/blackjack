@@ -1,8 +1,8 @@
-import { ERankPoints, ICardsDealed } from "../data/types";
+import { ERankPoints } from "../data/types";
 import { CardModel } from "../model/CardModel";
 
 export class PointsController {
-    public calcPoints(cards: CardModel[]) {
+    public calcPoints(cards: readonly CardModel[]) {
         let aces: CardModel[] = [];
         let sum = cards.reduce((sum, card) => {
             if (card.hidden) {
@@ -29,24 +29,25 @@ export class PointsController {
         return ERankPoints[card.rank];
     }
 
-    public isSplitAllowed(cards: CardModel[]) {
+    public isSplitAllowed(cards: readonly CardModel[]) {
         if (cards.length !== 2) return false;
         return this.getCardPoints(cards[0]) === this.getCardPoints(cards[1]);
     }
 
-    public isTie(dealerCards: CardModel[], playerCards: CardModel[]) {
+    public isTie(dealerCards: readonly CardModel[], playerCards: readonly CardModel[]) {
         return this.calcPoints(dealerCards) === this.calcPoints(playerCards);
     }
 
-    public isBust(cards: CardModel[]) {
+    public isBust(cards: readonly CardModel[]) {
         return this.calcPoints(cards) > 21;
     }
 
-    public isWin(cards: CardModel[]) {
+    public is21Points(cards: readonly CardModel[]) {
         return this.calcPoints(cards) === 21;
     }
 
-    public comparePoints(cards: ICardsDealed) {
-
+    public comparePoints(dealerCards: readonly CardModel[], playerCards: readonly CardModel[]) {
+        return this.isTie(dealerCards, playerCards) ? 'push' :
+            this.calcPoints(playerCards) > this.calcPoints(dealerCards) ? 'win' : 'lose';
     }
 }

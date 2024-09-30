@@ -66,7 +66,7 @@ export class GameButton extends Button {
     }
 
     private async playSound(soundID: string) {
-        const sound = await Main.assetsLoader.getSound(soundID);
+        const sound = await Main.assetsController.getSound(soundID);
         sound.play();
     }
 

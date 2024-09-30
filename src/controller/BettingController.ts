@@ -75,8 +75,9 @@ export class BettingController {
             split: this.roundModel.betSize
         }
         this.doubleBet(this.roundModel.betSize);
+        const isDoubleAllowed = this.roundModel.betSize <= this.gameController.playerBalance;
         const betsStack = this.setBetsStack(this.roundModel.betSize/2);
-        Main.signalController.bet.updated.emit({ betsStack: betsStack, sum: this.roundModel.betSize });
+        Main.signalController.bet.updated.emit({ betsStack: betsStack, sum: this.roundModel.betSize, isDoubleBetAllowed: isDoubleAllowed });
         Main.signalController.balance.updated.emit(this.gameController.playerBalance);
     }
 
@@ -87,7 +88,6 @@ export class BettingController {
             this.gameController.addToTotalWin(win);
         }
 
-        // this.emitChanges();
         Main.signalController.winSize.updated.emit({ win: win!, totalWin: this.gameController.totalWin });
         Main.signalController.balance.updated.emit(this.gameController.playerBalance);
     }

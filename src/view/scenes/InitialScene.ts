@@ -1,9 +1,7 @@
-import { BlurFilter, Container, Rectangle, Sprite } from "pixi.js";
+import { Container, Rectangle, Sprite } from "pixi.js";
 import { Main } from "../../main";
-import { Button } from "./sceneComponents/buttons/Button";
 import { IScene } from "../../data/types";
 import { Animations } from "../styles/Animations";
-import gsap from "gsap";
 import { SOUNDS } from "../../data/constants";
 
 export class InitialScene extends Container implements IScene<void> {
@@ -23,7 +21,7 @@ export class InitialScene extends Container implements IScene<void> {
     }
 
     private async setLogo(): Promise<void> {
-        this.logo = await Main.assetsLoader.getSprite('initialLogo');
+        this.logo = await Main.assetsController.getSprite('initialLogo');
         this.logo.position.set(Main.screenSize.width / 2, Main.screenSize.height/2);
         if (Main.screenSize.width < this.logo.width) {
             this.logo.scale.set(Main.screenSize.width/1200)
@@ -33,7 +31,7 @@ export class InitialScene extends Container implements IScene<void> {
         this.addChild(this.logo);
     }
 
-    private onStartClick(): void {
+    private async onStartClick() {
         this.playSound(SOUNDS.welcome);
         this.playBackgroundMusic();
         this.eventMode = 'none';
@@ -41,12 +39,12 @@ export class InitialScene extends Container implements IScene<void> {
     }
 
     private async playSound(soundID: string) {
-        const sound = await Main.assetsLoader.getSound(soundID);
+        const sound = await Main.assetsController.getSound(soundID);
         sound.play();
     }
 
     private async playBackgroundMusic(){
-        const music = await Main.assetsLoader.getSound(SOUNDS.backgroundMusic);
+        const music = await Main.assetsController.getSound(SOUNDS.backgroundMusic);
         music.loop(true);
         music.volume(0.1);
         music.play();

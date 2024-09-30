@@ -4,7 +4,7 @@ import { GameView } from "../view/GameView";
 import { RoundController } from "./RoundController";
 import { Main } from "../main";
 import { BettingController } from "./BettingController";
-import { ERoundState, IStateInfo } from "../data/types";
+import { ERoundState } from "../data/types";
 
 export class GameController {
     private app: Application;
@@ -15,13 +15,13 @@ export class GameController {
     private gameView: GameView | null = null;
     private roundModel: RoundModel | null = null;
     private bettingController: BettingController | null = null;
-    private history: IStateInfo[] = [];
+    // private history: IStateInfo[] = [];
+    private soundsOn= true;
 
     constructor(app: Application) {
         this.app = app;
-        this.roundModel = new RoundModel();
-        this.roundModel.state = ERoundState.NOT_STARTED;
-        this.gameView = new GameView(this.app, this.playerBalance, this.totalWin, this.roundModel.state);
+        this.roundModel = new RoundModel(ERoundState.NOT_STARTED);
+        this.gameView = new GameView(this.app, this.playerBalance, this.totalWin, this.roundModel.state, this.soundsOn);
         this.bettingController = new BettingController(this.roundModel, this);
         this.roundController = new RoundController(this.roundModel, this.gameView, this.bettingController);
         this.init();
@@ -35,6 +35,7 @@ export class GameController {
     private setEventListeners() {
         Main.signalController.round.new.add(this.onNewRound, this);
         Main.signalController.round.end.add(this.onRoundEnd, this);
+        Main.signalController.sounds.isOn.add(this.onSoundsChange, this);
     }
 
     private onNewRound() {
@@ -43,16 +44,16 @@ export class GameController {
         this.bettingController && this.bettingController.deactivate()
         this.roundController.deactivate()
         this.app.stage.removeChildren();
-        this.roundModel = new RoundModel();
-        this.gameView = new GameView(this.app, this.playerBalance, this._totalWin, this.roundModel.state);
+        this.roundModel = new RoundModel(ERoundState.BETTING);
+        this.gameView = new GameView(this.app, this.playerBalance, this._totalWin, this.roundModel.state, this.soundsOn);
         this.bettingController = new BettingController(this.roundModel, this);
         this.roundController = new RoundController(this.roundModel, this.gameView, this.bettingController);
         Main.signalController.round.start.emit();
     }
 
     private onRoundEnd() {
-        this.history.push(this.roundController.roundModel.roundStateInfo);
-        this._totalWin += this.roundController.roundModel.roundStateInfo.win;
+        // this.history.push(this.roundController.roundModel.roundStateInfo);
+        this._totalWin += this.roundController.roundModel.winSize;
     }
 
     get playerBalance() {
@@ -85,5 +86,10 @@ export class GameController {
 
     public onResize() {
         this.gameView?.onResize();
+    }
+
+    private onSoundsChange(isOn: boolean) {
+        this.soundsOn = isOn;
+        Howler.mute(!isOn);
     }
 }

@@ -1,9 +1,8 @@
-import { Assets, Sprite, extensions } from "pixi.js";
+import { Assets, Sprite } from "pixi.js";
 import { ASSETS_MANIFEST, SOUNDS } from "../data/assets";
 import { Howl } from "howler";
-import { Main } from "../main";
 
-export class AssetsLoader {
+export class AssetsController {
     public async init() {
         await Assets.init({ manifest: ASSETS_MANIFEST });
         await Assets.loadBundle('fonts');
@@ -14,14 +13,21 @@ export class AssetsLoader {
         await Assets.load('./assets/cards/cardsSpritesheet.json');
         await Assets.load('./assets/chips/chipsSpritesheet.json');
 
-        this.setEventListeners();
+        Object.values(this.soundsStorage).forEach((howl)=> howl.load());
     };
 
-    private setEventListeners() {
-        Main.signalController.sounds.isOn.add((isSoundsOn) => Howler.mute(!isSoundsOn), this);
-    }
 
-    private soundsStorage: { [key: string]: Howl } = {}
+    private soundsStorage: { [key: string]: Howl } = {
+            welcome: new Howl({
+                src: [SOUNDS.welcome],
+                preload: true,
+            }),
+            backgroundMusic: new Howl({
+                src: [SOUNDS.backgroundMusic],
+                preload: true,
+                loop: true,
+            }),
+    }
 
     public async getSprite(id: string): Promise<Sprite> {
         const texture = await Assets.get(id);

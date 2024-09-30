@@ -4,20 +4,19 @@ import { Background } from "./scenes/sceneComponents/Background";
 import { InitialScene } from "./scenes/InitialScene";
 import { GameScene } from "./scenes/GameScene";
 import { HeaderPanel } from "./scenes/sceneComponents/HeaderPanel";
-import { ERoundState, IPanel, IScene, IStateInfo, TBets, IRoundResult } from "../data/types";
+import { ERoundState, IPanel, IScene, TBets, IRoundResult, IRoundStateDTO } from "../data/types";
 import { CardModel } from "../model/CardModel";
 import { BetPanel } from "./scenes/sceneComponents/panels/BetPanel";
 import { GamePanel } from "./scenes/sceneComponents/panels/GamePanel";
 import { FinalPanel } from "./scenes/sceneComponents/panels/FinalPanel";
 import { TParticipants } from "../data/types";
 import { Footer } from "./scenes/sceneComponents/Footer";
-import gsap from "gsap";
 import { SOUNDS } from "../data/constants";
 
 export class GameView {
     private app: Application;
     private background: Background | null = null;
-    private currentScene: IScene<IStateInfo> | null = null;
+    private currentScene: IScene<IRoundStateDTO> | null = null;
     private currentFooterPanel: IPanel | null = null;
     private initialScene: InitialScene | null = null;
     private headerPanel: HeaderPanel | null = null;
@@ -31,12 +30,14 @@ export class GameView {
     private isDoubleAllowed = false;
     private splitActivated = false;
     private state: ERoundState;
+    private soundsOn: boolean;
 
-    constructor(app: Application, playerBalance: number, totalWin: number, state: ERoundState) {
+    constructor(app: Application, playerBalance: number, totalWin: number, state: ERoundState, soundsOn: boolean) {
         this.app = app;
         this.playerBalance = playerBalance;
         this.totalWin = totalWin;
         this.state = state;
+        this.soundsOn = soundsOn
         this.init();
     }
 
@@ -52,7 +53,7 @@ export class GameView {
         Main.signalController.player.endTurn.add(this.onTurnEnd, this);
     }
 
-    public async render(stateInfo: IStateInfo, isSplitAllowed?: boolean) {
+    public async render(stateInfo: IRoundStateDTO, isSplitAllowed?: boolean) {
         switch (stateInfo.currentState) {
             case ERoundState.NOT_STARTED:
                 this.background = new Background();
@@ -88,21 +89,20 @@ export class GameView {
                 break;
 
             case ERoundState.PLAYERS_TURN:
-                stateInfo.cards.player.length === 2 && await this.gameScene?.setActiveHand('player');
-                if (stateInfo.cards.split.length === 1 && !this.splitActivated) {
+                stateInfo.cards.main.length === 2 && await this.gameScene?.setActiveHand('player');
+                if (stateInfo.cards.split?.length === 1 && !this.splitActivated) {
                     this.splitActivated = true;
-                    await this.gameScene?.splitCards(stateInfo.cards.player, stateInfo.cards.split);
+                    await this.gameScene?.splitCards(stateInfo.cards.main, stateInfo.cards.split);
                     return;
                 }
                 const splitAllowed = isSplitAllowed && !this.splitActivated
-                this.gamePanel?.updateButtons(stateInfo.currentState, stateInfo.cards.player, splitAllowed);
+                this.gamePanel?.updateButtons(stateInfo.currentState, stateInfo.cards.main, this.isDoubleAllowed, splitAllowed);
                 break;
 
             case ERoundState.SPLIT_TURN:
-                stateInfo.cards.split.length === 1 &&  await this.gameScene?.setActiveHand('split');
-                if (stateInfo.cards.split.length >= 2) {
-                    console.log(stateInfo.cards.split)
-                    this.gamePanel?.updateButtons(stateInfo.currentState, stateInfo.cards.split);
+                stateInfo.cards.split?.length === 2 &&  await this.gameScene?.setActiveHand('split');
+                if (stateInfo.cards.split!.length >= 2) {
+                    this.gamePanel?.updateButtons(stateInfo.currentState, stateInfo.cards.split!, this.isDoubleAllowed);
                 }
                 break;
 
@@ -117,7 +117,7 @@ export class GameView {
 
                 if (stateInfo.win > 0) {
                     const popup = await this.gameScene?.renderWinPopup(stateInfo.win);
-                    const sound = await Main.assetsLoader.getSound(SOUNDS.popup);
+                    const sound = await Main.assetsController.getSound(SOUNDS.popup);
                     sound.play();
                     popup && this.app.stage.addChild(popup);
                 }
@@ -133,14 +133,14 @@ export class GameView {
         this.setCurrentScene(this.initialScene);
     }
 
-    private renderHeaderPanel(stateInfo: IStateInfo, playerBalance: number, totalWin: number) {
+    private renderHeaderPanel(stateInfo: IRoundStateDTO, playerBalance: number, totalWin: number) {
         this.headerPanel = new HeaderPanel(stateInfo.win, playerBalance, totalWin);
         this.headerPanel.position.set(0, 0);
         this.app.stage.addChild(this.headerPanel);
     }
 
     private renderFooter() {
-        this.footer = new Footer();
+        this.footer = new Footer(this.soundsOn);
         this.app.stage.addChild(this.footer);
     }
 
@@ -156,32 +156,28 @@ export class GameView {
         this.currentScene && this.currentScene.addChild(footerPanel);
     }
 
-    private onBetUpdate(data: { betsStack: TBets[], sum: number, availableBets?: TBets[], isDoubleBetAllowed?: boolean }) {
+    private onBetUpdate(data: { betsStack: TBets[], sum: number, availableBets?: TBets[], isDoubleBetAllowed: boolean }) {
         const { betsStack, sum, availableBets, isDoubleBetAllowed } = data;
         this.headerPanel?.onBetUpdate(sum);
-        if (availableBets && typeof isDoubleBetAllowed === 'boolean') {
-            this.isDoubleAllowed = isDoubleBetAllowed;
+        this.isDoubleAllowed = isDoubleBetAllowed;
+        if (availableBets) {
             this.betPanel?.onBetUpdate(sum, availableBets, isDoubleBetAllowed);
         }
         this.gameScene?.onBetUpdate(betsStack);
     }
 
-    private async onCardDeal(data: { person: TParticipants, card: CardModel, totalPoints: number, resolve: (value: unknown) => void }) {
+    private async onCardDeal(data: { person: TParticipants, card: CardModel, totalPoints: number, resolve: () => void }) {
         const { person, card, totalPoints, resolve } = data;
         const resolveAt = this.state === ERoundState.CARDS_DEALING ? 'onStart' : 'onComplete';
         await this.gameScene?.onCardDeal(person, card, totalPoints, resolveAt);
-        resolve(true);
+        resolve();
     }
 
-    private async onCardOpen(data: { card: CardModel, totalPoints: number, resolve: (value: unknown) => void }) {
-        const { card, totalPoints, resolve } = data;
-        await this.gameScene?.onCardOpen(card, totalPoints);
-        resolve(true);
+    private async onCardOpen(data: { cardIndex: number, totalPoints: number, resolve: () => void }) {
+        const { cardIndex, totalPoints, resolve } = data;
+        await this.gameScene?.onCardOpen(cardIndex, totalPoints);
+        resolve();
     }
-
-    // private async onRoundEnd(result: IRoundResult) {
-    //     result.main && await this.gameScene?.onTurnEnd(result);
-    // }
 
     private onTurnEnd(result: IRoundResult) {
         this.gameScene?.onTurnEnd(result);
@@ -205,7 +201,6 @@ export class GameView {
         Main.signalController.bet.updated.remove(this.onBetUpdate);
         Main.signalController.card.deal.remove(this.onCardDeal);
         Main.signalController.card.open.remove(this.onCardOpen);
-        // Main.signalController.round.end.remove(this.onRoundEnd);
         Main.signalController.player.endTurn.remove(this.onTurnEnd);
     }
 }

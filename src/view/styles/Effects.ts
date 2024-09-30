@@ -1,5 +1,3 @@
-import { DropShadowFilter } from "pixi-filters";
-
 export class Effects {
     public static FOOTER_DROP_SHADOW = {
         blur: 5,

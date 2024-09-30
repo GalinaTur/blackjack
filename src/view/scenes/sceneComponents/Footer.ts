@@ -1,24 +1,21 @@
 import { Container, Graphics, Sprite, Text } from "pixi.js";
-import { container } from "webpack";
 import { Main } from "../../../main";
 import { Textstyles } from "../../styles/TextStyles";
 import { DropShadowFilter } from "pixi-filters";
 import { Effects } from "../../styles/Effects";
-import { Button } from "./buttons/Button";
-import { BUTTONS } from "../../../data/constants";
 import { SoundsButton } from "./buttons/SoundsButton";
 
 export class Footer extends Container {
     private text: Text | null = null;
     private dropShadowFilter = new DropShadowFilter(Effects.FOOTER_DROP_SHADOW);
     private background: Sprite | null = null;
+    private soundsOn: boolean;
 
-    // private soundOffButton = new Button(BUTTONS.sounds.off,)
-
-    constructor() {
+    constructor(soundsOn: boolean) {
         super()
         this.text = new Text("", Textstyles.FOOTER_TEXTSTYLE);
-        this.background
+        this.background;
+        this.soundsOn = soundsOn
         this.init();
     }
 
@@ -42,14 +39,10 @@ export class Footer extends Container {
     }
 
     private setSoundsButton(){
-        const soundsButton = new SoundsButton();
+        const soundsButton = new SoundsButton(this.soundsOn);
         soundsButton.scale.set(0.1);
         soundsButton.position.set(Main.screenSize.width*0.9, this.height/2);
         this.addChild(soundsButton);
-    }
-
-    private onSoundsButtonClick() {
-
     }
 
     private setText() {

@@ -1,300 +1,172 @@
-import { DeckModel } from "../model/DeckModel";
 import { RoundModel } from "../model/RoundModel";
 import { GameView } from "../view/GameView";
 import { Main } from "../main";
 import { BettingController } from "./BettingController";
 import { PointsController } from "./PointsController";
-import { ERoundState, TParticipants, TResult } from "../data/types";
-import { CardModel } from "../model/CardModel";
+import { ERoundState, IRoundStateDTO } from "../data/types";
+import { PlayerController } from "./PlayerController";
+import { DealerController } from "./DealerController";
 
 export class RoundController {
     public roundModel: RoundModel;
     private gameView: GameView;
-    private deck = new DeckModel();
     private pointsController = new PointsController();
-    private bettingController
+    private bettingController: BettingController;
+    private playerController: PlayerController;
+    private dealerController: DealerController;
 
     constructor(roundModel: RoundModel, gameView: GameView, bettingController: BettingController) {
         this.gameView = gameView;
         this.roundModel = roundModel;
         this.bettingController = bettingController;
+        this.playerController = new PlayerController(this, this.pointsController, this.roundModel.mainHand);
+        this.dealerController = new DealerController(this, this.pointsController, this.roundModel.dealerHand);
         this.init();
     }
 
     private async init() {
         this.setEventListeners();
-        this.handleNextAction(this.roundModel.state);
+        this.handleNextAction();
     }
 
     private setEventListeners() {
         Main.signalController.round.start.add(this.onRoundStart, this);
         Main.signalController.bet.placed.add(this.onBetPlaced, this);
-        Main.signalController.player.hit.add(this.onPlayerHit, this);
-        Main.signalController.player.stand.add(this.onPlayerStand, this);
-        Main.signalController.player.double.add(this.onPlayerDoubleDown, this);
-        Main.signalController.player.split.add(this.onPlayerSplit, this);
     }
 
-    private async handleNextAction(state: ERoundState) {
-        let dealTo: TParticipants = 'player';
-        switch (state) {
+    public async handleNextAction() {
+        let roundStateDTO = this.getRoundStateInfo();
+        switch (this.roundModel.state) {
             case ERoundState.NOT_STARTED:
-                this.gameView.render(this.roundModel.roundStateInfo)
+                this.gameView.render(roundStateDTO)
                 break;
             case ERoundState.BETTING:
-                this.gameView.render(this.roundModel.roundStateInfo)
+                this.gameView.render(roundStateDTO)
                 break;
 
             case ERoundState.CARDS_DEALING:
-                this.gameView.render(this.roundModel.roundStateInfo)
+                let controller: PlayerController | DealerController = this.playerController;
+                roundStateDTO = this.getRoundStateInfo();
+                this.gameView.render(roundStateDTO)
                 while (!this.roundModel.isDealingEnded()) {
-                    await this.dealCardTo(dealTo)
-                    dealTo = dealTo === 'player' ? 'dealer' : 'player';
+                    await controller.dealCard();
+                    controller = controller === this.playerController ? this.dealerController : this.playerController;
                 }
-                if (! await this.checkForBJ()) this.changeState(ERoundState.PLAYERS_TURN);
+                if (! await this.checkForAnyBJ()) this.goToNextState();
                 break;
 
             case ERoundState.PLAYERS_TURN:
-                if (this.pointsController.isWin(this.playersCards)) {
-                    this.onPlayerStand();
-                } else if (this.pointsController.isBust(this.playersCards)) {
-                    this.endTurn('playerBust');
-                } else {
-                    const isSplitAllowed = this.pointsController.isSplitAllowed(this.playersCards);
-                    this.gameView.render(this.roundModel.roundStateInfo, isSplitAllowed);
-                    return;
-                }
+                const isSplitAllowed = this.pointsController.isSplitAllowed(this.roundModel.mainHand.cards);
+                this.playerController.handleTurn();
+                roundStateDTO = this.getRoundStateInfo();
+                await this.gameView.render(roundStateDTO, isSplitAllowed);
                 break;
 
             case ERoundState.SPLIT_TURN:
-                if (this.pointsController.isWin(this.splitCards)) {
-                    this.onPlayerStand();
-                } else if (this.pointsController.isBust(this.splitCards)) {
-                    this.endTurn('playerBust');
-                }
-                await this.gameView.render(this.roundModel.roundStateInfo);
-                if (this.splitCards.length < 2) await this.dealCardTo('split');
-                await this.gameView.render(this.roundModel.roundStateInfo);
+                if (this.roundModel.splitHand) this.playerController.setHand(this.roundModel.splitHand);
+                this.playerController.handleTurn();
+                roundStateDTO = this.getRoundStateInfo();
+                await this.gameView.render(roundStateDTO);
                 break;
 
             case ERoundState.DEALERS_TURN:
-                this.gameView.render(this.roundModel.roundStateInfo)
-                await this.revealHoleCard();
-                if (this.pointsController.isBust(this.dealersCards)) {
-                    this.dealerBust();
-                } else await this.dealerPlay();
+                this.gameView.render(roundStateDTO);
+                this.dealerController.handleTurn();
                 break;
 
             case ERoundState.ROUND_OVER:
-                this.gameView.render(this.roundModel.roundStateInfo)
+                await this.gameView.render(roundStateDTO)
                 break;
         }
     }
 
-    private changeState(state: ERoundState) {
-        if (this.roundModel.state !== state) this.roundModel.state = state;
-        console.log(`%cEnabled state: ${ERoundState[state]}`, "color: green");
-        Main.signalController.round.stateChanged.emit(state);
-        this.handleNextAction(state);
+    public goToNextState() {
+        this.roundModel.goToNextState();
+        console.log(`%cEnabled state: ${ERoundState[this.roundModel.state]}`, "color: green");
+        Main.signalController.round.stateChanged.emit(this.roundModel.state);
+        if (this.roundModel.state === ERoundState.ROUND_OVER) this.endRound();
+        this.handleNextAction();
     }
 
     private onRoundStart() {
-        if (this.roundModel.state !== ERoundState.BETTING) this.changeState(ERoundState.BETTING);
+        if (this.roundModel.state !== ERoundState.BETTING) this.goToNextState();
         this.bettingController.setInitialBet();
     }
 
     private onBetPlaced() {
-        this.changeState(ERoundState.CARDS_DEALING);
+        this.goToNextState();
     }
 
-    private async dealCardTo(person: TParticipants) {
-        return new Promise((resolve) => {
-            const card = this.deck.getCard();
-            if (!card) {
-                console.error("No more cards in deck!");
-                return;
-            };
-            this.roundModel.dealTo(person, card);
-            const totalPoints = this.pointsFrom(this.roundModel.cards[person]);
-            Main.signalController.card.deal.emit({ person, card, totalPoints, resolve });
-        })
-    }
-
-    private async onPlayerHit() {
-        if (this.roundModel.state === ERoundState.PLAYERS_TURN) {
-            await this.dealCardTo('player');
-        } else if (this.roundModel.state === ERoundState.SPLIT_TURN) {
-            await this.dealCardTo('split');
+    private getRoundStateInfo(): IRoundStateDTO {
+        return {
+            currentState: this.roundModel.state,
+            availableBets: this.bettingController.setAvailableBets(),
+            bet: this.roundModel.betSize,
+            win: this.roundModel.winSize,
+            cards: {
+                main: this.roundModel.mainHand.cards,
+                dealer: this.roundModel.dealerHand.cards,
+                split: this.roundModel.splitHand && this.roundModel.splitHand.cards
+            },
+            isSplitAllowed: this.pointsController.isSplitAllowed(this.roundModel.mainHand.cards),
+            roundResult: this.roundModel.getResult(),
         }
-        this.handleNextAction(this.roundModel.state);
     }
 
-    private onPlayerStand() {
-        this.endTurn();
-    }
-
-    private endTurn(result?: TResult) {
-        if (result) this.roundModel.result = result;
+    public endTurn() {
         const roundResult = this.roundModel.getResult();
         Main.signalController.player.endTurn.emit(roundResult);
 
-        if (roundResult.main && roundResult.split) {
+        if (roundResult.main && (!this.roundModel.splitHand || roundResult.split)) {
             this.endRound();
             return;
         }
 
-        if (this.roundModel.state === ERoundState.SPLIT_TURN) {
-            this.changeState(ERoundState.DEALERS_TURN);
-            return;
-        }
-
-        if (this.roundModel.state === ERoundState.DEALERS_TURN) {
-            this.endRound();
-            return;
-        }
-
-        if (roundResult.main && !this.roundModel.cards.split.length) {
-            this.endRound();
-            return;
-        }
-
-        this.roundModel.cards.split.length ? this.changeState(ERoundState.SPLIT_TURN) :
-           this.changeState(ERoundState.DEALERS_TURN);
+        this.goToNextState();
     }
 
-    private async onPlayerDoubleDown() {
-        if (this.roundModel.state === ERoundState.PLAYERS_TURN) {
-            await this.dealCardTo('player');
-            if (this.pointsController.isBust(this.playersCards)) {
-                this.endTurn('playerBust');
-            } else {
-                this.onPlayerStand();
-            }
-        } else if (this.roundModel.state === ERoundState.SPLIT_TURN) {
-            await this.dealCardTo('split');
-            if (this.pointsController.isBust(this.splitCards)) {
-                this.endTurn('playerBust');
-            } else {
-                this.onPlayerStand();
-            }
-        }
-    }
-
-    private async onPlayerSplit() {
-        if (this.roundModel.state !== ERoundState.PLAYERS_TURN) return;
-        const secondCard = this.roundModel.cards.player.pop();
-        secondCard && this.roundModel.cards.split.push(secondCard);
-        await this.gameView.render(this.roundModel.roundStateInfo);
+    public async onPlayerSplit() {
+        this.roundModel.split();
+        const roundStateDTO = this.getRoundStateInfo();
+        await this.gameView.render(roundStateDTO);
         this.bettingController.onPlayerSplit();
-        await this.dealCardTo('player');
-        this.handleNextAction(this.roundModel.state)
     }
 
-    private async dealerPlay() {
-        if (this.pointsFrom(this.dealersCards) >= 17) {
-            this.dealerStand();
-            return;
-        }
-        await this.dealCardTo('dealer');
-        this.handleNextAction(this.roundModel.state);
-    }
-
-    private dealerStand() {
-        const playerResult = this.comparePoints(this.dealersCards, this.playersCards);
-        const splitResult = this.splitCards.length && this.comparePoints(this.dealersCards, this.splitCards);
-
-        if (!this.roundModel.getResult().main) this.roundModel.setResult(playerResult, 'player');
-        if (splitResult && !this.roundModel.getResult().split) this.roundModel.setResult(splitResult, 'split');
-
-        this.endTurn();
-    }
-
-    private dealerBust() {
-        if (!this.roundModel.getResult().main) this.roundModel.setResult('dealerBust', 'player');
-        if (!this.roundModel.getResult().split) this.splitCards.length && this.roundModel.setResult('dealerBust', 'split');
-
-        this.endTurn();
-    }
-
-    private async endRound() {
-        if (this.holeCard) {
-            await this.revealHoleCard();
-        };
+    public async endRound() {
+        if (this.roundModel.dealerHand.holeCardIndex) await this.dealerController.revealHoleCard();
         Main.signalController.round.end.emit(this.roundModel.getResult());
-        this.changeState(ERoundState.ROUND_OVER);
+        this.roundModel.endRound();
+        this.handleNextAction();
     }
 
-    private comparePoints(dealerCards: CardModel[], playerCards: CardModel[]) {
-        return this.pointsController.isTie(dealerCards, playerCards) ? 'push' :
-            this.pointsFrom(playerCards) > this.pointsFrom(dealerCards) ? 'win' : 'lose';
-    }
-
-    private async checkForDealerBJ() {
-        if (!this.holeCard) return;
-        let dealerPoints = this.pointsFrom(this.dealersCards);
-        if (dealerPoints !== 10 && dealerPoints !== 11) return;
-        let holeCardPoints = this.pointsController.getCardPoints(this.holeCard);
-        if (dealerPoints + holeCardPoints === 21) {
-            await this.revealHoleCard();
-            return true;
-        }
-        return false
-    }
-
-    private async checkForBJ() {
-        if (await this.checkForDealerBJ()) {
-            this.roundModel.result = this.pointsController.isTie(this.dealersCards, this.playersCards) ? 'push' : 'dealerBJ';
+    private async checkForAnyBJ() {
+        const isPlayerBJ = this.playerController.checkForBJ();
+        const isDealerBJ = await this.dealerController.checkForBJ();
+        if (isDealerBJ && isPlayerBJ) {
+            this.roundModel.setResult('push');
             this.endTurn();
             return true;
         }
-        if (this.pointsFrom(this.playersCards) === 21) {
-            this.roundModel.result = 'playerBJ';
+        if (isPlayerBJ) {
+            this.roundModel.setResult('playerBJ');
+            this.endTurn();
+            return true;
+        }
+        if (isDealerBJ) {
+            this.roundModel.setResult('dealerBJ');
             this.endTurn();
             return true;
         }
         return false;
     }
 
-    private async revealHoleCard() {
-        if (!this.holeCard) return;
-
-        return new Promise(resolve => {
-            if (!this.holeCard) return;
-            const card = this.holeCard;
-            this.holeCard.hidden = false;
-            const totalPoints = this.pointsFrom(this.dealersCards);
-            Main.signalController.card.open.emit({ card, totalPoints, resolve });
-        })
-    }
-
-    get dealersCards() {
-        return this.roundModel.cards.dealer;
-    }
-
     get playersCards() {
-        return this.roundModel.cards.player;
-    }
-
-    get splitCards() {
-        return this.roundModel.cards.split;
-    }
-
-    get holeCard() {
-        if (!this.dealersCards[1].hidden) return null;
-        return this.dealersCards[1];
-    }
-
-    private pointsFrom(cards: CardModel[]): number {
-        return this.pointsController.calcPoints(cards);
+        return this.roundModel.mainHand.cards;
     }
 
     public deactivate() {
-        // Main.signalController.bet.updated.remove(this.onBetUpdated);
+        this.playerController.deactivate();
         Main.signalController.round.start.remove(this.onRoundStart);
         Main.signalController.bet.placed.remove(this.onBetPlaced);
-        Main.signalController.player.hit.remove(this.onPlayerHit);
-        Main.signalController.player.stand.remove(this.onPlayerStand);
-        Main.signalController.player.double.remove(this.onPlayerDoubleDown);
-        Main.signalController.player.split.remove(this.onPlayerSplit);
     }
 }

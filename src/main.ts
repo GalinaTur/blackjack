@@ -1,15 +1,15 @@
 import { Application } from "pixi.js";
 import { SignalsController } from "./controller/SignalsController";
-import { AssetsLoader } from "./controller/AssetsController";
+import { AssetsController } from "./controller/AssetsController";
 import { GameController } from "./controller/GameController";
-import PixiPlugin from "gsap/PixiPlugin";
 import gsap from "gsap";
+import PixiPlugin from "gsap/PixiPlugin";
 import { MotionPathPlugin } from "gsap/all";
 
 export class Main {
     public static APP: Application;
     public static signalController = new SignalsController();
-    public static assetsLoader = new AssetsLoader();
+    public static assetsController = new AssetsController();
     public static screenSize: { width: number; height: number } = {
         width: window.innerWidth,
         height: window.innerHeight,
@@ -35,7 +35,7 @@ export class Main {
         (globalThis as any).__PIXI_APP__ = this.app;
         Main.APP = this.app;
         this.app.stage.sortableChildren = true;
-        await Main.assetsLoader.init();
+        await Main.assetsController.init();
         this.gameController = new GameController(this.app);
         document.body.appendChild(this.app.view as HTMLCanvasElement);
 

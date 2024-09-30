@@ -1,11 +1,10 @@
-import gsap from "gsap"
+import gsap from "gsap";
 import { ChipView } from "../scenes/sceneComponents/ChipView"
 import { Main } from "../../main"
-import { Container, Point, Sprite, Text } from "pixi.js"
-import { CardModel } from "../../model/CardModel"
+import { Container, Sprite, Text } from "pixi.js"
 import { CardView } from "../scenes/sceneComponents/CardView"
-import { BevelFilter } from "pixi-filters"
 import { Background } from "../scenes/sceneComponents/Background"
+
 
 export class Animations {
 
@@ -111,7 +110,7 @@ export class Animations {
                         positionX: -80,
                         positionY: -50 - 5 * index,
                     },
-                    duration: 0.5,
+                    duration: 0.8,
                     ease: 'power1.out',
                     onComplete: resolve
                 })

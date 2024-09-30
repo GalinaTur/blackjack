@@ -18,7 +18,6 @@ export type TPanels = 'betPanel' | 'gamePanel' | 'finalPanel';
 export interface IScene<T> extends Container {
     onResize(): void,
     deactivate(): Promise<void> | void,
-    // onUpdate(data: IStateInfo): void,
 }
 
 export interface IButton {
@@ -36,8 +35,8 @@ export interface IPanel extends Container {
     onResize(): void;
 }
 
-export interface IStateInfo {
-    availableBets: TBets[];
+export interface IRoundStateDTO {
+    availableBets: TBets[],
     bet: number,
     win: number,
     currentState: ERoundState,
@@ -47,9 +46,9 @@ export interface IStateInfo {
 }
 
 export interface ICardsDealed {
-    dealer: CardModel[],
-    player: CardModel[],
-    split: CardModel[]
+    dealer: readonly CardModel[],
+    main: readonly CardModel[],
+    split?: readonly CardModel[] | null
 }
 
 export interface IPoints {

@@ -23,8 +23,8 @@ export class PlayersHand extends Hand {
     }
 
     public async setPointer() {
-        this.pointer = await Main.assetsLoader.getSprite('pointer');
-        const shine = await Main.assetsLoader.getSprite('pointerShine');
+        this.pointer = await Main.assetsController.getSprite('pointer');
+        const shine = await Main.assetsController.getSprite('pointerShine');
         this.pointer.anchor.set(0.5);
         this.pointer.scale.set(0);
         this.pointer.position.y = -50;
@@ -58,9 +58,10 @@ export class PlayersHand extends Hand {
 
     public async moveChip(value: TBets, globalPosition: Point) {
         const [newChip, index] = await this.addChipToStack(value, globalPosition);
+        newChip.position = this.toLocal(globalPosition);
         newChip.scale.set(0.6, 0.5);
         await Animations.chip.move(newChip, index);
-        this.chipsStack?.children.length === 1 ? this.playSound(SOUNDS.firstChipPlace) : this.playSound(SOUNDS.chipPlace)
+        // this.chipsStack?.children.length === 1 ? this.playSound(SOUNDS.firstChipPlace) : this.playSound(SOUNDS.chipPlace)
     }
 
     public async placeChip(value: TBets, globalPosition: Point) {
@@ -98,7 +99,7 @@ export class PlayersHand extends Hand {
         chip.bevelFilter.lightAlpha = 0.5;
     }
 
-    public async updateCards(cards: CardModel[]) {
+    public async updateCards(cards: readonly CardModel[]) {
         cards.forEach(async cardModel => {
             const card = await CardView.build(cardModel);
             card.open();
@@ -111,7 +112,6 @@ export class PlayersHand extends Hand {
 
     public async doubleBet() {
         if (!this.chipsStack) return;
-
         const length = this.chipsStack.children.length;
         const animationPromises: Promise<void>[] = [];
         return new Promise<void>(resolve => {
@@ -141,7 +141,7 @@ export class PlayersHand extends Hand {
     }
 
     private async setShine() {
-        const shine = await Main.assetsLoader.getSprite('shine');
+        const shine = await Main.assetsController.getSprite('shine');
         shine.anchor.set(0.5);
         // shine.scale.set(0.6);
         shine.position.set(100, 0)

@@ -60,7 +60,9 @@ export class GamePanel extends Container implements IPanel {
         this.disableButtons();
     }
 
-    public updateButtons(state: ERoundState, cards: CardModel[], isSplitAllowed?: boolean) {
+    public updateButtons(state: ERoundState, cards: readonly CardModel[], isDoubleAllowed: boolean, isSplitAllowed?: boolean) {
+        console.log(isDoubleAllowed)
+        this.isDoubleAllowed = isDoubleAllowed;
         this.updateHitStandButtons(state);
         if (isSplitAllowed) this.splitButton.updateIsActive(isSplitAllowed && this.isDoubleAllowed);
         if (this.isDoubleAllowed) {
@@ -74,7 +76,7 @@ export class GamePanel extends Container implements IPanel {
         this.standButton.updateIsActive(isActive);
     }
 
-    public updateDoubleButton(cards: CardModel[]) {
+    public updateDoubleButton(cards: readonly CardModel[]) {
         const isActive = cards.length <= 2;
         this.doubleButton.updateIsActive(isActive);
     }

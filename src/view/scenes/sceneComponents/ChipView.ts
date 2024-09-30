@@ -1,7 +1,6 @@
-import { Container, Sprite, Text } from "pixi.js";
+import { Container, Sprite } from "pixi.js";
 import { BevelFilter, DropShadowFilter } from "pixi-filters";
 import { Main } from "../../../main";
-import { Textstyles } from "../../styles/TextStyles";
 import { Effects } from "../../styles/Effects";
 import { EChips, TBets } from "../../../data/types";
 
@@ -40,7 +39,7 @@ export class ChipView extends Container {
     private async setSprite() {
         const key: string = this.value + '$';
         const name = EChips[key as keyof typeof EChips];
-        this.image = await Main.assetsLoader.getSprite(name);
+        this.image = await Main.assetsController.getSprite(name);
         this.image.anchor.set(0.5);
         this.image.scale.set(0.7)
         this.addChild(this.image);

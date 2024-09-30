@@ -21,7 +21,7 @@ export class Button extends Container {
     }
 
     protected async setImage(imgID: string): Promise<void> {
-        this.image = await Main.assetsLoader.getSprite(imgID);
+        this.image = await Main.assetsController.getSprite(imgID);
         this.image.anchor.set(0.5);
         this.addChildAt(this.image, 0);
     }

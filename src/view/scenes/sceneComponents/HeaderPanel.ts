@@ -1,8 +1,6 @@
-import { Container, Graphics, Sprite, Text } from "pixi.js";
+import { Container, Text } from "pixi.js";
 import { Main } from "../../../main";
-import { ColorGradientFilter } from "pixi-filters";
 import { Textstyles } from "../../styles/TextStyles";
-import { Effects } from "../../styles/Effects";
 import { IPanel } from "../../../data/types";
 import { Animations } from "../../styles/Animations";
 import { HEADER_FIELDS } from "../../../data/constants";

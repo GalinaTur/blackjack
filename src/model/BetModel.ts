@@ -15,6 +15,10 @@ export class BetModel {
     get betValues() {
         return this._choosedBetValues;
     }
+
+    get betSum() {
+        return this._choosedBetValues.reduce((sum, bet) => sum + bet, 0);
+    }
     
     set availableBets(availableBets: TBets[]) {
         this._availableBets = availableBets;

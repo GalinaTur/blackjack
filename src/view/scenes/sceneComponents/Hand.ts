@@ -40,7 +40,7 @@ export class Hand extends Container {
     }
 
     public async setBJLabel() {
-        const label = await Main.assetsLoader.getSprite('BJ_label');
+        const label = await Main.assetsController.getSprite('BJ_label');
         label.scale.set(0)
         label.anchor.set(0.5);
         label.position.set(5);
@@ -51,7 +51,7 @@ export class Hand extends Container {
     }
 
     protected async createLabel(img: string, message: string) {
-        const image = await Main.assetsLoader.getSprite(img);
+        const image = await Main.assetsController.getSprite(img);
         image.anchor.set(0.5);
         image.position.set(70, 20);
         image.scale.set();
@@ -67,7 +67,7 @@ export class Hand extends Container {
             return;
         }
 
-        this.pointsLabel = await Main.assetsLoader.getSprite("points_label");
+        this.pointsLabel = await Main.assetsController.getSprite("points_label");
         this.pointsLabel.anchor.set(0, 0.5);
         this.pointsLabel.position.set(-40, 20);
         this.pointsLabel.scale.set(0, 0.7);
@@ -89,7 +89,7 @@ export class Hand extends Container {
     }
 
     protected async playSound(soundID: string) {
-        const sound = await Main.assetsLoader.getSound(soundID);
+        const sound = await Main.assetsController.getSound(soundID);
         sound.play();
     }
 

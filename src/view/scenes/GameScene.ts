@@ -1,4 +1,4 @@
-import { Container, Point, Sprite, SpriteMaskFilter, Text } from "pixi.js";
+import { Container, Point, Text } from "pixi.js";
 import { Main } from "../../main";
 import { CardView } from "./sceneComponents/CardView";
 import { IRoundResult, IScene, TBets, TResult } from "../../data/types";
@@ -16,7 +16,6 @@ export class GameScene extends Container implements IScene<void> {
     private dealersHand = new Hand('dealer');
     private playersHand = new PlayersHand('player');
     private splitHand: PlayersHand | null = null;
-    private chipsStack = new Container();
     private activeHand: PlayersHand | null = null;
 
     constructor() {
@@ -28,17 +27,13 @@ export class GameScene extends Container implements IScene<void> {
         await this.setShoe();
         this.setEventListeners();
         this.sortableChildren = true;
-        this.chipsStack.zIndex = 1;
         this.dealersHand.position.set(Main.screenSize.width / 2, Main.screenSize.height * 0.3);
         this.playersHand.position.set(Main.screenSize.width / 2, Main.screenSize.height * 0.65);
-        this.playersHand.addChild(this.chipsStack);
         this.addChild(this.dealersHand, this.playersHand);
     }
 
     private setEventListeners() {
-        Main.signalController.bet.cleared.add(this.onBetClear, this);
         Main.signalController.player.double.add(this.onDoubleBet, this);
-        // Main.signalController.bet.doubled.addPriority(this.onDoubleBet, this);
     }
 
     public async setActiveHand(hand: TParticipants) {
@@ -46,6 +41,7 @@ export class GameScene extends Container implements IScene<void> {
             this.activeHand = this.playersHand;
             await this.playersHand.setPointer();
         } else if (hand === 'split') {
+            console.log('sj')
             this.activeHand = this.splitHand;
             this.playersHand.removePointer();
             this.splitHand && await this.splitHand.setPointer()
@@ -76,23 +72,22 @@ export class GameScene extends Container implements IScene<void> {
         hand.points = points;
     }
 
-    public async onCardOpen(card: CardModel, points: number) {
-        console.log(this.dealersHand.cards)
-        const cardView = this.dealersHand.cards.find((cardView) => cardView.value === card.value);
+    public async onCardOpen(cardIndex: number, points: number) {
+        const cardView = this.dealersHand.cards[cardIndex];
         if (!cardView) return;
         this.playOpenCardSound()
         await cardView.animatedOpen();
         this.dealersHand.points = points;
     }
 
-    
-    private async playOpenCardSound(){
-        const sound = await Main.assetsLoader.getSound(SOUNDS.flipCard);
+
+    private async playOpenCardSound() {
+        const sound = await Main.assetsController.getSound(SOUNDS.flipCard);
         sound.play();
     }
 
     public async renderWinPopup(winSize: number) {
-        const background = await Main.assetsLoader.getSprite('finalLabel');
+        const background = await Main.assetsController.getSprite('finalLabel');
         background.anchor.set(0.5);
         background.position.set(Main.screenSize.width / 2, Main.screenSize.height * 0.4)
         background.scale.set(0);
@@ -106,8 +101,8 @@ export class GameScene extends Container implements IScene<void> {
     }
 
     private async setShoe() {
-        const shoe = await Main.assetsLoader.getSprite('cardsShoe');
-        const shoePart = await Main.assetsLoader.getSprite('cardsShoePart');
+        const shoe = await Main.assetsController.getSprite('cardsShoe');
+        const shoePart = await Main.assetsController.getSprite('cardsShoePart');
         shoe.anchor.set(0, 0);
         shoePart.anchor.set(0, 0.44);
         this.cardsShoe.addChild(shoe);
@@ -121,17 +116,10 @@ export class GameScene extends Container implements IScene<void> {
         this.addChild(this.cardsShoe);
     }
 
-    private onBetClear() {
-        Animations.chipStack.remove(this.chipsStack);
-        this.chipsStack.removeChildren();
-        this.chipsStack.position.set(0, 0);
-    }
-
     public async onDoubleBet() {
-        console.log(this.activeHand?.name)
         const activeHand = this.activeHand || this.playersHand;
         await activeHand.doubleBet();
-        Main.signalController.bet.doubled.emit(this.activeHand?.name || this.playersHand.name);
+        Main.signalController.bet.doubled.emit(activeHand.name);
     }
 
     public onBetUpdate(chipsStack: TBets[]) {
@@ -143,26 +131,17 @@ export class GameScene extends Container implements IScene<void> {
             })
         }
         this.activeHand ? this.activeHand.onChipsStackUpdate(chipsStack) : this.playersHand.onChipsStackUpdate(chipsStack);
-        // else {
-        //     await this.splitHand.onChipsStackUpdate(chipsStack);
-        // }
     }
 
     public async onChipClick(value: TBets, globalPosition: Point) {
-        // const resolveAt = 'start';
         await this.playersHand.placeChip(value, globalPosition);
     }
 
-    public async splitCards(playerCards: CardModel[], splitCards: CardModel[]) {
+    public async splitCards(playerCards: readonly CardModel[], splitCards: readonly CardModel[]) {
         this.removeChild(this.playersHand);
         const chipsStack = this.playersHand.chipsStack;
         this.splitHand = new PlayersHand('split');
         this.playersHand = new PlayersHand('player');
-        chipsStack?.children.forEach(chip => {
-            const chipView = chip as ChipView;
-            this.playersHand.moveChip(chipView.value, chip.position);
-        })
-        chipsStack?.destroy({children:true})
         this.playersHand.position.set(Main.screenSize.width / 2, Main.screenSize.height * 0.65);
         this.splitHand.position.set(Main.screenSize.width / 1.9, Main.screenSize.height * 0.65);
         this.playersHand.updateCards(playerCards);
@@ -171,11 +150,17 @@ export class GameScene extends Container implements IScene<void> {
         this.addChild(this.splitHand);
         this.addChild(this.playersHand);
         this.playSound(SOUNDS.slideCard);
+
+        chipsStack?.children.forEach(async chip => {
+            const chipView = chip as ChipView;
+            const globalPosition = chip.toGlobal(new Point(chip.x, chip.y));
+            this.playersHand.moveChip(chipView.value, globalPosition);
+        })
         await Animations.hand.split(this.playersHand, this.splitHand);
     }
 
     private async playSound(soundID: string) {
-        const sound = await Main.assetsLoader.getSound(soundID);
+        const sound = await Main.assetsController.getSound(soundID);
         sound.play();
     }
 
@@ -217,7 +202,7 @@ export class GameScene extends Container implements IScene<void> {
 
             case "lose":
                 currentHand!.setRegularLabel('LOSE');
-                this.playSound(SOUNDS.lose); 
+                this.playSound(SOUNDS.lose);
                 break;
 
             case "push":
@@ -243,7 +228,6 @@ export class GameScene extends Container implements IScene<void> {
     };
 
     public deactivate() {
-        Main.signalController.bet.cleared.remove(this.onBetClear);
         Main.signalController.player.double.remove(this.onDoubleBet);
     }
 }

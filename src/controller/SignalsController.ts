@@ -1,21 +1,16 @@
 import { ERoundState, IRoundResult, TBets, TParticipants, TResult } from "../data/types";
 import { CardModel } from "../model/CardModel";
-import { IStateInfo } from "../data/types";
 
-class Signal<T = void>  {
+class Signal<T = void> {
     private subscribers: { func: ((data: T) => void), ctx: unknown }[] = [];
 
     public add(func: ((data: T) => void), ctx: unknown) {
         this.subscribers.push({ func, ctx });
     }
 
-    public addPriority(func: ((data: T) => void), ctx: unknown) {
-        this.subscribers.unshift({ func, ctx });
-    }
-
     public async emit(data: T): Promise<void> {
         for (const subscriber of this.subscribers) {
-           subscriber.func.call(subscriber.ctx, data);
+            subscriber.func.call(subscriber.ctx, data);
         }
     }
 
@@ -36,7 +31,7 @@ export class SignalsController {
 
     public bet = {
         added: new Signal<TBets>(),
-        updated: new Signal<{betsStack: TBets[], sum:number, availableBets?: TBets[], isDoubleBetAllowed?: boolean}>(),
+        updated: new Signal<{ betsStack: TBets[], sum: number, availableBets?: TBets[], isDoubleBetAllowed: boolean }>(),
         removedLast: new Signal<void>(),
         placed: new Signal<void>(),
         cleared: new Signal<void>(),
@@ -47,14 +42,14 @@ export class SignalsController {
     public balance = {
         updated: new Signal<number>(),
     }
-    
+
     public winSize = {
-        updated: new Signal<{win: number, totalWin: number}>(),
+        updated: new Signal<{ win: number, totalWin: number }>(),
     }
 
     public card = {
-        deal: new Signal<{ person: TParticipants, card: CardModel, totalPoints: number, resolve: (value: unknown)=>void }>(),
-        open: new Signal<{ card: CardModel, totalPoints: number, resolve: (value: unknown)=>void }>(),
+        deal: new Signal<{ person: TParticipants, card: CardModel, totalPoints: number, resolve: () => void }>(),
+        open: new Signal<{ cardIndex: number, totalPoints: number, resolve: () => void }>(),
     }
 
     public player = {

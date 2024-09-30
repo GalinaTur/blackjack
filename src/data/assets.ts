@@ -156,7 +156,7 @@ export const ASSETS_MANIFEST = {
 }
 
 export const SOUNDS = {
-    welcome: './assets/sounds/welcome.wav',
+    welcome: './assets/sounds/welcome.mp3',
     backgroundMusic: './assets/sounds/background.mp3',
     dealCard: './assets/sounds/dealCard.ogg',
     slideCard: './assets/sounds/slideCard.wav',

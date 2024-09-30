@@ -21,8 +21,8 @@ export class CardView extends Container {
     }
 
     private async setImage() {
-        this._backImage = await Main.assetsLoader.getSprite('card_back');
-        this._image = await Main.assetsLoader.getSprite(this.value);
+        this._backImage = await Main.assetsController.getSprite('card_back');
+        this._image = await Main.assetsController.getSprite(this.value);
         this._backImage.anchor.set(0.5)
         this._image.anchor.set(0.5);
         this.addChild(this._backImage);

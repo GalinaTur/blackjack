@@ -16,13 +16,13 @@ export class Background extends Container {
     }
 
     private async setBackground(): Promise<void> {
-        this.background = await Main.assetsLoader.getSprite('background');
+        this.background = await Main.assetsController.getSprite('background');
         this.background.anchor.set(0.5);
         this.addChild(this.background);
     }
 
     private async setLogo(): Promise<void> {
-        this.logo = await Main.assetsLoader.getSprite('bgLogo');
+        this.logo = await Main.assetsController.getSprite('bgLogo');
         this.logo.anchor.set(0.5);
         this.logo.scale.set(0.7, 0.5);
         this.logo.alpha = 0.4;
