@@ -1,10 +1,8 @@
 import { Main } from "../../../../main";
-// import { Button } from "./Button";
 import { ERoundState, IPanel } from "../../../../data/types";
-import { BUTTONS } from "../../../../data/constants";
+import { BUTTONS, SOUNDS } from "../../../../data/constants";
 import { Container } from "pixi.js";
 import { CardModel } from "../../../../model/CardModel";
-import { Button } from "../buttons/Button";
 import { GameButton } from "../buttons/GameButton";
 
 export class GamePanel extends Container implements IPanel {
@@ -40,28 +38,36 @@ export class GamePanel extends Container implements IPanel {
         this.addChild(this.splitButton, this.doubleButton, this.standButton, this.hitButton);
     }
 
+    private async playSound(soundID: string) {
+        const sound = await Main.assetsController.getSound(soundID);
+        sound.play();
+    }
+
     private onHit() {
+        this.playSound(SOUNDS.hit);
         Main.signalController.player.hit.emit();
         this.disableButtons();
     }
 
     private onStand() {
+        this.playSound(SOUNDS.stand);
         this.disableButtons();
         Main.signalController.player.stand.emit();
     }
 
     private onDouble() {
+        this.playSound(SOUNDS.doubledown);
         this.disableButtons();
         Main.signalController.player.double.emit();
     }
 
     private onSplit() {
+        this.playSound(SOUNDS.split);
         Main.signalController.player.split.emit();
         this.disableButtons();
     }
 
     public updateButtons(state: ERoundState, cards: readonly CardModel[], isDoubleAllowed: boolean, isSplitAllowed?: boolean) {
-        console.log(isDoubleAllowed)
         this.isDoubleAllowed = isDoubleAllowed;
         this.updateHitStandButtons(state);
         if (isSplitAllowed) this.splitButton.updateIsActive(isSplitAllowed && this.isDoubleAllowed);

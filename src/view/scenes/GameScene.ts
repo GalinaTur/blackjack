@@ -41,7 +41,6 @@ export class GameScene extends Container implements IScene<void> {
             this.activeHand = this.playersHand;
             await this.playersHand.setPointer();
         } else if (hand === 'split') {
-            console.log('sj')
             this.activeHand = this.splitHand;
             this.playersHand.removePointer();
             this.splitHand && await this.splitHand.setPointer()
@@ -176,12 +175,12 @@ export class GameScene extends Container implements IScene<void> {
             case "dealerBJ":
                 this.dealersHand.setBJLabel();
                 currentHand!.setRegularLabel('LOSE');
-                this.playSound(SOUNDS.dealerBlackjack)
+                this.playSound(SOUNDS.dealerBJ);
                 break;
 
             case "playerBJ":
                 currentHand!.setBJLabel();
-                this.playSound(SOUNDS.playerBlackjack)
+                this.playSound(SOUNDS.playerBJ);
                 break;
 
             case "playerBust":

@@ -15,8 +15,8 @@ export class HeaderPanel extends Container implements IPanel {
         super();
         this.betText = new Text(`Bet: $`, Textstyles.HEADER_TEXTSTYLE);
         this.balanceText = new Text(`Balance: ${playerBalance}$`, Textstyles.HEADER_TEXTSTYLE);
-        this.winText = new Text(`Win: ${winSize}$`, Textstyles.HEADER_TEXTSTYLE);
-        this.totalWinText = new Text(`Total Win: ${totalWin}$`, Textstyles.HEADER_TEXTSTYLE);
+        this.winText = new Text(`Win: ${Number(winSize).toFixed(1)}$`, Textstyles.HEADER_TEXTSTYLE);
+        this.totalWinText = new Text(`Total Win: ${Number(totalWin).toFixed(1)}$`, Textstyles.HEADER_TEXTSTYLE);
         this.init();
     }
 

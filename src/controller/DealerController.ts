@@ -44,7 +44,6 @@ export class DealerController extends ParticipantController<DealerModel> {
         const playerResult = this.pointsController.comparePoints(this.hand.cards, this.roundController.roundModel.mainHand.cards);
         const splitResult = this.roundController.roundModel.splitHand && this.pointsController.comparePoints(this.hand.cards, this.roundController.roundModel.splitHand.cards);
 
-        console.log(playerResult)
         if (!this.roundController.roundModel.getResult().main) this.roundController.roundModel.setResult(playerResult, 'player');
         if (splitResult && !this.roundController.roundModel.getResult().split) this.roundController.roundModel.setResult(splitResult, 'split');
 
