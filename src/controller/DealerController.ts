@@ -11,7 +11,7 @@ export class DealerController extends ParticipantController<DealerModel> {
     }
 
     public async play() {
-        if (this.pointsFrom(this.hand.cards) >= 17) {
+        if (this.pointsFrom(this._hand.cards) >= 17) {
             this.onStand();
             return;
         }
@@ -19,11 +19,11 @@ export class DealerController extends ParticipantController<DealerModel> {
     }
 
     public async checkForBJ() {
-        const holeCardIndex = this.hand.holeCardIndex;
+        const holeCardIndex = this._hand.holeCardIndex;
         if (!holeCardIndex) return false;
-        let points = this.pointsFrom(this.hand.cards);
+        let points = this.pointsFrom(this._hand.cards);
         if (points !== 10 && points !== 11) return false;
-        let holeCardPoints = this.pointsController.getCardPoints(this.hand.cards[holeCardIndex]);
+        let holeCardPoints = this.pointsController.getCardPoints(this._hand.cards[holeCardIndex]);
         if (points + holeCardPoints === 21) {
             await this.revealHoleCard();
             return true;
@@ -32,8 +32,8 @@ export class DealerController extends ParticipantController<DealerModel> {
     }
 
     public async handleTurn() {
-        if (this.hand.holeCardIndex) await this.revealHoleCard();
-        if (this.pointsController.isBust(this.hand.cards)) {
+        if (this._hand.holeCardIndex) await this.revealHoleCard();
+        if (this.pointsController.isBust(this._hand.cards)) {
             this.onBust();
             return;
         }
@@ -41,8 +41,8 @@ export class DealerController extends ParticipantController<DealerModel> {
     }
 
     protected onStand() {
-        const playerResult = this.pointsController.comparePoints(this.hand.cards, this.roundController.roundModel.mainHand.cards);
-        const splitResult = this.roundController.roundModel.splitHand && this.pointsController.comparePoints(this.hand.cards, this.roundController.roundModel.splitHand.cards);
+        const playerResult = this.pointsController.comparePoints(this._hand.cards, this.roundController.roundModel.mainHand.cards);
+        const splitResult = this.roundController.roundModel.splitHand && this.pointsController.comparePoints(this._hand.cards, this.roundController.roundModel.splitHand.cards);
 
         if (!this.roundController.roundModel.getResult().main) this.roundController.roundModel.setResult(playerResult, 'player');
         if (splitResult && !this.roundController.roundModel.getResult().split) this.roundController.roundModel.setResult(splitResult, 'split');
@@ -52,9 +52,9 @@ export class DealerController extends ParticipantController<DealerModel> {
 
     public async revealHoleCard() {
         return new Promise<void>(resolve => {
-            const cardIndex = this.hand.revealHoleCard();
+            const cardIndex = this._hand.revealHoleCard();
             if (!cardIndex) return;
-            const totalPoints = this.pointsFrom(this.hand.cards);
+            const totalPoints = this.pointsFrom(this._hand.cards);
             Main.signalController.card.open.emit({ cardIndex, totalPoints, resolve });
         })
     }

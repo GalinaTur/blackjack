@@ -58,6 +58,7 @@ export class RoundController {
             case ERoundState.PLAYERS_TURN:
                 const isSplitAllowed = this.pointsController.isSplitAllowed(this.roundModel.mainHand.cards);
                 await this.playerController.handleTurn();
+                if (this.playerController.hand !== this.roundModel.mainHand) return;
                 roundStateDTO = this.getRoundStateInfo();
                 await this.gameView.render(roundStateDTO, isSplitAllowed);
                 break;

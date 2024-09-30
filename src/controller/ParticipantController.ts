@@ -6,13 +6,13 @@ import { RoundController } from "./RoundController";
 
 export class ParticipantController<T extends ParticipantModel> {
     protected roundController: RoundController;
-    protected hand: T;
+    protected _hand: T;
     protected pointsController: PointsController;
 
     constructor(roundController: RoundController, pointsController: PointsController, hand: T) {
         this.roundController = roundController;
         this.pointsController = pointsController;
-        this.hand = hand;
+        this._hand = hand;
     }
 
     protected async onHit() {
@@ -20,12 +20,12 @@ export class ParticipantController<T extends ParticipantModel> {
         this.roundController.handleNextAction();
     }
 
-    public async dealCard() {
-        return new Promise<void>(async (resolve) => {
-            await this.hand.drawCard();
-            const totalPoints = this.pointsFrom(this.hand.cards);
-            const person = this.hand.name;
-            const card = this.hand.cards[this.hand.cards.length - 1];
+    public dealCard() {
+        return new Promise<void>(resolve => {
+            this._hand.drawCard();
+            const totalPoints = this.pointsFrom(this._hand.cards);
+            const person = this._hand.name;
+            const card = this._hand.cards[this._hand.cards.length - 1];
             Main.signalController.card.deal.emit({ person, card, totalPoints, resolve });
         })
     }

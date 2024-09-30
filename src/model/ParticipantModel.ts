@@ -12,7 +12,7 @@ export class ParticipantModel {
         this.deck = deck;
     }
 
-    public async drawCard() {
+    public drawCard() {
         const card = this.deck.getCard();
         if (!card) {
             console.error("No more cards in deck!");

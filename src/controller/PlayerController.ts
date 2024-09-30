@@ -33,7 +33,7 @@ export class PlayerController extends ParticipantController<PlayerModel> {
 
     private onBust() {
         this.roundController.roundModel.setResult('playerBust', this.hand.name);
-        this.roundController.endTurn();
+        this.roundController.endTurn()
     }
 
     private async onDoubleDown() {
@@ -47,7 +47,11 @@ export class PlayerController extends ParticipantController<PlayerModel> {
     }
 
     public setHand(hand: PlayerModel) {
-        this.hand = hand;
+        this._hand = hand;
+    }
+
+    get hand() {
+        return this._hand;
     }
 
     private async onSplit() {

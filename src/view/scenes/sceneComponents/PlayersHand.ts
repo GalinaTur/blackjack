@@ -78,7 +78,8 @@ export class PlayersHand extends Hand {
         if (chipsStack.length === this.chipsStack!.children.length) return;
 
         this.chipsStack!.removeChildren();
-        chipsStack.forEach(async (value, index) => {
+
+        chipsStack.forEach((value, index) => {
             const chip = new ChipView(value);
             this.setChipFilter(chip, index);
             chip.position.x = -80;

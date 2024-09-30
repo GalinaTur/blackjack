@@ -44,13 +44,11 @@ export class GamePanel extends Container implements IPanel {
     }
 
     private onHit() {
-        this.playSound(SOUNDS.hit);
         Main.signalController.player.hit.emit();
         this.disableButtons();
     }
 
     private onStand() {
-        this.playSound(SOUNDS.stand);
         this.disableButtons();
         Main.signalController.player.stand.emit();
     }

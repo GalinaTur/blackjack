@@ -2,8 +2,8 @@ import { ParticipantModel } from "./ParticipantModel";
 
 export class DealerModel extends ParticipantModel {
 
-    public async drawCard() {
-        const card = await super.drawCard();
+    public drawCard() {
+        const card = super.drawCard();
         if (card && this._cards.length !== 2) card.hidden = false;
         return card;
     }

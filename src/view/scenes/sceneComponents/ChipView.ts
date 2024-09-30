@@ -44,7 +44,7 @@ export class ChipView extends Container {
         this.image.scale.set(0.7)
         this.addChild(this.image);
     }
-
+    
     public onResize() {
 
     }

@@ -41,6 +41,7 @@ export class GameScene extends Container implements IScene<void> {
             this.activeHand = this.playersHand;
             await this.playersHand.setPointer();
         } else if (hand === 'split') {
+            if (this.activeHand === this.splitHand) return;
             this.activeHand = this.splitHand;
             this.playersHand.removePointer();
             this.splitHand && await this.splitHand.setPointer()
