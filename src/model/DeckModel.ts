@@ -23,10 +23,10 @@ export class DeckModel {
             [this._deck[i], this._deck[k]] = [this._deck[k], this._deck[i]];
         }
         //for split feature (delete this);
-        this._deck.push(new CardModel('ace', 'spades'));
-        this._deck.push(new CardModel('four', 'spades'));
-        this._deck.push(new CardModel('two', 'spades'));
-        this._deck.push(new CardModel('four', 'spades'));
+        //         this._deck.push(new CardModel('four', 'spades'));
+        // this._deck.push(new CardModel('ace', 'spades'));
+        // this._deck.push(new CardModel('four', 'spades'));
+        // this._deck.push(new CardModel('ace', 'spades'));
     }
 
     public getCard(): CardModel | null {

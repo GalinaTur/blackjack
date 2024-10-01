@@ -8,19 +8,16 @@ import { PlayerController } from "./PlayerController";
 import { DealerController } from "./DealerController";
 
 export class RoundController {
-    public roundModel: RoundModel;
-    private gameView: GameView;
-    private pointsController = new PointsController();
-    private bettingController: BettingController;
+    private pointsController = PointsController;
     private playerController: PlayerController;
     private dealerController: DealerController;
 
-    constructor(roundModel: RoundModel, gameView: GameView, bettingController: BettingController) {
-        this.gameView = gameView;
-        this.roundModel = roundModel;
-        this.bettingController = bettingController;
-        this.playerController = new PlayerController(this, this.pointsController, this.roundModel.mainHand);
-        this.dealerController = new DealerController(this, this.pointsController, this.roundModel.dealerHand);
+    constructor(private _roundModel: RoundModel, 
+        private gameView: GameView, 
+        private bettingController: BettingController) {
+
+        this.playerController = new PlayerController(this, this.roundModel.mainHand);
+        this.dealerController = new DealerController(this, this.roundModel.dealerHand);
         this.init();
     }
 
@@ -30,8 +27,8 @@ export class RoundController {
     }
 
     private setEventListeners() {
-        Main.signalController.round.start.add(this.onRoundStart, this);
-        Main.signalController.bet.placed.add(this.onBetPlaced, this);
+        Main.signalsController.round.start.add(this.onRoundStart, this);
+        Main.signalsController.bet.placed.add(this.onBetPlaced, this);
     }
 
     public async handleNextAction() {
@@ -56,11 +53,10 @@ export class RoundController {
                 break;
 
             case ERoundState.PLAYERS_TURN:
-                const isSplitAllowed = this.pointsController.isSplitAllowed(this.roundModel.mainHand.cards);
                 await this.playerController.handleTurn();
                 if (this.playerController.hand !== this.roundModel.mainHand) return;
                 roundStateDTO = this.getRoundStateInfo();
-                await this.gameView.render(roundStateDTO, isSplitAllowed);
+                await this.gameView.render(roundStateDTO);
                 break;
 
             case ERoundState.SPLIT_TURN:
@@ -84,7 +80,7 @@ export class RoundController {
     public goToNextState() {
         this.roundModel.goToNextState();
         console.log(`%cEnabled state: ${ERoundState[this.roundModel.state]}`, "color: green");
-        Main.signalController.round.stateChanged.emit(this.roundModel.state);
+        Main.signalsController.round.stateChanged.emit(this.roundModel.state);
         if (this.roundModel.state === ERoundState.ROUND_OVER) this.endRound();
         this.handleNextAction();
     }
@@ -109,14 +105,15 @@ export class RoundController {
                 dealer: this.roundModel.dealerHand.cards,
                 split: this.roundModel.splitHand && this.roundModel.splitHand.cards
             },
-            isSplitAllowed: this.pointsController.isSplitAllowed(this.roundModel.mainHand.cards),
+            isDoubleAllowed: this.bettingController.isDoubleAllowed() && this.playerController.hand.cards.length ===2,
+            isSplitAllowed: this.bettingController.isDoubleAllowed() && this.pointsController.isSplitAllowed(this.roundModel.mainHand.cards),
             roundResult: this.roundModel.getResult(),
         }
     }
 
     public endTurn() {
         const roundResult = this.roundModel.getResult();
-        Main.signalController.player.endTurn.emit(roundResult);
+        Main.signalsController.round.endTurn.emit(roundResult);
 
         if (roundResult.main && (!this.roundModel.splitHand || roundResult.split)) {
             this.endRound();
@@ -135,7 +132,7 @@ export class RoundController {
 
     public async endRound() {
         if (this.roundModel.dealerHand.holeCardIndex) await this.dealerController.revealHoleCard();
-        Main.signalController.round.end.emit(this.roundModel.getResult());
+        Main.signalsController.round.end.emit(this.roundModel.getResult());
         this.roundModel.endRound();
         this.handleNextAction();
     }
@@ -165,9 +162,15 @@ export class RoundController {
         return this.roundModel.mainHand.cards;
     }
 
+    get roundModel() {
+        return this._roundModel;
+    }
+
     public deactivate() {
+        this.gameView.deactivate();
+        this.bettingController.deactivate()
         this.playerController.deactivate();
-        Main.signalController.round.start.remove(this.onRoundStart);
-        Main.signalController.bet.placed.remove(this.onBetPlaced);
+        Main.signalsController.round.start.remove(this.onRoundStart);
+        Main.signalsController.bet.placed.remove(this.onBetPlaced);
     }
 }

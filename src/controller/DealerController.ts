@@ -1,13 +1,11 @@
-import { Main } from "../main";
 import { DealerModel } from "../model/DealerModel";
 import { ParticipantController } from "./ParticipantController";
-import { PointsController } from "./PointsController";
 import { RoundController } from "./RoundController";
 
 export class DealerController extends ParticipantController<DealerModel> {
 
-    constructor(roundController: RoundController, pointsController: PointsController, hand: DealerModel) {
-        super(roundController, pointsController, hand)
+    constructor(roundController: RoundController, hand: DealerModel) {
+        super(roundController, hand)
     }
 
     public async play() {
@@ -55,7 +53,7 @@ export class DealerController extends ParticipantController<DealerModel> {
             const cardIndex = this._hand.revealHoleCard();
             if (!cardIndex) return;
             const totalPoints = this.pointsFrom(this._hand.cards);
-            Main.signalController.card.open.emit({ cardIndex, totalPoints, resolve });
+            this.signalsController.card.open.emit({ cardIndex, totalPoints, resolve });
         })
     }
 

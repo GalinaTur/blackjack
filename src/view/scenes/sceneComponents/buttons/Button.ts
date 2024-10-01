@@ -1,15 +1,14 @@
 import { ColorMatrixFilter, Container, Filter, Sprite } from "pixi.js";
 import { Main } from "../../../../main";
-import { IButton } from "../../../../data/types";
 
 export class Button extends Container {
     protected image: Sprite | null = null;
     private colorMatrixFilter = new ColorMatrixFilter();
     public filters: Filter[] = [];
 
-    constructor(buttonInfo: IButton) {
+    constructor(imgID: string) {
         super();
-        this.setImage(buttonInfo.imgID);
+        this.setImage(imgID);
         this.init();
     }
 

@@ -10,13 +10,11 @@ import { SOUNDS } from "../../../data/constants";
 export class Hand extends Container {
     private pointsLabel: Sprite | null = null;
     private _cards: CardView[] = [];
-    public name: TParticipants;
     protected label: Sprite | null = null;
 
-    constructor(name: TParticipants) {
+    constructor(public name: TParticipants) {
         super();
         this.init();
-        this.name = name;
     }
 
     private init() {

@@ -1,9 +1,10 @@
 import gsap from "gsap";
-import { ChipView } from "../scenes/sceneComponents/ChipView"
 import { Main } from "../../main"
 import { Container, Sprite, Text } from "pixi.js"
 import { CardView } from "../scenes/sceneComponents/CardView"
 import { Background } from "../scenes/sceneComponents/Background"
+import { ChipButton } from "../scenes/sceneComponents/buttons/ChipButton";
+import { IChip } from "../../data/types";
 
 
 export class Animations {
@@ -76,7 +77,7 @@ export class Animations {
     }
 
     public static chip = {
-        place(chip: ChipView, index: number) {
+        place(chip: IChip, index: number) {
             return new Promise<void>((resolve) => {
                 gsap.to(chip, {
                     id: 'moveChip',
@@ -96,27 +97,11 @@ export class Animations {
                         type: 'cubic',
                     },
                     ease: 'power1.out',
-                    onComplete: resolve
+                    onComplete: resolve,
                 })
             })
         },
-        move(chip: ChipView, index: number) {
-            return new Promise<void>((resolve) => {
-                gsap.to(chip, {
-                    id: 'moveChip',
-                    pixi: {
-                        scaleX: 0.6,
-                        scaleY: 0.5,
-                        positionX: -80,
-                        positionY: -50 - 5 * index,
-                    },
-                    duration: 0.8,
-                    ease: 'power1.out',
-                    onComplete: resolve
-                })
-            })
-        },
-        hide(chip: ChipView) {
+        hide(chip: ChipButton) {
             return new Promise((resolve) => gsap.to(chip, {
                 id: 'hideChip',
                 pixi: {
@@ -128,7 +113,7 @@ export class Animations {
                 onComplete: resolve
             }))
         },
-        show(chip: ChipView) {
+        show(chip: ChipButton) {
             return new Promise((resolve) => gsap.to(chip, {
                 id: 'showChip',
                 pixi: {
@@ -417,5 +402,33 @@ export class Animations {
                 ease: 'back.out',
             })
         }
+    }
+    public static footerText = {
+        show(text: Text) {
+            return new Promise(resolve => gsap.to(text, {
+                id: 'showLabel',
+                pixi: {
+                    alpha: 1,
+                    scale:1
+                },
+                duration: 0.1,
+                onComplete: resolve,
+            }))
+        },
+        hide(text: Text) {
+            return new Promise(resolve => gsap.to(text, {
+                id: 'showLabel',
+                pixi: {
+                    alpha: 0,
+                    scale: 0
+                },
+                duration: 0.1,
+                onComplete: resolve,
+            }))
+        },
+    }
+    
+    public static killAllAnimations(target: Sprite) {
+        gsap.killTweensOf(target);
     }
 }

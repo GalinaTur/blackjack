@@ -1,12 +1,13 @@
 import { Container, Point, Sprite } from "pixi.js";
 import { ChipView } from "./ChipView";
 import { Hand } from "./Hand";
-import { TBets, TParticipants } from "../../../data/types";
+import { IChip, TBets, TParticipants } from "../../../data/types";
 import { Animations } from "../../styles/Animations";
 import { CardModel } from "../../../model/CardModel";
 import { CardView } from "./CardView";
 import { Main } from "../../../main";
 import { SOUNDS } from "../../../data/constants";
+import { ChipButton } from "./buttons/ChipButton";
 
 export class PlayersHand extends Hand {
     public chipsStack: Container | null = null;
@@ -44,49 +45,45 @@ export class PlayersHand extends Hand {
         this.removeChild(this.pointer);
     }
 
-    private async addChipToStack(value: TBets, globalPosition: Point):Promise<[ChipView, number]> {
+    private async addChipToStack(chip: ChipView): Promise<number> {
         if (!this.chipsStack) {
             this.setStack();
         }
-        const newChip = new ChipView(value);
         const index = this.chipsStack!.children.length;
-        this.setChipFilter(newChip, index);
-        this.chipsStack!.addChild(newChip);
-        newChip.position = this.toLocal(globalPosition);
-        return [newChip, index];
+        this.setChipFilter(chip, index);
+        this.chipsStack!.addChild(chip);
+        chip.position = this.toLocal(chip.position);
+        return index;
     }
 
-    public async moveChip(value: TBets, globalPosition: Point) {
-        const [newChip, index] = await this.addChipToStack(value, globalPosition);
-        newChip.position = this.toLocal(globalPosition);
-        newChip.scale.set(0.6, 0.5);
-        await Animations.chip.move(newChip, index);
-        // this.chipsStack?.children.length === 1 ? this.playSound(SOUNDS.firstChipPlace) : this.playSound(SOUNDS.chipPlace)
-    }
-
-    public async placeChip(value: TBets, globalPosition: Point) {
-        const [newChip, index] = await this.addChipToStack(value, globalPosition);
-        await Animations.chip.place(newChip, index);
-        this.chipsStack?.children.length === 1 ? this.playSound(SOUNDS.firstChipPlace) : this.playSound(SOUNDS.chipPlace)
+    public async placeChip(chip: ChipView) {
+        const index = await this.addChipToStack(chip);
+        const sound = index === 0 ? SOUNDS.firstChipPlace : SOUNDS.chipPlace
+        await Animations.chip.place(chip, index);
+        await this.playSound(sound);
     }
 
     public async onChipsStackUpdate(chipsStack: TBets[]) {
         if (!this.chipsStack) {
             this.setStack();
         }
-
         if (chipsStack.length === this.chipsStack!.children.length) return;
 
         this.chipsStack!.removeChildren();
 
-        chipsStack.forEach((value, index) => {
-            const chip = new ChipView(value);
-            this.setChipFilter(chip, index);
-            chip.position.x = -80;
-            chip.position.y = -50 - 5 * index,
-                chip.scale.set(0.6, 0.5);
+        chipsStack.forEach(async (value, index) => {
+            const chip = await this.setChip(value, index);
+            chip.image?.scale.set(0.7)
+            chip.position.set(-80, -50 - 5 * index);
             this.chipsStack!.addChild(chip);
         })
+    }
+
+    public async setChip(value: TBets, index: number) {
+        const chip = await ChipView.build(value);
+        this.setChipFilter(chip, index);
+        chip.scale.set(0.6, 0.5);
+        return chip;
     }
 
     private setChipFilter(chip: ChipView, index: number) {
@@ -115,10 +112,11 @@ export class PlayersHand extends Hand {
         if (!this.chipsStack) return;
         const length = this.chipsStack.children.length;
         const animationPromises: Promise<void>[] = [];
-        return new Promise<void>(resolve => {
+        return new Promise<void>(async resolve => {
             for (let i = 0; i < length; i++) {
-                const chip = this.chipsStack?.children[i] as ChipView;
-                const animationPromise = this.placeChip(chip.value, new Point(Main.screenSize.width * 0.2, Main.screenSize.height + 100));
+                const chip = await (this.chipsStack?.children[i] as ChipView).clone();
+                chip?.position.set(Main.screenSize.width/4, Main.screenSize.height);
+                const animationPromise = this.placeChip(chip!);
                 animationPromises.push(animationPromise);
             }
             Promise.all(animationPromises).then(() => resolve());

@@ -35,7 +35,7 @@ export class InitialScene extends Container implements IScene<void> {
         this.playSound(SOUNDS.welcome);
         this.playBackgroundMusic();
         this.eventMode = 'none';
-        Main.signalController.round.start.emit();
+        Main.signalsController.round.start.emit();
     }
 
     private async playSound(soundID: string) {
@@ -57,6 +57,7 @@ export class InitialScene extends Container implements IScene<void> {
 
     public async deactivate(): Promise<void> {
         this.logo && await Animations.initialLogo.remove(this.logo);
+        this.logo && Animations.killAllAnimations(this.logo)
         this.parent.removeChild(this);
     }
 }

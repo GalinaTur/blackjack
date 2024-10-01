@@ -8,7 +8,7 @@ import { MotionPathPlugin } from "gsap/all";
 
 export class Main {
     public static APP: Application;
-    public static signalController = new SignalsController();
+    public static signalsController = new SignalsController();
     public static assetsController = new AssetsController();
     public static screenSize: { width: number; height: number } = {
         width: window.innerWidth,
@@ -51,7 +51,7 @@ export class Main {
             this.app.renderer.resize(Main.screenSize.width, Main.screenSize.height);
             this.onResize()
 
-            requestAnimationFrame(() => Main.APP.render());
+            requestAnimationFrame(() => this.app.render());
         });
     }
 

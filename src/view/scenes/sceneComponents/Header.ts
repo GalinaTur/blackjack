@@ -1,11 +1,10 @@
 import { Container, Text } from "pixi.js";
 import { Main } from "../../../main";
 import { Textstyles } from "../../styles/TextStyles";
-import { IPanel } from "../../../data/types";
 import { Animations } from "../../styles/Animations";
 import { HEADER_FIELDS } from "../../../data/constants";
 
-export class HeaderPanel extends Container implements IPanel {
+export class Header extends Container {
     private betText: Text;
     private balanceText: Text;
     private winText: Text;
@@ -13,7 +12,7 @@ export class HeaderPanel extends Container implements IPanel {
 
     constructor(winSize: number, playerBalance: number, totalWin: number) {
         super();
-        this.betText = new Text(`Bet: $`, Textstyles.HEADER_TEXTSTYLE);
+        this.betText = new Text(`Bet: 0.0$`, Textstyles.HEADER_TEXTSTYLE);
         this.balanceText = new Text(`Balance: ${playerBalance}$`, Textstyles.HEADER_TEXTSTYLE);
         this.winText = new Text(`Win: ${Number(winSize).toFixed(1)}$`, Textstyles.HEADER_TEXTSTYLE);
         this.totalWinText = new Text(`Total Win: ${Number(totalWin).toFixed(1)}$`, Textstyles.HEADER_TEXTSTYLE);
@@ -26,8 +25,8 @@ export class HeaderPanel extends Container implements IPanel {
     }
 
     private setEventListeners() {
-        Main.signalController.balance.updated.add(this.onBalanceUpdate, this);
-        Main.signalController.winSize.updated.add(this.onWinSizeUpdate, this);
+        Main.signalsController.balance.updated.add(this.onBalanceUpdate, this);
+        Main.signalsController.winSize.updated.add(this.onWinSizeUpdate, this);
     }
 
     private setTexts() {
@@ -66,8 +65,8 @@ export class HeaderPanel extends Container implements IPanel {
     }
 
     public deactivate(): void {
-        Main.signalController.balance.updated.remove(this.onBalanceUpdate);
-        Main.signalController.winSize.updated.remove(this.onWinSizeUpdate);
+        Main.signalsController.balance.updated.remove(this.onBalanceUpdate);
+        Main.signalsController.winSize.updated.remove(this.onWinSizeUpdate);
     }
 
     public onResize() {

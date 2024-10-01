@@ -1,6 +1,7 @@
 import { Container } from "pixi.js";
 import { ALL_BETS, RANKS, SUITS } from "./constants";
 import { CardModel } from "../model/CardModel";
+import { ChipView } from "../view/scenes/sceneComponents/ChipView";
 
 export type TParticipants = 'dealer' | 'player' | 'split';
 
@@ -41,6 +42,7 @@ export interface IRoundStateDTO {
     win: number,
     currentState: ERoundState,
     cards: ICardsDealed,
+    isDoubleAllowed: boolean,
     isSplitAllowed: boolean,
     roundResult: IRoundResult
 }
@@ -54,6 +56,10 @@ export interface ICardsDealed {
 export interface IPoints {
     dealer: number,
     player: number,
+}
+
+export interface IChip extends Container{
+    clone: ()=> Promise<ChipView | null>
 }
 
 export enum ERoundState {

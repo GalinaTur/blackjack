@@ -8,7 +8,6 @@ export class RoundModel {
     private _mainHand = new PlayerModel('player', this._deck);
     private _dealerHand = new DealerModel('dealer', this._deck);
     private _splitHand: PlayerModel | null = null;
-    private _currentState = ERoundState.BETTING;
     private _bet = 0;
     private _win = 0;
     private roundResult: IRoundResult = {
@@ -16,8 +15,8 @@ export class RoundModel {
         split: null
     }
 
-    constructor(initialState: ERoundState) {
-        this._currentState = initialState
+    constructor(
+        private _currentState: ERoundState) {
     }
 
     public increaseBet(value: number) {

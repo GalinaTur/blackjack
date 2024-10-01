@@ -26,7 +26,8 @@ export class SignalsController {
         start: new Signal<void>(),
         end: new Signal<IRoundResult>(),
         new: new Signal<void>(),
-        stateChanged: new Signal<ERoundState>()
+        endTurn: new Signal<IRoundResult>(),
+        stateChanged: new Signal<ERoundState>(),
     }
 
     public bet = {
@@ -58,7 +59,6 @@ export class SignalsController {
         double: new Signal<void>(),
         split: new Signal<void>(),
         insure: new Signal<void>(),
-        endTurn: new Signal<IRoundResult>(),
     }
 
     public dealer = {

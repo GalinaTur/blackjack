@@ -33,27 +33,26 @@ export class GameController {
     }
 
     private setEventListeners() {
-        Main.signalController.round.new.add(this.onNewRound, this);
-        Main.signalController.round.end.add(this.onRoundEnd, this);
-        Main.signalController.sounds.isOn.add(this.onSoundsChange, this);
+        Main.signalsController.round.new.add(this.onNewRound, this);
+        Main.signalsController.round.end.add(this.onRoundEnd, this);
+        Main.signalsController.sounds.isOn.add(this.onSoundsChange, this);
     }
 
     private onNewRound() {
         console.log('%cNew round', 'color: red');
-        this.gameView?.deactivate();
-        this.bettingController && this.bettingController.deactivate()
         this.roundController.deactivate()
         this.app.stage.removeChildren();
         this.roundModel = new RoundModel(ERoundState.BETTING);
         this.gameView = new GameView(this.app, this.playerBalance, this._totalWin, this.roundModel.state, this.soundsOn);
         this.bettingController = new BettingController(this.roundModel, this);
         this.roundController = new RoundController(this.roundModel, this.gameView, this.bettingController);
-        Main.signalController.round.start.emit();
+        Main.signalsController.round.start.emit();
     }
 
     private onRoundEnd() {
         // this.history.push(this.roundController.roundModel.roundStateInfo);
-        this._totalWin += this.roundController.roundModel.winSize;
+        // this._totalWin += this.roundController.roundModel.winSize;
+        // this._playerBalance += this.roundController.roundModel.winSize;
     }
 
     get playerBalance() {

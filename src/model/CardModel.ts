@@ -1,13 +1,11 @@
 import { TRank, TSuit, TValue } from "../data/types";
 
 export class CardModel {
-    private _rank: TRank;
-    private _suit: TSuit;
     private _hidden = true;
 
-    constructor(rank: TRank, suit: TSuit) {
-        this._rank = rank;
-        this._suit = suit;
+    constructor(
+        private _rank: TRank, 
+        private _suit: TSuit) {
     }
 
     get rank(): TRank {

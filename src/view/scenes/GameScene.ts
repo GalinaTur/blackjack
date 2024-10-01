@@ -9,7 +9,7 @@ import { Animations } from "../styles/Animations";
 import { Hand } from "./sceneComponents/Hand";
 import { PlayersHand } from "./sceneComponents/PlayersHand";
 import { SOUNDS } from "../../data/constants";
-import { ChipView } from "./sceneComponents/ChipView";
+import { ChipButton } from "./sceneComponents/buttons/ChipButton";
 
 export class GameScene extends Container implements IScene<void> {
     private cardsShoe = new Container();
@@ -33,7 +33,7 @@ export class GameScene extends Container implements IScene<void> {
     }
 
     private setEventListeners() {
-        Main.signalController.player.double.add(this.onDoubleBet, this);
+        Main.signalsController.player.double.add(this.onDoubleBet, this);
     }
 
     public async setActiveHand(hand: TParticipants) {
@@ -81,8 +81,8 @@ export class GameScene extends Container implements IScene<void> {
     }
 
 
-    private async playOpenCardSound() {
-        const sound = await Main.assetsController.getSound(SOUNDS.flipCard);
+    private playOpenCardSound() {
+        const sound = Main.assetsController.getSound(SOUNDS.flipCard);
         sound.play();
     }
 
@@ -119,22 +119,26 @@ export class GameScene extends Container implements IScene<void> {
     public async onDoubleBet() {
         const activeHand = this.activeHand || this.playersHand;
         await activeHand.doubleBet();
-        Main.signalController.bet.doubled.emit(activeHand.name);
+        Main.signalsController.bet.doubled.emit(activeHand.name);
     }
 
-    public onBetUpdate(chipsStack: TBets[]) {
+    public async onBetUpdate(chipsStack: TBets[]) {
         if (this.splitHand && !this.splitHand.chipsStack) {
-            chipsStack.forEach((value, index) => {
-                setTimeout(() => {
-                    this.splitHand!.placeChip(value, new Point(Main.screenSize.width * 0.2, Main.screenSize.height + 100))
+            chipsStack.forEach(async (value, index) => {
+                setTimeout(async () => {
+                    const chip = await this.splitHand!.setChip(value, index);
+                    chip.position.set(Main.screenSize.width/4, Main.screenSize.height);
+                    this.splitHand!.placeChip(chip)
                 }, 200 * index)
             })
         }
         this.activeHand ? this.activeHand.onChipsStackUpdate(chipsStack) : this.playersHand.onChipsStackUpdate(chipsStack);
     }
 
-    public async onChipClick(value: TBets, globalPosition: Point) {
-        await this.playersHand.placeChip(value, globalPosition);
+    public async onChipClick(chip: ChipButton) {
+        const chipView = await chip.clone();
+        if (!chipView) return;
+        await this.playersHand.placeChip(chipView);
     }
 
     public async splitCards(playerCards: readonly CardModel[], splitCards: readonly CardModel[]) {
@@ -151,11 +155,9 @@ export class GameScene extends Container implements IScene<void> {
         this.addChild(this.playersHand);
         this.playSound(SOUNDS.slideCard);
 
-        chipsStack?.children.forEach(async chip => {
-            const chipView = chip as ChipView;
-            const globalPosition = chip.toGlobal(new Point(chip.x, chip.y));
-            this.playersHand.moveChip(chipView.value, globalPosition);
-        })
+        this.playersHand.chipsStack = chipsStack
+        this.playersHand.addChild(chipsStack!)
+
         await Animations.hand.split(this.playersHand, this.splitHand);
     }
 
@@ -228,6 +230,6 @@ export class GameScene extends Container implements IScene<void> {
     };
 
     public deactivate() {
-        Main.signalController.player.double.remove(this.onDoubleBet);
+        Main.signalsController.player.double.remove(this.onDoubleBet);
     }
 }

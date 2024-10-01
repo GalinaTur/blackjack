@@ -3,12 +3,11 @@ import { Button } from "./Button";
 import { BUTTONS } from "../../../../data/constants";
 
 export class SoundsButton extends Button {
-    private soundsOn: boolean;
 
-    constructor(soundsOn: boolean) {
+    constructor(private soundsOn: boolean) {
         const buttonImageID = soundsOn ? BUTTONS.sounds.on : BUTTONS.sounds.off;
-        super(buttonImageID);
-        this.soundsOn = soundsOn
+        super(buttonImageID.imgID);
+
         this.on('pointerdown', () => {
             this.toggle();
         });
@@ -16,7 +15,7 @@ export class SoundsButton extends Button {
 
     private toggle(): void {
         this.soundsOn = !this.soundsOn;
-        Main.signalController.sounds.isOn.emit(this.soundsOn);
+        Main.signalsController.sounds.isOn.emit(this.soundsOn);
         this.update();
     }
 

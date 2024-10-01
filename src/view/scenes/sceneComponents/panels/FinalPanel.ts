@@ -28,7 +28,7 @@ export class FinalPanel extends Container implements IPanel {
     }
 
     private onRepeat() {
-        Main.signalController.round.new.emit();
+        Main.signalsController.round.new.emit();
     }
 
     private onTopUp() {

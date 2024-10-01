@@ -10,15 +10,14 @@ export class GamePanel extends Container implements IPanel {
     private doubleButton: GameButton;
     private hitButton: GameButton;
     private standButton: GameButton;
-    private isDoubleAllowed: boolean;
 
-    constructor(isDoubleAllowed: boolean) {
+    constructor(private isDoubleAllowed: boolean) {
         super();
         this.splitButton = new GameButton(BUTTONS.game.split, this.onSplit.bind(this), false);
         this.doubleButton = new GameButton(BUTTONS.game.doubleDown, this.onDouble.bind(this), false);
         this.hitButton = new GameButton(BUTTONS.game.hit, this.onHit.bind(this), false);
         this.standButton = new GameButton(BUTTONS.game.stand, this.onStand.bind(this), false);
-        this.isDoubleAllowed = isDoubleAllowed
+
         this.init();
     }
 
@@ -44,31 +43,31 @@ export class GamePanel extends Container implements IPanel {
     }
 
     private onHit() {
-        Main.signalController.player.hit.emit();
+        Main.signalsController.player.hit.emit();
         this.disableButtons();
     }
 
     private onStand() {
         this.disableButtons();
-        Main.signalController.player.stand.emit();
+        Main.signalsController.player.stand.emit();
     }
 
     private onDouble() {
         this.playSound(SOUNDS.doubledown);
         this.disableButtons();
-        Main.signalController.player.double.emit();
+        Main.signalsController.player.double.emit();
     }
 
     private onSplit() {
         this.playSound(SOUNDS.split);
-        Main.signalController.player.split.emit();
+        Main.signalsController.player.split.emit();
         this.disableButtons();
     }
 
     public updateButtons(state: ERoundState, cards: readonly CardModel[], isDoubleAllowed: boolean, isSplitAllowed?: boolean) {
         this.isDoubleAllowed = isDoubleAllowed;
         this.updateHitStandButtons(state);
-        if (isSplitAllowed) this.splitButton.updateIsActive(isSplitAllowed && this.isDoubleAllowed);
+        if (isSplitAllowed) this.splitButton.updateIsActive(isSplitAllowed);
         if (this.isDoubleAllowed) {
             this.updateDoubleButton(cards);
         }

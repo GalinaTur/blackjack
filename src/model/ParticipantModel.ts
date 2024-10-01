@@ -3,13 +3,11 @@ import { CardModel } from "./CardModel";
 import { DeckModel } from "./DeckModel";
 
 export class ParticipantModel {
-    private _name: TParticipants;
-    private deck: DeckModel;
     protected _cards: CardModel[] = [];
 
-    constructor(name: TParticipants, deck: DeckModel) {
-        this._name = name;
-        this.deck = deck;
+    constructor(
+        private _name: TParticipants, 
+        private deck: DeckModel) {
     }
 
     public drawCard() {

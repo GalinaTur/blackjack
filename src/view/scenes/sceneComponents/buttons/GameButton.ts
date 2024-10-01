@@ -7,11 +7,9 @@ import { Button } from "./Button";
 import { SOUNDS } from "../../../../data/constants";
 
 export class GameButton extends Button {
-    private _isActive: boolean;
 
-    constructor(buttonInfo: IButton, onClick: (() => void), isActive: boolean) {
-        super(buttonInfo);
-        this._isActive = isActive;
+    constructor(buttonInfo: IButton, onClick: (() => void), private _isActive: boolean) {
+        super(buttonInfo.imgID);
         this.setTextFrame(buttonInfo.text);
         this.on('pointerdown', () => {
             this.playSound(SOUNDS.button);

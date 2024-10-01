@@ -1,21 +1,19 @@
-import { Main } from "../main";
 import { PlayerModel } from "../model/PlayerModel";
 import { ParticipantController } from "./ParticipantController";
-import { PointsController } from "./PointsController";
 import { RoundController } from "./RoundController";
 
 export class PlayerController extends ParticipantController<PlayerModel> {
 
-    constructor(roundController: RoundController, pointsController: PointsController, hand: PlayerModel) {
-        super(roundController, pointsController, hand)
+    constructor(roundController: RoundController,  hand: PlayerModel) {
+        super(roundController, hand)
         this.setEventListeners();
     }
 
     private setEventListeners() {
-        Main.signalController.player.hit.add(this.onHit, this);
-        Main.signalController.player.stand.add(this.onStand, this);
-        Main.signalController.player.double.add(this.onDoubleDown, this);
-        Main.signalController.player.split.add(this.onSplit, this);
+        this.signalsController.player.hit.add(this.onHit, this);
+        this.signalsController.player.stand.add(this.onStand, this);
+        this.signalsController.player.double.add(this.onDoubleDown, this);
+        this.signalsController.player.split.add(this.onSplit, this);
     }
 
     public checkForBJ() {
@@ -60,9 +58,9 @@ export class PlayerController extends ParticipantController<PlayerModel> {
     }
 
     public deactivate() {
-        Main.signalController.player.hit.remove(this.onHit);
-        Main.signalController.player.stand.remove(this.onStand);
-        Main.signalController.player.double.remove(this.onDoubleDown);
-        Main.signalController.player.split.remove(this.onSplit);
+        this.signalsController.player.hit.remove(this.onHit);
+        this.signalsController.player.stand.remove(this.onStand);
+        this.signalsController.player.double.remove(this.onDoubleDown);
+        this.signalsController.player.split.remove(this.onSplit);
     }
 }
