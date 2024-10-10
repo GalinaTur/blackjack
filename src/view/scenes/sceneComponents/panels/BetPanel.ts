@@ -21,11 +21,11 @@ export class BetPanel extends Container implements IPanel {
     }
 
     private async init(): Promise<void> {
-        await this.setButtons();
-        await this.setChips();
+        this.setButtons();
+        this.setChips();
     }
 
-    private async setButtons(): Promise<void> {
+    private setButtons(): void {
         this.dealButton = new GameButton(BUTTONS.bet.deal, this.onPlaceBet, this.isButtonsActive);
         this.doubleButton = new GameButton(BUTTONS.bet.double, this.onDoubleBet, this.isButtonsActive);
         this.undoButton = new GameButton(BUTTONS.bet.undo, this.onUndoBet, this.isButtonsActive);
@@ -36,7 +36,7 @@ export class BetPanel extends Container implements IPanel {
         this.addChild(this.dealButton, this.doubleButton, this.undoButton, this.clearButton);
     }
 
-    private async setChips(): Promise<void> {
+    private setChips(): void {
         for (let i = 0; i < this.availableBets.length; i++) {
             const value = this.availableBets[i];
             const chip = new ChipButton(value, () => this.onChipClick(value, chip));
@@ -127,7 +127,7 @@ export class BetPanel extends Container implements IPanel {
             this.clearButton?.updateIsActive(false),
         ]).then(() => {
             this.parent.removeChild(this);
-            this.destroy({children: true});
+            this.destroy({ children: true });
         })
     }
 }

@@ -1,13 +1,12 @@
-import { Container, Point, Sprite } from "pixi.js";
+import { Container, Sprite } from "pixi.js";
 import { ChipView } from "./ChipView";
 import { Hand } from "./Hand";
-import { IChip, TBets, TParticipants } from "../../../data/types";
+import { TBets, TParticipants } from "../../../data/types";
 import { Animations } from "../../styles/Animations";
 import { CardModel } from "../../../model/CardModel";
 import { CardView } from "./CardView";
 import { Main } from "../../../main";
 import { SOUNDS } from "../../../data/constants";
-import { ChipButton } from "./buttons/ChipButton";
 
 export class PlayersHand extends Hand {
     public chipsStack: Container | null = null;
@@ -23,9 +22,9 @@ export class PlayersHand extends Hand {
         this.addChild(this.chipsStack);
     }
 
-    public async setPointer() {
-        this.pointer = await Main.assetsController.getSprite('pointer');
-        const shine = await Main.assetsController.getSprite('pointerShine');
+    public setPointer() {
+        this.pointer = Main.assetsController.getSprite('pointer');
+        const shine = Main.assetsController.getSprite('pointerShine');
         this.pointer.anchor.set(0.5);
         this.pointer.scale.set(0);
         this.pointer.position.y = -50;
@@ -45,7 +44,7 @@ export class PlayersHand extends Hand {
         this.removeChild(this.pointer);
     }
 
-    private async addChipToStack(chip: ChipView): Promise<number> {
+    private addChipToStack(chip: ChipView): number {
         if (!this.chipsStack) {
             this.setStack();
         }
@@ -57,13 +56,13 @@ export class PlayersHand extends Hand {
     }
 
     public async placeChip(chip: ChipView) {
-        const index = await this.addChipToStack(chip);
+        const index = this.addChipToStack(chip);
         const sound = index === 0 ? SOUNDS.firstChipPlace : SOUNDS.chipPlace
         await Animations.chip.place(chip, index);
-        await this.playSound(sound);
+        this.playSound(sound);
     }
 
-    public async onChipsStackUpdate(chipsStack: TBets[]) {
+    public onChipsStackUpdate(chipsStack: TBets[]) {
         if (!this.chipsStack) {
             this.setStack();
         }
@@ -71,16 +70,16 @@ export class PlayersHand extends Hand {
 
         this.chipsStack!.removeChildren();
 
-        chipsStack.forEach(async (value, index) => {
-            const chip = await this.setChip(value, index);
+        chipsStack.forEach((value, index) => {
+            const chip = this.setChip(value, index);
             chip.image?.scale.set(0.7)
             chip.position.set(-80, -50 - 5 * index);
             this.chipsStack!.addChild(chip);
         })
     }
 
-    public async setChip(value: TBets, index: number) {
-        const chip = await ChipView.build(value);
+    public setChip(value: TBets, index: number) {
+        const chip = new ChipView(value);
         this.setChipFilter(chip, index);
         chip.scale.set(0.6, 0.5);
         return chip;
@@ -97,9 +96,9 @@ export class PlayersHand extends Hand {
         chip.bevelFilter.lightAlpha = 0.5;
     }
 
-    public async updateCards(cards: readonly CardModel[]) {
-        cards.forEach(async cardModel => {
-            const card = await CardView.build(cardModel);
+    public updateCards(cards: readonly CardModel[]) {
+        cards.forEach(cardModel => {
+            const card = new CardView(cardModel);
             card.open();
             card.scale.set(0.89);
             card.position.x = -10
@@ -108,13 +107,13 @@ export class PlayersHand extends Hand {
         })
     }
 
-    public async doubleBet() {
+    public doubleBet() {
         if (!this.chipsStack) return;
         const length = this.chipsStack.children.length;
         const animationPromises: Promise<void>[] = [];
         return new Promise<void>(async resolve => {
             for (let i = 0; i < length; i++) {
-                const chip = await (this.chipsStack?.children[i] as ChipView).clone();
+                const chip = (this.chipsStack?.children[i] as ChipView).clone();
                 chip?.position.set(Main.screenSize.width/4, Main.screenSize.height);
                 const animationPromise = this.placeChip(chip!);
                 animationPromises.push(animationPromise);
@@ -123,26 +122,25 @@ export class PlayersHand extends Hand {
         });
     }
 
-    public async setBJLabel() {
+    public setBJLabel() {
         super.setBJLabel();
-        const shine = await this.setShine();
+        const shine = this.setShine();
         shine.position.x = 150;
         this.addChildAt(shine, 0);
     }
 
-    public async setWinLabel(message: string) {
-        const label = await this.createLabel('win_label', message);
-        const shine = await this.setShine();
+    public setWinLabel(message: string) {
+        const label = this.createLabel('win_label', message);
+        const shine = this.setShine();
         Animations.label.showWin(label)
         shine.scale.set(0.4);
         this.label = label
         this.addChild(shine, label);
     }
 
-    private async setShine() {
-        const shine = await Main.assetsController.getSprite('shine');
+    private setShine() {
+        const shine = Main.assetsController.getSprite('shine');
         shine.anchor.set(0.5);
-        // shine.scale.set(0.6);
         shine.position.set(100, 0)
         return shine;
     }

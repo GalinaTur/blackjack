@@ -18,7 +18,7 @@ export class GameView {
     private currentScene: IScene<IRoundStateDTO> | null = null;
     private currentFooterPanel: IPanel | null = null;
     private initialScene: InitialScene | null = null;
-    private headerPanel: Header | null = null;
+    private header: Header | null = null;
     private footer: Footer | null = null;
     private betPanel: BetPanel | null = null;
     private gamePanel: GamePanel | null = null;
@@ -96,7 +96,7 @@ export class GameView {
                 break;
 
             case ERoundState.SPLIT_TURN:
-                stateInfo.cards.split?.length === 2 && await this.gameScene?.setActiveHand('split');
+                stateInfo.cards.split?.length === 2 && this.gameScene?.setActiveHand('split');
                 if (stateInfo.cards.split!.length >= 2) {
                     this.gamePanel?.updateButtons(stateInfo.currentState, stateInfo.cards.split!, stateInfo.isDoubleAllowed);
                 }
@@ -133,9 +133,9 @@ export class GameView {
     }
 
     private renderHeader(stateInfo: IRoundStateDTO, playerBalance: number, totalWin: number) {
-        this.headerPanel = new Header(stateInfo.win, playerBalance, totalWin);
-        this.headerPanel.position.set(0, 0);
-        this.app.stage.addChild(this.headerPanel);
+        this.header = new Header(stateInfo.win, playerBalance, totalWin);
+        this.header.position.set(0, 0);
+        this.app.stage.addChild(this.header);
     }
 
     private renderFooter() {
@@ -157,7 +157,7 @@ export class GameView {
 
     private onBetUpdate(data: { betsStack: TBets[], sum: number, availableBets?: TBets[], isDoubleBetAllowed: boolean }) {
         const { betsStack, sum, availableBets, isDoubleBetAllowed } = data;
-        this.headerPanel?.onBetUpdate(sum);
+        this.header?.onBetUpdate(sum);
         if (availableBets) {
             this.betPanel?.onBetUpdate(sum, availableBets, isDoubleBetAllowed);
         }
@@ -184,6 +184,7 @@ export class GameView {
     public onResize() {
         if (!this.background) return;
         this.background?.onResize();
+        this.header?.onResize();
         this.footer?.onResize();
         this.currentScene?.onResize()
         if (this.currentFooterPanel) {
@@ -193,7 +194,7 @@ export class GameView {
 
     }
     public deactivate() {
-        this.headerPanel?.deactivate();
+        this.header?.deactivate();
         this.currentFooterPanel && this.currentFooterPanel.deactivate();
         this.gameScene && this.gameScene.deactivate();
         Main.signalsController.round.endTurn.remove(this.onTurnEnd);

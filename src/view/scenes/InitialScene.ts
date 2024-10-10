@@ -20,8 +20,8 @@ export class InitialScene extends Container implements IScene<void> {
         this.setLogo();
     }
 
-    private async setLogo(): Promise<void> {
-        this.logo = await Main.assetsController.getSprite('initialLogo');
+    private setLogo(): void {
+        this.logo = Main.assetsController.getSprite('initialLogo');
         this.logo.position.set(Main.screenSize.width / 2, Main.screenSize.height/2);
         if (Main.screenSize.width < this.logo.width) {
             this.logo.scale.set(Main.screenSize.width/1200)
@@ -31,20 +31,20 @@ export class InitialScene extends Container implements IScene<void> {
         this.addChild(this.logo);
     }
 
-    private async onStartClick() {
+    private onStartClick() {
         this.playSound(SOUNDS.welcome);
         this.playBackgroundMusic();
         this.eventMode = 'none';
         Main.signalsController.round.start.emit();
     }
 
-    private async playSound(soundID: string) {
-        const sound = await Main.assetsController.getSound(soundID);
+    private playSound(soundID: string) {
+        const sound = Main.assetsController.getSound(soundID);
         sound.play();
     }
 
-    private async playBackgroundMusic(){
-        const music = await Main.assetsController.getSound(SOUNDS.backgroundMusic);
+    private playBackgroundMusic(){
+        const music = Main.assetsController.getSound(SOUNDS.backgroundMusic);
         music.loop(true);
         music.volume(0.1);
         music.play();

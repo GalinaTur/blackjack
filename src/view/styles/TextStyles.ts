@@ -1,4 +1,5 @@
 import { TextStyle } from "pixi.js";
+import { Main } from "../../main";
 
 export class Textstyles {
     public static BUTTON_TEXTSTYLE: Partial<TextStyle> = {
@@ -14,8 +15,8 @@ export class Textstyles {
 
     public static FOOTER_TEXTSTYLE: Partial<TextStyle> = {
         fill: "#ffffff",
-        fontFamily: "SairaBlackItalic",
-        fontSize: 24,
+        fontFamily: "SairaLightItalic",
+        fontSize: 18,
         strokeThickness:1,
         letterSpacing: 1.4,
         stroke: "#000000",

@@ -59,7 +59,7 @@ export interface IPoints {
 }
 
 export interface IChip extends Container{
-    clone: ()=> Promise<ChipView | null>
+    clone: ()=> ChipView | null
 }
 
 export enum ERoundState {

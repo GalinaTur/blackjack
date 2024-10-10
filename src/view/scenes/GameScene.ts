@@ -23,8 +23,8 @@ export class GameScene extends Container implements IScene<void> {
         this.init();
     }
 
-    private async init() {
-        await this.setShoe();
+    private init() {
+        this.setShoe();
         this.setEventListeners();
         this.sortableChildren = true;
         this.dealersHand.position.set(Main.screenSize.width / 2, Main.screenSize.height * 0.3);
@@ -36,15 +36,15 @@ export class GameScene extends Container implements IScene<void> {
         Main.signalsController.player.double.add(this.onDoubleBet, this);
     }
 
-    public async setActiveHand(hand: TParticipants) {
+    public setActiveHand(hand: TParticipants) {
         if (hand === 'player') {
             this.activeHand = this.playersHand;
-            await this.playersHand.setPointer();
+            this.playersHand.setPointer();
         } else if (hand === 'split') {
             if (this.activeHand === this.splitHand) return;
             this.activeHand = this.splitHand;
             this.playersHand.removePointer();
-            this.splitHand && await this.splitHand.setPointer()
+            this.splitHand && this.splitHand.setPointer()
         } else if (hand === 'dealer') {
             this.playersHand.removePointer();
             this.splitHand && this.splitHand.removePointer();
@@ -52,7 +52,7 @@ export class GameScene extends Container implements IScene<void> {
     }
 
     public async onCardDeal(person: TParticipants, card: CardModel, points: number, resolveAt: string) {
-        const cardView = await CardView.build(card);
+        const cardView = new CardView(card);
         cardView.scale.set(0.89)
         cardView.angle = -45;
         cardView.position.set(50, 121);
@@ -86,8 +86,8 @@ export class GameScene extends Container implements IScene<void> {
         sound.play();
     }
 
-    public async renderWinPopup(winSize: number) {
-        const background = await Main.assetsController.getSprite('finalLabel');
+    public renderWinPopup(winSize: number) {
+        const background = Main.assetsController.getSprite('finalLabel');
         background.anchor.set(0.5);
         background.position.set(Main.screenSize.width / 2, Main.screenSize.height * 0.4)
         background.scale.set(0);
@@ -100,9 +100,9 @@ export class GameScene extends Container implements IScene<void> {
         return background;
     }
 
-    private async setShoe() {
-        const shoe = await Main.assetsController.getSprite('cardsShoe');
-        const shoePart = await Main.assetsController.getSprite('cardsShoePart');
+    private setShoe() {
+        const shoe = Main.assetsController.getSprite('cardsShoe');
+        const shoePart = Main.assetsController.getSprite('cardsShoePart');
         shoe.anchor.set(0, 0);
         shoePart.anchor.set(0, 0.44);
         this.cardsShoe.addChild(shoe);
@@ -125,8 +125,8 @@ export class GameScene extends Container implements IScene<void> {
     public async onBetUpdate(chipsStack: TBets[]) {
         if (this.splitHand && !this.splitHand.chipsStack) {
             chipsStack.forEach(async (value, index) => {
-                setTimeout(async () => {
-                    const chip = await this.splitHand!.setChip(value, index);
+                setTimeout(() => {
+                    const chip = this.splitHand!.setChip(value, index);
                     chip.position.set(Main.screenSize.width/4, Main.screenSize.height);
                     this.splitHand!.placeChip(chip)
                 }, 200 * index)
@@ -136,7 +136,7 @@ export class GameScene extends Container implements IScene<void> {
     }
 
     public async onChipClick(chip: ChipButton) {
-        const chipView = await chip.clone();
+        const chipView = chip.clone();
         if (!chipView) return;
         await this.playersHand.placeChip(chipView);
     }
@@ -161,8 +161,8 @@ export class GameScene extends Container implements IScene<void> {
         await Animations.hand.split(this.playersHand, this.splitHand);
     }
 
-    private async playSound(soundID: string) {
-        const sound = await Main.assetsController.getSound(soundID);
+    private playSound(soundID: string) {
+        const sound = Main.assetsController.getSound(soundID);
         sound.play();
     }
 

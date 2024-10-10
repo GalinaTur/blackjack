@@ -19,13 +19,13 @@ export class Button extends Container {
         this.on('pointerout', this.onPointerOut);
     }
 
-    protected async setImage(imgID: string): Promise<void> {
-        this.image = await Main.assetsController.getSprite(imgID);
+    protected setImage(imgID: string): void {
+        this.image = Main.assetsController.getSprite(imgID);
         this.image.anchor.set(0.5);
         this.addChildAt(this.image, 0);
     }
 
-    private async onPointerOver(): Promise<void> {
+    private onPointerOver(): void {
         this.colorMatrixFilter.brightness(1.2, false);
         this.filters.push(this.colorMatrixFilter);
     }

@@ -10,19 +10,19 @@ export class Background extends Container {
 
     constructor() {
         super();
-        this.setBackground()
-            .then(this.setLogo.bind(this))
-            .then(this.resize.bind(this));
+        this.setBackground();
+        this.setLogo();
+        this.resize();
     }
 
-    private async setBackground(): Promise<void> {
-        this.background = await Main.assetsController.getSprite('background');
+    private setBackground(): void {
+        this.background = Main.assetsController.getSprite('background');
         this.background.anchor.set(0.5);
         this.addChild(this.background);
     }
 
-    private async setLogo(): Promise<void> {
-        this.logo = await Main.assetsController.getSprite('bgLogo');
+    private setLogo(): void {
+        this.logo = Main.assetsController.getSprite('bgLogo');
         this.logo.anchor.set(0.5);
         this.logo.scale.set(0.7, 0.5);
         this.logo.alpha = 0.4;

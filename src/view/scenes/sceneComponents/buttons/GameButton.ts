@@ -48,12 +48,12 @@ export class GameButton extends Button {
         Animations.button.enable(this);
         this.eventMode = "static";
         this.cursor = "pointer";
-        this.onPointerOut();
     }
 
     private async disable(): Promise<void> {
         this.eventMode = "none";
         this.cursor = "default";
+        this.onPointerOut();
         await Animations.button.disable(this);
     }
 
@@ -63,8 +63,8 @@ export class GameButton extends Button {
         this._isActive ? this.enable() : await this.disable();
     }
 
-    private async playSound(soundID: string) {
-        const sound = await Main.assetsController.getSound(soundID);
+    private playSound(soundID: string) {
+        const sound = Main.assetsController.getSound(soundID);
         sound.play();
     }
 

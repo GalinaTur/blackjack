@@ -15,7 +15,7 @@ export class FinalPanel extends Container implements IPanel {
         this.init();
     }
 
-    protected async init() {
+    protected init() {
         this.setButtons();
     }
 

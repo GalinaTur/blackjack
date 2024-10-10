@@ -19,7 +19,7 @@ export class Header extends Container {
         this.init();
     }
 
-    protected async init() {
+    protected init() {
         this.setEventListeners();
         this.setTexts();
     }

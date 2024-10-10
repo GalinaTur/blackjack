@@ -56,6 +56,7 @@ export class RoundController {
                 await this.playerController.handleTurn();
                 if (this.playerController.hand !== this.roundModel.mainHand) return;
                 roundStateDTO = this.getRoundStateInfo();
+                if (roundStateDTO.roundResult.main) return;
                 await this.gameView.render(roundStateDTO);
                 break;
 

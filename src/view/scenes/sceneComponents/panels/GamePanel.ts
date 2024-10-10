@@ -21,7 +21,7 @@ export class GamePanel extends Container implements IPanel {
         this.init();
     }
 
-    protected async init(): Promise<void> {
+    protected init(): void {
         this.setButtons()
     }
 
@@ -37,8 +37,8 @@ export class GamePanel extends Container implements IPanel {
         this.addChild(this.splitButton, this.doubleButton, this.standButton, this.hitButton);
     }
 
-    private async playSound(soundID: string) {
-        const sound = await Main.assetsController.getSound(soundID);
+    private playSound(soundID: string) {
+        const sound = Main.assetsController.getSound(soundID);
         sound.play();
     }
 

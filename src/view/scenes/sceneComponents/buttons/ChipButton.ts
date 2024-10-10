@@ -1,6 +1,5 @@
-import { Container, Point, Sprite } from "pixi.js";
+import { Point } from "pixi.js";
 import { BevelFilter, DropShadowFilter } from "pixi-filters";
-import { Main } from "../../../../main";
 import { Effects } from "../../../styles/Effects";
 import { EChips, IChip, TBets } from "../../../../data/types";
 import { Button } from "./Button";
@@ -31,20 +30,14 @@ export class ChipButton extends Button implements IChip {
         this.filters = [this.dropShadowFilter, this.bevelFilter];
     }
 
-    // private async init() {
-        // await this.setSprite()
-        // this.eventMode = "static";
-        // this.cursor = "pointer";
-
-    // }
-    public async clone() {
+    public clone() {
         if (!this.image) return null;
-        const chip = await ChipView.build(this.value);
+        const chip = new ChipView(this.value);
         if (!chip.image) return null;
         chip.image.anchor.x = this.image?.anchor.x;
         chip.image.anchor.y = this.image?.anchor.y;
-        chip.image.scale.x = this.scale.x;
-        chip.image.scale.y = this.scale.y;
+        chip.scale.x = this.scale.x;
+        chip.scale.y = this.scale.y;
         chip.position = this.toGlobal(new Point(chip.x, chip.y));
         return chip;
     }

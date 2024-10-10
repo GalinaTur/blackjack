@@ -30,15 +30,15 @@ export class Hand extends Container {
         this._cards.push(card);
     }
 
-    public async setRegularLabel(message: string) {
-        const label = await this.createLabel('regular_label', message);
+    public setRegularLabel(message: string) {
+        const label = this.createLabel('regular_label', message);
         Animations.label.showRegular(label);
         this.label = label
         this.addChild(label);
     }
 
-    public async setBJLabel() {
-        const label = await Main.assetsController.getSprite('BJ_label');
+    public setBJLabel() {
+        const label = Main.assetsController.getSprite('BJ_label');
         label.scale.set(0)
         label.anchor.set(0.5);
         label.position.set(5);
@@ -48,8 +48,8 @@ export class Hand extends Container {
         this.label = label
     }
 
-    protected async createLabel(img: string, message: string) {
-        const image = await Main.assetsController.getSprite(img);
+    protected createLabel(img: string, message: string) {
+        const image = Main.assetsController.getSprite(img);
         image.anchor.set(0.5);
         image.position.set(70, 20);
         image.scale.set();
@@ -59,13 +59,13 @@ export class Hand extends Container {
         return image;
     }
 
-    private async setPointsLabel(points: number) {
+    private setPointsLabel(points: number) {
         if (this.pointsLabel) {
             this.updatePointsLabel(points);
             return;
         }
 
-        this.pointsLabel = await Main.assetsController.getSprite("points_label");
+        this.pointsLabel = Main.assetsController.getSprite("points_label");
         this.pointsLabel.anchor.set(0, 0.5);
         this.pointsLabel.position.set(-40, 20);
         this.pointsLabel.scale.set(0, 0.7);
@@ -86,8 +86,8 @@ export class Hand extends Container {
         Animations.cards.updatePointsLabel(this.pointsLabel);
     }
 
-    protected async playSound(soundID: string) {
-        const sound = await Main.assetsController.getSound(soundID);
+    protected playSound(soundID: string) {
+        const sound = Main.assetsController.getSound(soundID);
         sound.play();
     }
 

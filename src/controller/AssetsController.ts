@@ -29,8 +29,8 @@ export class AssetsController {
         }),
     }
 
-    public async getSprite(id: string): Promise<Sprite> {
-        const texture = await Assets.get(id);
+    public getSprite(id: string): Sprite {
+        const texture = Assets.get(id);
         return new Sprite(texture);
     }
 

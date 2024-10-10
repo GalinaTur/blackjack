@@ -14,15 +14,15 @@ export class CardView extends Container {
 
     constructor(private card: CardModel) {
         super();
-
         this.value = card.value;
+        this.setImage();
         this.dropShadowFilter = new DropShadowFilter(Effects.CARD_DROP_SHADOW);
         this.filters = [this.dropShadowFilter];
     }
 
-    private async setImage() {
-        this._backImage = await Main.assetsController.getSprite('card_back');
-        this._image = await Main.assetsController.getSprite(this.value);
+    private setImage() {
+        this._backImage = Main.assetsController.getSprite('card_back');
+        this._image = Main.assetsController.getSprite(this.value);
         this._backImage.anchor.set(0.5)
         this._image.anchor.set(0.5);
         this.addChild(this._backImage);
@@ -49,11 +49,5 @@ export class CardView extends Container {
 
     get backImage() {
         return this._backImage;
-    }
-
-    public static async build(card: CardModel) {
-        const cardView = new CardView(card);
-        await cardView.setImage();
-        return cardView;
     }
 }
