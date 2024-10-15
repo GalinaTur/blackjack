@@ -40,8 +40,7 @@ export class GameScene extends Container implements IScene<void> {
         if (hand === 'player') {
             this.activeHand = this.playersHand;
             this.playersHand.setPointer();
-        } else if (hand === 'split') {
-            if (this.activeHand === this.splitHand) return;
+        } else if (hand === 'split' && this.activeHand !== this.splitHand) {
             this.activeHand = this.splitHand;
             this.playersHand.removePointer();
             this.splitHand && this.splitHand.setPointer()
@@ -62,19 +61,34 @@ export class GameScene extends Container implements IScene<void> {
         this.cardsShoe.removeChild(cardView);
 
         let hand: Hand | null = null;
-        if (person === 'dealer') hand = this.dealersHand;
-        if (person === 'player') hand = this.playersHand;
-        if (person === 'split') hand = this.splitHand;
-        if (!hand) return;
+        if (person === 'dealer') {
+            hand = this.dealersHand;
+        }
+
+        if (person === 'player') {
+            hand = this.playersHand;
+        }
+
+        if (person === 'split') {
+            hand = this.splitHand;
+        }
+
+        if (!hand) {
+            return;
+        }
 
         await hand.dealCard(cardView, globalPosition, resolveAt);
-        if (hand.cards.length < 2) return;
+        if (hand.cards.length < 2) {
+            return;
+        }
         hand.points = points;
     }
 
     public async onCardOpen(cardIndex: number, points: number) {
         const cardView = this.dealersHand.cards[cardIndex];
-        if (!cardView) return;
+        if (!cardView) {
+            return;
+        }
         this.playOpenCardSound()
         await cardView.animatedOpen();
         this.dealersHand.points = points;
@@ -91,7 +105,7 @@ export class GameScene extends Container implements IScene<void> {
         background.anchor.set(0.5);
         background.position.set(Main.screenSize.width / 2, Main.screenSize.height * 0.4)
         background.scale.set(0);
-        background.zIndex = 5;
+        background.zIndex = 10;
         const text = new Text(`${winSize}$`, Textstyles.WIN_TEXTSTYLE);
         text.anchor.set(0.5, 0)
         text.position.set(0, 80)
@@ -137,7 +151,9 @@ export class GameScene extends Container implements IScene<void> {
 
     public async onChipClick(chip: ChipButton) {
         const chipView = chip.clone();
-        if (!chipView) return;
+        if (!chipView) {
+            return;
+        }
         await this.playersHand.placeChip(chipView);
     }
 
@@ -173,7 +189,10 @@ export class GameScene extends Container implements IScene<void> {
 
     private setLabels(result: TResult, hand: TParticipants) {
         const currentHand = hand === 'split' ? this.splitHand : this.playersHand;
-        if (currentHand?.hasLabel) return;
+        if (currentHand?.hasLabel) {
+            return;
+        }
+
         switch (result) {
             case "dealerBJ":
                 this.dealersHand.setBJLabel();

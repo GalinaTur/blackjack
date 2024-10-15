@@ -49,19 +49,28 @@ export class RoundController {
                     await controller.dealCard();
                     controller = controller === this.playerController ? this.dealerController : this.playerController;
                 }
-                if (! await this.checkForAnyBJ()) this.goToNextState();
+                if (! await this.checkForAnyBJ()) {
+                    this.goToNextState();
+                }
                 break;
 
             case ERoundState.PLAYERS_TURN:
                 await this.playerController.handleTurn();
-                if (this.playerController.hand !== this.roundModel.mainHand) return;
+                if (this.playerController.hand !== this.roundModel.mainHand) {
+                    return;
+                }
                 roundStateDTO = this.getRoundStateInfo();
-                if (roundStateDTO.roundResult.main) return;
+                if (roundStateDTO.roundResult.main) {
+                    return;
+                }
                 await this.gameView.render(roundStateDTO);
                 break;
 
             case ERoundState.SPLIT_TURN:
-                if (this.roundModel.splitHand) this.playerController.setHand(this.roundModel.splitHand);
+                if (this.roundModel.splitHand) {
+                    this.playerController.setHand(this.roundModel.splitHand);
+                }
+
                 await this.playerController.handleTurn();
                 roundStateDTO = this.getRoundStateInfo();
                 await this.gameView.render(roundStateDTO);
@@ -82,12 +91,16 @@ export class RoundController {
         this.roundModel.goToNextState();
         console.log(`%cEnabled state: ${ERoundState[this.roundModel.state]}`, "color: green");
         Main.signalsController.round.stateChanged.emit(this.roundModel.state);
-        if (this.roundModel.state === ERoundState.ROUND_OVER) this.endRound();
+        if (this.roundModel.state === ERoundState.ROUND_OVER) {
+            this.endRound();
+        }
         this.handleNextAction();
     }
 
     private onRoundStart() {
-        if (this.roundModel.state !== ERoundState.BETTING) this.goToNextState();
+        if (this.roundModel.state !== ERoundState.BETTING) {
+            this.goToNextState();
+        }
         this.bettingController.setInitialBet();
     }
 
@@ -132,7 +145,10 @@ export class RoundController {
     }
 
     public async endRound() {
-        if (this.roundModel.dealerHand.holeCardIndex) await this.dealerController.revealHoleCard();
+        if (this.roundModel.dealerHand.holeCardIndex) {
+            await this.dealerController.revealHoleCard();
+        }
+
         Main.signalsController.round.end.emit(this.roundModel.getResult());
         this.roundModel.endRound();
         this.handleNextAction();

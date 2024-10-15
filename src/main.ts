@@ -1,4 +1,4 @@
-import { Application } from "pixi.js";
+import { Application, Ticker } from "pixi.js";
 import { SignalsController } from "./controller/SignalsController";
 import { AssetsController } from "./controller/AssetsController";
 import { GameController } from "./controller/GameController";
@@ -43,6 +43,10 @@ export class Main {
         gsap.registerPlugin(MotionPathPlugin);
         PixiPlugin.registerPIXI(this.app);
 
+        let ticker = this.app.ticker;
+        ticker.autoStart = false;
+        ticker.stop();
+
         window.addEventListener('resize', () => {
             Main.screenSize = {
                 width: window.innerWidth,
@@ -53,6 +57,8 @@ export class Main {
 
             requestAnimationFrame(() => this.app.render());
         });
+
+        ticker.start();
     }
 
     get app() {

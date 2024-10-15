@@ -34,4 +34,9 @@ export class Button extends Container {
         this.colorMatrixFilter.brightness(1, false);
         this.filters = [this.colorMatrixFilter, ...this.filters.filter(f => f !== this.colorMatrixFilter)];
     }
+
+    public deactivate() {
+        this.off('pointerover', this.onPointerOver);
+        this.off('pointerout', this.onPointerOut);
+    }
 }

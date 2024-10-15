@@ -5,7 +5,9 @@ export class PlayerModel extends ParticipantModel {
     
     public drawCard() {
         const card = super.drawCard();
-        if (card) card.hidden = false;
+        if (card) {
+            card.hidden = false;
+        }
         return card;
     }
 

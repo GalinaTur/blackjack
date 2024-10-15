@@ -7,6 +7,7 @@ import { CardModel } from "../../../model/CardModel";
 import { CardView } from "./CardView";
 import { Main } from "../../../main";
 import { SOUNDS } from "../../../data/constants";
+import gsap from "gsap";
 
 export class PlayersHand extends Hand {
     public chipsStack: Container | null = null;
@@ -31,15 +32,18 @@ export class PlayersHand extends Hand {
         shine.anchor.set(0.5, 0.5);
         shine.alpha = 0.5;
         shine.position.set(25, -25);
-        this.pointer.zIndex = 5;
-        shine.zIndex = 6;
+        this.pointer.zIndex = 3;
+        shine.zIndex = 4;
         this.pointer.addChild(shine);
         this.addChild(this.pointer);
         Animations.pointer.show(this.pointer, shine);
     }
 
     public removePointer() {
-        if (!this.pointer) return;
+        if (!this.pointer) {
+            return;
+        }
+
         Animations.pointer.remove(this.pointer);
         this.removeChild(this.pointer);
     }
@@ -48,6 +52,7 @@ export class PlayersHand extends Hand {
         if (!this.chipsStack) {
             this.setStack();
         }
+
         const index = this.chipsStack!.children.length;
         this.setChipFilter(chip, index);
         this.chipsStack!.addChild(chip);
@@ -66,7 +71,9 @@ export class PlayersHand extends Hand {
         if (!this.chipsStack) {
             this.setStack();
         }
-        if (chipsStack.length === this.chipsStack!.children.length) return;
+        if (chipsStack.length === this.chipsStack!.children.length) {
+            return;
+        }
 
         this.chipsStack!.removeChildren();
 
@@ -108,13 +115,16 @@ export class PlayersHand extends Hand {
     }
 
     public doubleBet() {
-        if (!this.chipsStack) return;
+        if (!this.chipsStack) {
+            return;
+        }
+
         const length = this.chipsStack.children.length;
         const animationPromises: Promise<void>[] = [];
         return new Promise<void>(async resolve => {
             for (let i = 0; i < length; i++) {
                 const chip = (this.chipsStack?.children[i] as ChipView).clone();
-                chip?.position.set(Main.screenSize.width/4, Main.screenSize.height);
+                chip?.position.set(Main.screenSize.width / 4, Main.screenSize.height);
                 const animationPromise = this.placeChip(chip!);
                 animationPromises.push(animationPromise);
             }

@@ -23,9 +23,11 @@ export class InitialScene extends Container implements IScene<void> {
     private setLogo(): void {
         this.logo = Main.assetsController.getSprite('initialLogo');
         this.logo.position.set(Main.screenSize.width / 2, Main.screenSize.height/2);
+
         if (Main.screenSize.width < this.logo.width) {
             this.logo.scale.set(Main.screenSize.width/1200)
         } 
+        
         this.logo.anchor.set(0.5);
         Animations.initialLogo.scale(this.logo);
         this.addChild(this.logo);
@@ -51,11 +53,14 @@ export class InitialScene extends Container implements IScene<void> {
     }
 
     public onResize(): void {
-        if (!this.logo) return
+        if (!this.logo) {
+            return
+        }
         this.logo.position.set(Main.screenSize.width / 2, Main.screenSize.height/2);
     }
 
     public async deactivate(): Promise<void> {
+        this.off('pointerdown', this.onStartClick);
         this.logo && await Animations.initialLogo.remove(this.logo);
         this.logo && Animations.killAllAnimations(this.logo)
         this.parent.removeChild(this);

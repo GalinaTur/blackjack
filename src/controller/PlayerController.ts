@@ -21,12 +21,18 @@ export class PlayerController extends ParticipantController<PlayerModel> {
     }
 
     public async handleTurn() {
-        if (this.hand.cards.length < 2) await this.dealCard();
+        if (this.hand.cards.length < 2) {
+            await this.dealCard();
+        }
+
         if (this.pointsController.is21Points(this.hand.cards)) {
             this.onStand();
             return;
         }
-        if (this.pointsController.isBust(this.hand.cards)) this.onBust();
+        
+        if (this.pointsController.isBust(this.hand.cards)) {
+            this.onBust();
+        }
     }
 
     private onBust() {
@@ -35,7 +41,9 @@ export class PlayerController extends ParticipantController<PlayerModel> {
     }
 
     private async onDoubleDown() {
-        if (!this.hand.cards.length) return;
+        if (!this.hand.cards.length) {
+            return;
+        }
         await this.dealCard();
         if (this.pointsController.isBust(this.hand.cards)) {
             this.onBust();

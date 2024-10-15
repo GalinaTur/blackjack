@@ -36,7 +36,9 @@ export class Background extends Container {
     }
 
     private resizeBg(): void {
-        if (this.background === null) return;
+        if (this.background === null) {
+            return;
+        }
 
         const bgRatio = this.background.width / this.background.height;
         const screenRatio = Main.screenSize.width / Main.screenSize.height;
@@ -53,7 +55,9 @@ export class Background extends Container {
     }
 
     private resizeLogo(): void {
-        if (this.logo === null) return;
+        if (this.logo === null) {
+            return;
+        }
 
         const logoRatio = this.logo.width / this.logo.height;
 
@@ -75,8 +79,13 @@ export class Background extends Container {
     }
 
     private centralize(): void {
-        if (this.background === null) return;
-        if (this.logo === null) return;
+        if (this.background === null) {
+            return;
+        }
+
+        if (this.logo === null) {
+            return;
+        }
 
         this.background.position.x = Main.screenSize.width / 2;
         this.background.position.y = Main.screenSize.height / 2;

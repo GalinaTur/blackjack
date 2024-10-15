@@ -19,6 +19,7 @@ export class Hand extends Container {
 
     private init() {
         this.sortableChildren = true;
+        this.zIndex = 1;
     }
 
     public async dealCard(card: CardView, globalPosition: Point, resolveAt: string) {
@@ -80,7 +81,10 @@ export class Hand extends Container {
     }
 
     private updatePointsLabel(points: number) {
-        if (!this.pointsLabel) return;
+        if (!this.pointsLabel) {
+            return;
+        }
+
         const text = this.pointsLabel.getChildAt(0) as Text;
         text.text = points.toString();
         Animations.cards.updatePointsLabel(this.pointsLabel);

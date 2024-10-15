@@ -24,7 +24,9 @@ export class BettingController {
     }
 
     private onBetAdd(value: TBets) {
-        if (value > this.gameController.playerBalance) return;
+        if (value > this.gameController.playerBalance) {
+            return;
+        }
         this.roundModel.increaseBet(value);
         this.gameController.removeFromBalance(value);
         this.gameController.previousBet = this.roundModel.betSize;
@@ -44,7 +46,9 @@ export class BettingController {
 
     private onRemoveLast() {
         const lastValue = this.betsHistory.pop();
-        if (!lastValue) return;
+        if (!lastValue) {
+            return;
+        }
         this.roundModel.decreaseBet(lastValue);
         this.gameController.addToBalance(lastValue);
         this.emitChanges();
@@ -52,7 +56,9 @@ export class BettingController {
 
     private doubleBet(bet?: number): void {
         const valueToAdd = bet || this.roundModel.betSize;
-        if (this.gameController.playerBalance < valueToAdd) return;
+        if (this.gameController.playerBalance < valueToAdd) {
+            return;
+        }
         this.roundModel.increaseBet(valueToAdd);
         this.gameController.removeFromBalance(valueToAdd);
         this.betsHistory.push(valueToAdd);
@@ -61,7 +67,9 @@ export class BettingController {
     private onDoubledBet(hand: TParticipants): void {
         const valueToDouble = this.splittedBet?.[hand] || this.roundModel.betSize;
         this.doubleBet(valueToDouble);
-        if (this.splittedBet?.[hand]) this.splittedBet[hand] += valueToDouble;
+        if (this.splittedBet?.[hand]) {
+            this.splittedBet[hand] += valueToDouble;
+        }
         this.emitChanges();
     }
 
@@ -113,7 +121,9 @@ export class BettingController {
             bet = 0;
         };
 
-        if (bet === 0) return;
+        if (bet === 0) {
+            return;
+        }
         this.roundModel.increaseBet(bet);
         this.gameController.removeFromBalance(bet);
 
@@ -144,10 +154,16 @@ export class BettingController {
     }
 
     private setWin(result: IRoundResult) {
-        if (!result.main) return;
+        if (!result.main) {
+            return;
+        }
+
         const bet = this.splittedBet?.player || this.roundModel.betSize;
         let win = this.addWinToBalance(result.main, bet!);
-        if (result.split) win += this.addWinToBalance(result.split, this.splittedBet?.split!);
+
+        if (result.split) {
+            win += this.addWinToBalance(result.split, this.splittedBet?.split!);
+        }
 
         console.log(`%cResult: ${result.main}, Split: ${result.split || 'No'}, Bet: ${this.roundModel.betSize}, Win: ${win}, Balance: ${this.gameController.playerBalance}`, 'color: yellow');
         return win;

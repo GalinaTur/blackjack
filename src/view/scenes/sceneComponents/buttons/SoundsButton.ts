@@ -8,9 +8,7 @@ export class SoundsButton extends Button {
         const buttonImageID = soundsOn ? BUTTONS.sounds.on : BUTTONS.sounds.off;
         super(buttonImageID.imgID);
 
-        this.on('pointerdown', () => {
-            this.toggle();
-        });
+        this.on('pointerdown', this.toggle);
     }
 
     private toggle(): void {
@@ -28,5 +26,10 @@ export class SoundsButton extends Button {
         }
 
         this.setImage('soundsOff');
+    }
+
+    public deactivate(): void {
+        super.deactivate();
+        this.off('pointerdown', this.toggle);
     }
 }

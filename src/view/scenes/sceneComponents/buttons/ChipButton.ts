@@ -22,27 +22,37 @@ export class ChipButton extends Button implements IChip {
         super(imgID)
 
         this.on('pointerdown', onClick);
-        
+
         this.dropShadowFilter = new DropShadowFilter(Effects.CHIP_DROP_SHADOW);
         this.bevelFilter = new BevelFilter(this.bevelFilterOptions);
-        
-        this.scale.set(0.7)
         this.filters = [this.dropShadowFilter, this.bevelFilter];
+
+        this.scale.set(0.7)
     }
 
     public clone() {
-        if (!this.image) return null;
+        if (!this.image) {
+            return null;
+        }
+
         const chip = new ChipView(this.value);
-        if (!chip.image) return null;
+        
+        if (!chip.image) {
+            return null;
+        }
+
         chip.image.anchor.x = this.image?.anchor.x;
         chip.image.anchor.y = this.image?.anchor.y;
-        chip.scale.x = this.scale.x;
-        chip.scale.y = this.scale.y;
         chip.position = this.toGlobal(new Point(chip.x, chip.y));
         return chip;
     }
 
     public onResize() {
 
+    }
+
+    public deactivate(): void {
+        super.deactivate();
+        this.removeAllListeners();
     }
 }

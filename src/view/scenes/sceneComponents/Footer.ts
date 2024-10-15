@@ -46,7 +46,9 @@ export class Footer extends Container {
     }
 
     private setText() {
-        if (!this.text) return
+        if (!this.text) {
+            return;
+        }
         this.text.anchor.set(0.5);
         this.text.position.set(Main.screenSize.width * 0.5, this.height / 2);
         this.addChild(this.text);
@@ -62,8 +64,15 @@ export class Footer extends Container {
 
     public setPlayerTurnText(isDoubleAllowed: boolean, isSplitAllowed: boolean) {
         let text = `HIT, STAND, DOUBLE or SPLIT this hand`;
-        if (!isSplitAllowed) text = `HIT, STAND or DOUBLE this hand`;
-        if (!isDoubleAllowed) text = `Press HIT to receive another card or STAND to end this turn`;
+
+        if (!isSplitAllowed) {
+            text = `HIT, STAND or DOUBLE this hand`;
+        }
+
+        if (!isDoubleAllowed) {
+            text = `Press HIT to receive another card or STAND to end this turn`;
+        }
+
         this.updateText(text);
     }
 
@@ -82,25 +91,36 @@ export class Footer extends Container {
             case 'lose':
                 text = `Dealer wins`;
                 break;
+
             case 'push':
             case 'pushBJ':
                 text = `Push`
                 break;
+
             default: text = '';
         }
         this.updateText(text);
     }
 
     public async updateText(message: string) {
-        if (!this.text) return;
+        if (!this.text) {
+            return;
+        }
+
         await Animations.footerText.hide(this.text);
         this.text.text = message;
         await Animations.footerText.show(this.text);
     }
 
     public onResize() {
-        if (!this.background) return;
-        if (!this.text) return;
+        if (!this.background) {
+            return;
+        }
+
+        if (!this.text) {
+            return;
+        }
+
         this.background.width = Main.screenSize.width;
         this.background.height = Main.screenSize.height * 0.05;
         this.text.position.x = Main.screenSize.width * 0.5;

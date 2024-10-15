@@ -31,19 +31,29 @@ export class CardView extends Container {
     }
 
     public open() {
-        if (this.card.hidden) return;
-        if (!this._backImage || !this._image) return;
+        if (this.card.hidden) {
+            return;
+        }
+
+        if (!this._backImage || !this._image) {
+            return;
+        }
+        
         this._backImage.scale.x = 0;
         this._image.scale.x = this._image.scale.y;
     }
 
     public async animatedOpen() {
-        if (this.card.hidden) return;
+        if (this.card.hidden) {
+            return;
+        }
         await Animations.cards.open(this);
     }
 
     get image() {
-        if (this.card.hidden) return;
+        if (this.card.hidden) {
+            return;
+        }
         return this._image;
     }
 

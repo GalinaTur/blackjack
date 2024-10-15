@@ -23,7 +23,10 @@ export class GameButton extends Button {
     }
 
     private setTextFrame(data: string): void {
-        if (!data) return;
+        if (!data) {
+            return;
+        }
+
         const frame = new Graphics()
             .beginFill(0x000000)
             .lineStyle(3, 0xffffff, 1)
@@ -58,7 +61,10 @@ export class GameButton extends Button {
     }
 
     public async updateIsActive(isActive: boolean): Promise<void> {
-        if (this._isActive === isActive) return;
+        if (this._isActive === isActive) {
+            return;
+        }
+
         this._isActive = isActive;
         this._isActive ? this.enable() : await this.disable();
     }
@@ -70,5 +76,10 @@ export class GameButton extends Button {
 
     get isActive() {
         return this._isActive;
+    }
+
+    public deactivate(): void {
+        super.deactivate();
+        this.removeAllListeners();
     }
 }

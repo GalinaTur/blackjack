@@ -23,6 +23,7 @@ export class BetPanel extends Container implements IPanel {
     private async init(): Promise<void> {
         this.setButtons();
         this.setChips();
+        this.zIndex = -1
     }
 
     private setButtons(): void {
@@ -81,7 +82,10 @@ export class BetPanel extends Container implements IPanel {
     }
 
     private async hide(chip: ChipButton): Promise<void> {
-        if (!chip.isActive) return;
+        if (!chip.isActive) {
+            return;
+        }
+
         chip.eventMode = 'none';
         chip.isActive = false;
         await Animations.chip.hide(chip);
@@ -120,6 +124,16 @@ export class BetPanel extends Container implements IPanel {
     }
 
     public async deactivate(): Promise<void> {
+        this.dealButton?.deactivate();
+        this.doubleButton?.deactivate(),
+            this.undoButton?.deactivate(),
+            this.clearButton?.deactivate(),
+
+            this.chips.forEach(async (chip) => {
+                chip.deactivate();
+                await Animations.chip.hide(chip);
+            });
+
         Promise.all([
             this.dealButton?.updateIsActive(false),
             this.doubleButton?.updateIsActive(false),

@@ -24,7 +24,6 @@ export class GameView {
     private gamePanel: GamePanel | null = null;
     private finalPanel: FinalPanel | null = null;
     private gameScene: GameScene | null = null;
-    // private isDoubleAllowed = false;
     private splitActivated = false;
 
     constructor(private app: Application,
@@ -73,7 +72,6 @@ export class GameView {
                 if (!this.betPanel) {
                     this.betPanel = new BetPanel(stateInfo.availableBets);
                     this.setCurrentFooterPanel(this.betPanel);
-                } else {
                 }
                 break;
 
@@ -86,7 +84,7 @@ export class GameView {
             case ERoundState.PLAYERS_TURN:
                 const splitAllowed = stateInfo.isSplitAllowed && !this.splitActivated;
                 this.footer?.setPlayerTurnText(stateInfo.isDoubleAllowed, splitAllowed);
-                stateInfo.cards.main.length === 2 && await this.gameScene?.setActiveHand('player');
+                stateInfo.cards.main.length === 2 && this.gameScene?.setActiveHand('player');
                 if (stateInfo.cards.split?.length === 1 && !this.splitActivated) {
                     this.splitActivated = true;
                     await this.gameScene?.splitCards(stateInfo.cards.main, stateInfo.cards.split);
@@ -105,17 +103,17 @@ export class GameView {
 
             case ERoundState.DEALERS_TURN:
                 this.footer?.updateText("Playing dealer's cards")
-                this.gameScene && await this.gameScene.setActiveHand('dealer');
+                this.gameScene && this.gameScene.setActiveHand('dealer');
                 break;
 
             case ERoundState.ROUND_OVER:
                 this.footer?.setFinalText(stateInfo.roundResult, stateInfo.win)
-                this.gameScene && await this.gameScene.setActiveHand('dealer');
+                this.gameScene && this.gameScene.setActiveHand('dealer');
                 this.finalPanel = new FinalPanel();
                 this.setCurrentFooterPanel(this.finalPanel);
 
                 if (stateInfo.win > 0) {
-                    const popup = await this.gameScene?.renderWinPopup(stateInfo.win);
+                    const popup = this.gameScene?.renderWinPopup(stateInfo.win);
                     const sound = Main.assetsController.getSound(SOUNDS.popup);
                     sound.play();
                     popup && this.app.stage.addChild(popup);
@@ -182,7 +180,6 @@ export class GameView {
     }
 
     public onResize() {
-        if (!this.background) return;
         this.background?.onResize();
         this.header?.onResize();
         this.footer?.onResize();

@@ -32,7 +32,9 @@ export class PointsController {
     }
 
     public static isSplitAllowed(cards: readonly CardModel[]) {
-        if (cards.length !== 2) return false;
+        if (cards.length !== 2) {
+            return false;
+        }
         return this.getCardPoints(cards[0]) === this.getCardPoints(cards[1]);
     }
 
