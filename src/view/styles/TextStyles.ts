@@ -62,4 +62,15 @@ export class Textstyles {
         stroke: "#623900",
         strokeThickness: 20
     }
+
+    public static INFO_TEXTSTYLE: Partial<TextStyle> = {
+        fill: "#ffffff",
+        fontFamily: "SairaLightItalic",
+        fontSize: 22,
+        strokeThickness:1,
+        letterSpacing: 1.4,
+        stroke: "#000000",
+        wordWrap:true,
+        wordWrapWidth: 400
+    }
 }

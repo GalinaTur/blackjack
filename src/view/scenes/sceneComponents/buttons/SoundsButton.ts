@@ -5,7 +5,7 @@ import { BUTTONS } from "../../../../data/constants";
 export class SoundsButton extends Button {
 
     constructor(private soundsOn: boolean) {
-        const buttonImageID = soundsOn ? BUTTONS.sounds.on : BUTTONS.sounds.off;
+        const buttonImageID = soundsOn ? BUTTONS.footer.soundsOn : BUTTONS.footer.soundsOff;
         super(buttonImageID.imgID);
 
         this.on('pointerdown', this.toggle);

@@ -12,6 +12,7 @@ import { FinalPanel } from "./scenes/sceneComponents/panels/FinalPanel";
 import { TParticipants } from "../data/types";
 import { Footer } from "./scenes/sceneComponents/Footer";
 import { SOUNDS } from "../data/constants";
+import { Modal } from "./scenes/sceneComponents/Modal";
 
 export class GameView {
     private background: Background | null = null;
@@ -25,6 +26,7 @@ export class GameView {
     private finalPanel: FinalPanel | null = null;
     private gameScene: GameScene | null = null;
     private splitActivated = false;
+    private infoModal: Modal | null = null;
 
     constructor(private app: Application,
         private playerBalance: number,
@@ -44,6 +46,7 @@ export class GameView {
         Main.signalsController.bet.updated.add(this.onBetUpdate, this);
         Main.signalsController.card.deal.add(this.onCardDeal, this);
         Main.signalsController.card.open.add(this.onCardOpen, this);
+        Main.signalsController.info.isOn.add(this.onModalChange, this);
     }
 
     public async render(stateInfo: IRoundStateDTO) {
@@ -138,6 +141,7 @@ export class GameView {
 
     private renderFooter() {
         this.footer = new Footer(this.soundsOn);
+        this.footer.zIndex = 10;
         this.app.stage.addChild(this.footer);
     }
 
@@ -175,6 +179,17 @@ export class GameView {
         resolve();
     }
 
+    private onModalChange(isOn: boolean) {
+        if (!isOn) {
+            this.app.stage.removeChild(this.infoModal!);
+            return;
+        }
+        if (!this.infoModal) {
+            this.infoModal = new Modal();
+        }
+        this.app.stage.addChild(this.infoModal);
+    }
+
     private onTurnEnd(result: IRoundResult) {
         this.gameScene?.onTurnEnd(result);
     }
@@ -192,6 +207,7 @@ export class GameView {
     }
     public deactivate() {
         this.header?.deactivate();
+        this.footer?.deactivate();
         this.currentFooterPanel && this.currentFooterPanel.deactivate();
         this.gameScene && this.gameScene.deactivate();
         Main.signalsController.round.endTurn.remove(this.onTurnEnd);
@@ -199,5 +215,6 @@ export class GameView {
         Main.signalsController.bet.updated.remove(this.onBetUpdate);
         Main.signalsController.card.deal.remove(this.onCardDeal);
         Main.signalsController.card.open.remove(this.onCardOpen);
+        Main.signalsController.info.isOn.remove(this.onModalChange);
     }
 }

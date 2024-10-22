@@ -141,7 +141,7 @@ export class GameScene extends Container implements IScene<void> {
             chipsStack.forEach(async (value, index) => {
                 setTimeout(() => {
                     const chip = this.splitHand!.setChip(value, index);
-                    chip.position.set(Main.screenSize.width/4, Main.screenSize.height);
+                    chip.position.set(Main.screenSize.width / 4, Main.screenSize.height);
                     this.splitHand!.placeChip(chip)
                 }, 200 * index)
             })
@@ -154,7 +154,7 @@ export class GameScene extends Container implements IScene<void> {
         if (!chipView) {
             return;
         }
-        await this.playersHand.placeChip(chipView);
+        this.playersHand.placeChip(chipView);
     }
 
     public async splitCards(playerCards: readonly CardModel[], splitCards: readonly CardModel[]) {

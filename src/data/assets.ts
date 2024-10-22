@@ -96,6 +96,22 @@ export const ASSETS_MANIFEST = {
                     name: 'soundsOff',
                     srcs: './assets/buttons/sounds-off.svg',
                 },
+                {
+                    name: 'info',
+                    srcs: './assets/buttons/info.svg',
+                },
+                {
+                    name: 'next',
+                    srcs: './assets/buttons/next.svg',
+                },
+                {
+                    name: 'previous',
+                    srcs: './assets/buttons/previous.svg',
+                },
+                {
+                    name: 'closeInfo',
+                    srcs: './assets/buttons/close-info.svg',
+                },
             ],
         },
         {

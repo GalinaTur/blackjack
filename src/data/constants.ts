@@ -66,14 +66,30 @@ export const BUTTONS = {
             imgID: 'topUp',
         },
     },
-    sounds:{
-        on: {
+    footer:{
+        soundsOn: {
             text: '',
             imgID: 'soundsOn',
         },
-        off: {
+        soundsOff: {
             text: '',
             imgID: 'soundsOff',
+        },
+        info: {
+            text: '',
+            imgID: 'info',
+        },
+        next: {
+            text: '',
+            imgID: 'next',
+        },
+        previous: {
+            text: '',
+            imgID: 'previous',
+        },
+        closeInfo: {
+            text: '',
+            imgID: 'closeInfo',
         },
     }
 }

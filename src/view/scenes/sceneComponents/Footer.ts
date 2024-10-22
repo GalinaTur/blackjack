@@ -6,6 +6,7 @@ import { Effects } from "../../styles/Effects";
 import { SoundsButton } from "./buttons/SoundsButton";
 import { IRoundResult } from "../../../data/types";
 import { Animations } from "../../styles/Animations";
+import { InfoButton } from "./buttons/InfoButton";
 
 export class Footer extends Container {
     private text: Text | null = null;
@@ -24,6 +25,7 @@ export class Footer extends Container {
         this.setSignature();
         this.setText();
         this.setSoundsButton();
+        this.setInfoButton();
         this.position.set(0, Main.screenSize.height - this.height);
         this.filters = [this.dropShadowFilter];
     }
@@ -43,6 +45,13 @@ export class Footer extends Container {
         soundsButton.scale.set(0.1);
         soundsButton.position.set(Main.screenSize.width * 0.9, this.height / 2);
         this.addChild(soundsButton);
+    }
+
+    private setInfoButton() {
+        const infoButton = new InfoButton();
+        infoButton.scale.set(0.1);
+        infoButton.position.set(Main.screenSize.width * 0.93, this.height / 2);
+        this.addChild(infoButton);
     }
 
     private setText() {
@@ -125,5 +134,9 @@ export class Footer extends Container {
         this.background.height = Main.screenSize.height * 0.05;
         this.text.position.x = Main.screenSize.width * 0.5;
         this.position.set(0, Main.screenSize.height - this.height);
+    }
+
+    public deactivate() {
+        this.destroy();
     }
 }

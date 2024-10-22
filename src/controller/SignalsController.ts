@@ -70,4 +70,8 @@ export class SignalsController {
         isOn: new Signal<boolean>(),
     }
 
+    public info = {
+        isOn: new Signal<boolean>(),
+    }
+
 }
