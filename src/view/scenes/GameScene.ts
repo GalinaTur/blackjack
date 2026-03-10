@@ -96,8 +96,8 @@ export class GameScene extends Container implements IScene<void> {
 
 
     private playOpenCardSound() {
-        const sound = Main.assetsController.getSound(SOUNDS.flipCard);
-        sound.play();
+        const sound = Main.assetsController.playSound(SOUNDS.flipCard);
+        // sound.play();
     }
 
     public renderWinPopup(winSize: number) {
@@ -115,8 +115,8 @@ export class GameScene extends Container implements IScene<void> {
     }
 
     private setShoe() {
-        const shoe = Main.assetsController.getSprite('cardsShoe');
-        const shoePart = Main.assetsController.getSprite('cardsShoePart');
+        const shoe = Main.assetsController.getSprite('shoe');
+        const shoePart = Main.assetsController.getSprite('shoePart');
         shoe.anchor.set(0, 0);
         shoePart.anchor.set(0, 0.44);
         this.cardsShoe.addChild(shoe);
@@ -178,8 +178,8 @@ export class GameScene extends Container implements IScene<void> {
     }
 
     private playSound(soundID: string) {
-        const sound = Main.assetsController.getSound(soundID);
-        sound.play();
+        const sound = Main.assetsController.playSound(soundID);
+        // sound.play();
     }
 
     public onTurnEnd(result: IRoundResult) {
