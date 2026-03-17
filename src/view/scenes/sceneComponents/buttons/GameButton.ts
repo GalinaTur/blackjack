@@ -70,8 +70,8 @@ export class GameButton extends Button {
     }
 
     private playSound(soundID: string) {
-        const sound = Main.assetsController.getSound(soundID);
-        sound.play();
+        const sound = Main.assetsController.playSound(soundID);
+        // sound.play();
     }
 
     get isActive() {

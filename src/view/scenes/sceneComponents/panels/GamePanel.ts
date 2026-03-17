@@ -38,8 +38,8 @@ export class GamePanel extends Container implements IPanel {
     }
 
     private playSound(soundID: string) {
-        const sound = Main.assetsController.getSound(soundID);
-        sound.play();
+        const sound = Main.assetsController.playSound(soundID);
+        // sound.play();
     }
 
     private onHit() {

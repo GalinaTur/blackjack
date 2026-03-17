@@ -24,7 +24,7 @@ export const ASSETS_MANIFEST = {
             name: 'initialAssets',
             assets: [
                 {
-                    name: 'initialLogo',
+                    name: 'initialLogo.png',
                     srcs: './assets/initialLogo.png',
                 },
                 {
@@ -40,77 +40,77 @@ export const ASSETS_MANIFEST = {
         {
             name: 'buttons',
             assets: [
-                {
-                    name: 'clearBet',
-                    srcs: './assets/buttons/clearBet.png',
-                },
-                {
-                    name: 'deal',
-                    srcs: './assets/buttons/deal.png',
-                },
-                {
-                    name: 'double',
-                    srcs: './assets/buttons/double.png',
-                },
-                {
-                    name: 'doubleBet',
-                    srcs: './assets/buttons/doubleBet.png',
-                },
-                {
-                    name: 'hit',
-                    srcs: './assets/buttons/hit.png',
-                },
-                {
-                    name: 'stand',
-                    srcs: './assets/buttons/stand.png',
-                },
-                {
-                    name: 'insurance',
-                    srcs: './assets/buttons/insurance.png',
-                },
-                {
-                    name: 'noInsurance',
-                    srcs: './assets/buttons/noInsurance.png',
-                },
-                {
-                    name: 'split',
-                    srcs: './assets/buttons/split.png',
-                },
-                {
-                    name: 'undo',
-                    srcs: './assets/buttons/undo.png',
-                },
-                {
-                    name: 'repeat',
-                    srcs: './assets/buttons/repeat.png',
-                },
-                {
-                    name: 'topUp',
-                    srcs: './assets/buttons/topUp.png',
-                },
+                // {
+                //     name: 'clearBet',
+                //     srcs: './assets/buttons/clearBet.png',
+                // },
+                // {
+                //     name: 'deal',
+                //     srcs: './assets/buttons/deal.png',
+                // },
+                // {
+                //     name: 'double',
+                //     srcs: './assets/buttons/double.png',
+                // },
+                // {
+                //     name: 'doubleBet',
+                //     srcs: './assets/buttons/doubleBet.png',
+                // },
+                // {
+                //     name: 'hit',
+                //     srcs: './assets/buttons/hit.png',
+                // },
+                // {
+                //     name: 'stand',
+                //     srcs: './assets/buttons/stand.png',
+                // },
+                // {
+                //     name: 'insurance',
+                //     srcs: './assets/buttons/insurance.png',
+                // },
+                // {
+                //     name: 'noInsurance',
+                //     srcs: './assets/buttons/noInsurance.png',
+                // },
+                // {
+                //     name: 'split',
+                //     srcs: './assets/buttons/split.png',
+                // },
+                // {
+                //     name: 'undo',
+                //     srcs: './assets/buttons/undo.png',
+                // },
+                // {
+                //     name: 'repeat',
+                //     srcs: './assets/buttons/repeat.png',
+                // },
+                // {
+                //     name: 'topUp',
+                //     srcs: './assets/buttons/topUp.png',
+                // },
                 {
                     name: 'soundsOn',
-                    srcs: './assets/buttons/sounds-on.svg',
+                    srcs: './assets/images/buttons/sounds-on.svg',
                 },
                 {
                     name: 'soundsOff',
-                    srcs: './assets/buttons/sounds-off.svg',
+                    srcs: './assets/images/buttons/sounds-off.svg',
                 },
                 {
                     name: 'info',
-                    srcs: './assets/buttons/info.svg',
+                    srcs: './assets/images/buttons/info.svg',
                 },
                 {
                     name: 'next',
-                    srcs: './assets/buttons/next.svg',
+                    srcs: './assets/images/buttons/next.svg',
                 },
                 {
                     name: 'previous',
-                    srcs: './assets/buttons/previous.svg',
+                    srcs: './assets/images/buttons/previous.svg',
                 },
                 {
                     name: 'closeInfo',
-                    srcs: './assets/buttons/close-info.svg',
+                    srcs: './assets/images/buttons/close-info.svg',
                 },
             ],
         },

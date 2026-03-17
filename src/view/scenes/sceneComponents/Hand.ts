@@ -91,8 +91,8 @@ export class Hand extends Container {
     }
 
     protected playSound(soundID: string) {
-        const sound = Main.assetsController.getSound(soundID);
-        sound.play();
+        const sound = Main.assetsController.playSound(soundID);
+        // sound.play();
     }
 
     set points(points: number) {

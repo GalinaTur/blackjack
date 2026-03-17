@@ -117,8 +117,8 @@ export class GameView {
 
                 if (stateInfo.win > 0) {
                     const popup = this.gameScene?.renderWinPopup(stateInfo.win);
-                    const sound = Main.assetsController.getSound(SOUNDS.popup);
-                    sound.play();
+                    const sound = Main.assetsController.playSound(SOUNDS.popup);
+                    // sound.play();
                     popup && this.app.stage.addChild(popup);
                 }
                 break;

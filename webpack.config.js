@@ -10,12 +10,15 @@ module.exports = {
   entry: './src/main.ts',
   plugins: [
     new HtmlWebpackPlugin({ 
-      favicon: "./assets/favicon.png",
+      favicon: "./assets/images/favicon.png",
       template: './src/index.html' 
     }),
     new CopyPlugin({
       patterns: [
-        { from: "./assets", to: "./assets" },
+        { from: "./assets/images/exported", to: "./assets/images/exported" },
+        { from: "./assets/images/buttons", to: "./assets/images/buttons" },
+        { from: "./assets/sounds/exported", to: "./assets/sounds/exported" },
+        { from: "./assets/fonts", to: "./assets/fonts" },
       ],
     }),
   ],
