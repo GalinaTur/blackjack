@@ -1,6 +1,6 @@
 import { Howl } from "howler";
 import { Assets, Sprite } from "pixi.js";
-import { ASSETS_MANIFEST, SOUNDS } from "../data/assets";
+import { ASSETS_MANIFEST } from "../data/assets";
 
 export class AssetsController
 {
@@ -8,17 +8,19 @@ export class AssetsController
 
 	public async init(): Promise<void>
 	{
+		const deviceType = this.getDeviceType();
+
 		await Assets.init({ manifest: ASSETS_MANIFEST });
 		await Assets.loadBundle("fonts");
 		// await Assets.loadBundle("initialAssets");
 		await Assets.loadBundle("buttons");
 		// await Assets.loadBundle("labels");
 		// await Assets.loadBundle("other");
-		await Assets.load("./assets/images/exported/spritesheet.json");
-		await Assets.load("./assets/images/exported/cardsSpritesheet.json");
-		await Assets.load("./assets/images/exported/chipsSpritesheet.json");
+		await Assets.load(`./assets/images/exported/${ deviceType }/spritesheet.json`);
+		await Assets.load(`./assets/images/exported/cardsSpritesheet.json`);
+		await Assets.load(`./assets/images/exported/chipsSpritesheet.json`);
 
-		await this.createSoundsSprite();
+		await this.createSoundsSprite(deviceType);
 
 		// Object.values(this.soundsStorage).forEach((howl) => howl.load());
 	};
@@ -44,7 +46,8 @@ export class AssetsController
 	public playSound(id: string, volume = 1, loop = false): void
 	{
 		const playbackId = this.soundsSprite?.play(id);
-		if (!playbackId)		{
+		if (!playbackId)
+		{
 			return;
 		}
 		this.soundsSprite?.volume(volume, playbackId);
@@ -63,13 +66,27 @@ export class AssetsController
 	// 	return sound;
 	// }
 
-	private async createSoundsSprite(): Promise<void>
+	private async createSoundsSprite(deviceType: "mobile" | "desktop"): Promise<void>
 	{
-		const soundsSpriteData = await fetch("assets/sounds/exported/sounds.json").then(r => r.json());
+		const soundsSpriteData = await fetch(`assets/sounds/exported/${ deviceType }/sounds.json`).then(r => r.json());
 
 		this.soundsSprite = new Howl({
 			src: soundsSpriteData.urls,
 			sprite: soundsSpriteData.sprite
 		});
+	}
+
+	private getDeviceType(): "mobile" | "desktop"
+	{
+		const uaData = (navigator as any).userAgentData;
+
+		if (uaData?.mobile !== undefined)
+		{
+			return uaData.mobile ? "mobile" : "desktop";
+		}
+
+		return /Mobile|Android|iPhone|iPad/i.test(navigator.userAgent)
+			? "mobile"
+			: "desktop";
 	}
 }

@@ -10,7 +10,7 @@ module.exports = {
   entry: './src/main.ts',
   plugins: [
     new HtmlWebpackPlugin({ 
-      favicon: "./assets/images/favicon.png",
+      favicon: "./src/favicon.png",
       template: './src/index.html' 
     }),
     new CopyPlugin({
