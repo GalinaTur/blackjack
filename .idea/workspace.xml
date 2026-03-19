@@ -4,7 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9ca0ad5a-e9ee-41d2-807f-3e72bd4d9edb" name="Changes" comment="" />
+    <list default="true" id="9ca0ad5a-e9ee-41d2-807f-3e72bd4d9edb" name="Changes" comment="update ci/cd config">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/exported/spritesheet.json" beforeDir="false" afterPath="$PROJECT_DIR$/assets/images/exported/spritesheet.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/exported/spritesheet.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/images/exported/spritesheet.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/favicon.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/sounds/exported/sounds.ogg" beforeDir="false" afterPath="$PROJECT_DIR$/assets/sounds/exported/sounds.ogg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/controller/AssetsController.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/AssetsController.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webpack.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/webpack.config.js" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -17,9 +27,16 @@
   </component>
   <component name="CopilotUserSelectedModel">
     <selectedModels>
-      <entry key="chat-panel" value="Claude Haiku 4.5" />
-      <entry key="agent-panel" value="Claude Haiku 4.5" />
+      <entry key="chat-panel" value="Claude Opus 4.6" />
+      <entry key="agent-panel" value="Claude Opus 4.6" />
     </selectedModels>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="GitHub Workflow" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
@@ -28,7 +45,20 @@
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RESET_MODE" value="MIXED" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;GalinaTur&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/GalinaTur/blackjack.git&quot;,
+    &quot;accountId&quot;: &quot;81922c66-312f-4d03-9d90-160861ab9453&quot;
+  }
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 8
 }</component>
@@ -43,12 +73,15 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "JavaScript Debug.localhost:8080.executor": "Debug",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "Node.js.constants.ts.executor": "Debug",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
+    "SONARLINT_PRECOMMIT_ANALYSIS": "true",
     "git-widget-placeholder": "test",
+    "last_opened_file_path": "C:/Users/halyna.turaieva/OneDrive - Sigma Software LLC/Desktop/blackjack",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -56,6 +89,7 @@
     "nodejs_package_manager_path": "npm",
     "npm.build.executor": "Run",
     "npm.build:audio.executor": "Run",
+    "npm.build:full.executor": "Run",
     "npm.build:resources.executor": "Run",
     "npm.serve.executor": "Run",
     "settings.editor.selected.configurable": "terminal",
@@ -71,14 +105,18 @@
   }
 }]]></component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\halyna.turaieva\OneDrive - Sigma Software LLC\Desktop\blackjack" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\halyna.turaieva\OneDrive - Sigma Software LLC\Desktop\blackjack\src" />
       <recent name="C:\Users\halyna.turaieva\OneDrive - Sigma Software LLC\Desktop\blackjack\assets\images" />
       <recent name="C:\Users\halyna.turaieva\OneDrive - Sigma Software LLC\Desktop\blackjack\assets\images\png" />
       <recent name="C:\Users\halyna.turaieva\OneDrive - Sigma Software LLC\Desktop\blackjack\assets\images\exported" />
     </key>
   </component>
-  <component name="RunManager" selected="npm.build">
-    <configuration name="constants.ts" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/src/data/constants.ts" typescript-loader="bundled" working-dir="$PROJECT_DIR$/src/data">
+  <component name="RunManager" selected="npm.build:full">
+    <configuration name="localhost:8080" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:8080/">
       <method v="2" />
     </configuration>
     <configuration name="build" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
@@ -91,11 +129,11 @@
       <envs />
       <method v="2" />
     </configuration>
-    <configuration name="build:audio" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+    <configuration name="build:full" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
       <package-json value="$PROJECT_DIR$/package.json" />
       <command value="run" />
       <scripts>
-        <script value="build:audio" />
+        <script value="build:full" />
       </scripts>
       <node-interpreter value="project" />
       <envs />
@@ -123,11 +161,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="npm.build" />
-        <item itemvalue="npm.build:resources" />
+        <item itemvalue="npm.build:full" />
         <item itemvalue="npm.serve" />
-        <item itemvalue="npm.build:audio" />
-        <item itemvalue="Node.js.constants.ts" />
+        <item itemvalue="npm.build" />
+        <item itemvalue="JavaScript Debug.localhost:8080" />
+        <item itemvalue="npm.build:resources" />
       </list>
     </recent_temporary>
   </component>
@@ -156,7 +194,95 @@
       <workItem from="1773136892122" duration="3567000" />
       <workItem from="1773140550033" duration="2901000" />
       <workItem from="1773143738507" duration="6619000" />
+      <workItem from="1773258758022" duration="623000" />
+      <workItem from="1773596124625" duration="8003000" />
+      <workItem from="1773644013732" duration="4458000" />
+      <workItem from="1773650602523" duration="1267000" />
+      <workItem from="1773653766374" duration="11297000" />
+      <workItem from="1773926985738" duration="170000" />
+      <workItem from="1773928744662" duration="633000" />
     </task>
+    <task id="LOCAL-00001" summary="dubug ci">
+      <option name="closed" value="true" />
+      <created>1773725062538</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1773725062538</updated>
+    </task>
+    <task id="LOCAL-00002" summary="dubug ci">
+      <option name="closed" value="true" />
+      <created>1773725089785</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1773725089785</updated>
+    </task>
+    <task id="LOCAL-00003" summary="dubug ci">
+      <option name="closed" value="true" />
+      <created>1773725737693</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1773725737694</updated>
+    </task>
+    <task id="LOCAL-00004" summary="dubug ci">
+      <option name="closed" value="true" />
+      <created>1773726553018</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1773726553018</updated>
+    </task>
+    <task id="LOCAL-00005" summary="dubug ci">
+      <option name="closed" value="true" />
+      <created>1773726858891</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1773726858891</updated>
+    </task>
+    <task id="LOCAL-00006" summary="dubug ci, fix scripts">
+      <option name="closed" value="true" />
+      <created>1773728763618</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1773728763618</updated>
+    </task>
+    <task id="LOCAL-00007" summary="dubug ci">
+      <option name="closed" value="true" />
+      <created>1773729812754</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1773729812754</updated>
+    </task>
+    <task id="LOCAL-00008" summary="dubug ci">
+      <option name="closed" value="true" />
+      <created>1773729849446</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1773729849446</updated>
+    </task>
+    <task id="LOCAL-00009" summary="debug ci">
+      <option name="closed" value="true" />
+      <created>1773730840971</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1773730840971</updated>
+    </task>
+    <task id="LOCAL-00010" summary="update ci/cd config">
+      <option name="closed" value="true" />
+      <created>1773739158668</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1773739158668</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -172,6 +298,14 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="debug ci" />
+    <MESSAGE value="dubug ci, fix scripts" />
+    <MESSAGE value="dubug ci" />
+    <MESSAGE value="debug ci" />
+    <MESSAGE value="update ci/cd config" />
+    <option name="LAST_COMMIT_MESSAGE" value="update ci/cd config" />
   </component>
   <component name="github-copilot-workspace">
     <instructionFileLocations>

@@ -8,8 +8,8 @@
     "build": "npm run build:source",
     "build:full": "npm run build:source && npm run build:resources && npm run build:audio",
     "build:source": "webpack --config webpack.config.js",
-    "build:resources": "texturepacker assets/images/png --sheet assets/images/exported/spritesheet.png --data assets/images/exported/spritesheet.json --format pixijs4 --max-width 4096 --max-height 4096 --trim-sprite-names",
-    "build:audio": "audiosprite assets/sounds/*.mp3 --output assets/sounds/exported/sounds --format howler --export mp3,ogg",
+    "build:resources": "node scripts/build-resources",
+    "build:audio": "node scripts/build-audio",
     "serve": "webpack serve",
     "deploy": "gh-pages -d dist"
   },
